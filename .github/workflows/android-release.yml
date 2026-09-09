@@ -1,4 +1,4 @@
-name: Compilar REDYA Release AAB
+name: Generar REDYA Release AAB
 
 on:
   workflow_dispatch:
@@ -17,6 +17,11 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Configurar Gradle 8.13
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v3
 
@@ -25,18 +30,15 @@ jobs:
           yes | sdkmanager --licenses || true
           sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
-      - name: Compilar AAB Release
-        run: ./gradlew bundleRelease --stacktrace
-
-      - name: Preparar clave de firma
+      - name: Preparar firma
         env:
           REDYA_KEYSTORE_BASE64: ${{ secrets.REDYA_KEYSTORE_BASE64 }}
         run: |
-          if [ -z "$REDYA_KEYSTORE_BASE64" ]; then
-            echo "Falta el secreto REDYA_KEYSTORE_BASE64"
-            exit 1
-          fi
           echo "$REDYA_KEYSTORE_BASE64" | base64 --decode > redya-release.keystore
+          test -s redya-release.keystore
+
+      - name: Generar AAB Release
+        run: gradle bundleRelease --stacktrace
 
       - name: Firmar AAB
         env:
@@ -44,14 +46,16 @@ jobs:
           REDYA_KEY_ALIAS: ${{ secrets.REDYA_KEY_ALIAS }}
           REDYA_KEY_PASSWORD: ${{ secrets.REDYA_KEY_PASSWORD }}
         run: |
-          if [ -z "$REDYA_KEYSTORE_PASSWORD" ] || [ -z "$REDYA_KEY_ALIAS" ] || [ -z "$REDYA_KEY_PASSWORD" ]; then
-            echo "Falta uno o más secretos de firma"
-            exit 1
-          fi
-          jarsigner             -keystore redya-release.keystore             -storepass "$REDYA_KEYSTORE_PASSWORD"             -keypass "$REDYA_KEY_PASSWORD"             -signedjar app/build/outputs/bundle/release/REDYA-release.aab             app/build/outputs/bundle/release/app-release.aab             "$REDYA_KEY_ALIAS"
+          jarsigner \
+            -keystore redya-release.keystore \
+            -storepass "$REDYA_KEYSTORE_PASSWORD" \
+            -keypass "$REDYA_KEY_PASSWORD" \
+            app/build/outputs/bundle/release/app-release.aab \
+            "$REDYA_KEY_ALIAS"
+          jarsigner -verify -verbose app/build/outputs/bundle/release/app-release.aab
 
-      - name: Guardar AAB firmado
+      - name: Guardar AAB
         uses: actions/upload-artifact@v4
         with:
           name: REDYA-AAB-RELEASE
-          path: app/build/outputs/bundle/release/REDYA-release.aab
+          path: app/build/outputs/bundle/release/app-release.aab
