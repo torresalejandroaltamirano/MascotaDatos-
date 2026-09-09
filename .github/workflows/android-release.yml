@@ -1,0 +1,57 @@
+name: Compilar REDYA Release AAB
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar proyecto
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar Android API 36
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Compilar AAB Release
+        run: ./gradlew bundleRelease --stacktrace
+
+      - name: Preparar clave de firma
+        env:
+          REDYA_KEYSTORE_BASE64: ${{ secrets.REDYA_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$REDYA_KEYSTORE_BASE64" ]; then
+            echo "Falta el secreto REDYA_KEYSTORE_BASE64"
+            exit 1
+          fi
+          echo "$REDYA_KEYSTORE_BASE64" | base64 --decode > redya-release.keystore
+
+      - name: Firmar AAB
+        env:
+          REDYA_KEYSTORE_PASSWORD: ${{ secrets.REDYA_KEYSTORE_PASSWORD }}
+          REDYA_KEY_ALIAS: ${{ secrets.REDYA_KEY_ALIAS }}
+          REDYA_KEY_PASSWORD: ${{ secrets.REDYA_KEY_PASSWORD }}
+        run: |
+          if [ -z "$REDYA_KEYSTORE_PASSWORD" ] || [ -z "$REDYA_KEY_ALIAS" ] || [ -z "$REDYA_KEY_PASSWORD" ]; then
+            echo "Falta uno o más secretos de firma"
+            exit 1
+          fi
+          jarsigner             -keystore redya-release.keystore             -storepass "$REDYA_KEYSTORE_PASSWORD"             -keypass "$REDYA_KEY_PASSWORD"             -signedjar app/build/outputs/bundle/release/REDYA-release.aab             app/build/outputs/bundle/release/app-release.aab             "$REDYA_KEY_ALIAS"
+
+      - name: Guardar AAB firmado
+        uses: actions/upload-artifact@v4
+        with:
+          name: REDYA-AAB-RELEASE
+          path: app/build/outputs/bundle/release/REDYA-release.aab
