@@ -1,1 +1,56 @@
+name: MascotaDatos - Revisión semanal de fuentes oficiales
 
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  revisar-fuentes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Revisar fuentes oficiales
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p reporte
+
+          echo "Fecha de revisión: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" > reporte/revision.txt
+
+          echo "" >> reporte/revision.txt
+          echo "FUENTE SAG - Médicos Veterinarios Autorizados Macro Zona Norte" >> reporte/revision.txt
+
+          curl -L --fail --silent --show-error \
+            "https://www.sag.gob.cl/ambitos-de-accion/medicos-veterinarios/registros" \
+            -o reporte/sag.html
+
+          echo "Fuente SAG consultada correctamente." >> reporte/revision.txt
+
+          echo "" >> reporte/revision.txt
+          echo "FUENTE DATOS.GOB - Establecimientos de Salud" >> reporte/revision.txt
+
+          curl -L --fail --silent --show-error \
+            "https://datos.gob.cl/api/3/action/package_show?id=3bf4cf7c-f638-4735-9a01-f65faae4beca" \
+            -o reporte/datosgob.json
+
+          python - <<'PY'
+          import json
+
+          data = json.load(open("reporte/datosgob.json", encoding="utf-8"))
+          resources = data.get("result", {}).get("resources", [])
+
+          for r in resources:
+              if r.get("id") == "2c44d782-3366-44e3-aefb-2c8b8363a1bc":
+                  print("URL actual:", r.get("url"))
+                  print("Última modificación:", r.get("last_modified"))
+                  print("Formato:", r.get("format"))
+          PY
+
+      - name: Guardar reporte
+        uses: actions/upload-artifact@v4
+        with:
+          name: revision-fuentes-oficiales
+          path: reporte/
+          retention-days: 30
