@@ -17,11 +17,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Configurar Gradle 8.13
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.13'
-
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v3
 
@@ -33,12 +28,16 @@ jobs:
       - name: Preparar firma
         env:
           REDYA_KEYSTORE_BASE64: ${{ secrets.REDYA_KEYSTORE_BASE64 }}
+          REDYA_KEYSTORE_PASSWORD: ${{ secrets.REDYA_KEYSTORE_PASSWORD }}
         run: |
-        echo "$REDYA_KEYSTORE_BASE64" | base64 --decode > redya-release.keystore
-            test -s redya-release.keystore
+          printf '%s' "$REDYA_KEYSTORE_BASE64" | tr -d '\r\n\t ' | base64 --decode > redya-release.keystore
+          test -s redya-release.keystore
+          keytool -list -keystore redya-release.keystore -storepass "$REDYA_KEYSTORE_PASSWORD" >/dev/null
 
       - name: Generar AAB Release
-        run: gradle bundleRelease --stacktrace
+        run: |
+          chmod +x ./gradlew
+          ./gradlew bundleRelease --stacktrace
 
       - name: Firmar AAB
         env:
@@ -50,6 +49,8 @@ jobs:
             -keystore redya-release.keystore \
             -storepass "$REDYA_KEYSTORE_PASSWORD" \
             -keypass "$REDYA_KEY_PASSWORD" \
+            -sigalg SHA256withRSA \
+            -digestalg SHA-256 \
             app/build/outputs/bundle/release/app-release.aab \
             "$REDYA_KEY_ALIAS"
           jarsigner -verify -verbose app/build/outputs/bundle/release/app-release.aab
