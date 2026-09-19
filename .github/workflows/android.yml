@@ -1,10 +1,11 @@
-name: Compilar REDYA Android
+name: Compilar MascotaDatos Android
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
+      - v35-profesional
 
 jobs:
   build:
@@ -25,13 +26,10 @@ jobs:
         with:
           gradle-version: '8.13'
 
-      - name: Configurar Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Instalar Android API 36
         run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
       - name: Compilar APK
         run: gradle assembleDebug --stacktrace
@@ -39,5 +37,5 @@ jobs:
       - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
-          name: REDYA-APK
+          name: MascotaDatos-APK
           path: app/build/outputs/apk/debug/app-debug.apk
