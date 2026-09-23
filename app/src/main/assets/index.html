@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b4d4a">
-<title>MascotaDatos — v32</title>
+<title>MascotaDatos — V35 Profesional 1.3.0</title>
 <style>
 :root{--teal:#0b4d4a;--cream:#fff8eb;--brown:#4a2d18;--terra:#bd542b;--gold:#d98a25;--line:#eadcc8;--muted:#6f665c}
 *{box-sizing:border-box}body{margin:0;background:#e9e2d7;font-family:Arial,Helvetica,sans-serif;color:var(--brown)}
@@ -14,7 +14,7 @@ header{background:var(--teal);color:white;padding:12px 15px;position:sticky;top:
 main{padding:14px 13px 92px}.view{display:none}.view.active{display:block}
 .hero{border:1px solid var(--line);background:#f2e3ca;border-radius:18px;padding:15px;display:flex;gap:12px;align-items:center}.hero img{width:72px;height:72px;border-radius:14px;object-fit:cover}.hero h1{font-size:20px;margin:0 0 4px}.hero p{font-size:12px;color:#665d54;margin:0;line-height:1.35}
 h2{font-size:19px;margin:20px 0 10px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.card,.item{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:0 2px 8px #0000000a}.card{padding:13px}.item{padding:13px}.action{cursor:pointer}.icon{font-size:27px}.card b{display:block;margin-top:6px}.small{font-size:11px;color:var(--muted);line-height:1.35;margin-top:4px}
+.card,.item{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:0 2px 8px #0000000a}.card{padding:13px}.item{padding:13px}.action{cursor:pointer}.action:active,.action.selected{border-color:var(--teal);background:#eef8f5;transform:scale(.99)}.icon{font-size:27px}.card b{display:block;margin-top:6px}.small{font-size:11px;color:var(--muted);line-height:1.35;margin-top:4px}
 .search{display:flex;gap:8px;margin:10px 0}.search input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:white}
 .searchbox{width:100%;margin:10px 0 12px}.searchbox input{display:block;width:100%;min-width:0;padding:13px 14px;border:2px solid var(--gold);border-radius:12px;background:#fff;color:var(--brown);font:inherit;font-size:16px;outline:none}.searchbox input:focus{border-color:var(--teal);box-shadow:0 0 0 3px #0b4d4a20}
 .list{display:grid;gap:9px}.top{display:flex;justify-content:space-between;gap:8px}.item h3{font-size:15px;margin:0}.meta{font-size:11px;color:var(--muted);line-height:1.45;margin-top:7px}.badge{background:#dff2dc;color:#236423;border-radius:18px;padding:4px 7px;font-size:10px;font-weight:700;white-space:nowrap}.badge.info{background:#e3eef9;color:#28557b}.badge.warn{background:#fff0d2;color:#80571a}
@@ -81,7 +81,7 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
   <div id="onlineStatus" class="notice" style="margin-bottom:10px">☁️ Conectando con MascotaDatos…</div>
   <h2>¿Qué necesitas?</h2><div class="grid" style="margin-bottom:10px"><div class="card action" onclick="show('cuenta')"><div class="icon">👤</div><b>Mi cuenta</b><div class="small">Publicaciones y datos</div></div><div class="card action" onclick="show('seguridad')"><div class="icon">🛡️</div><b>Seguridad</b><div class="small">Privacidad y reportes</div></div><div class="card action" onclick="show('notificaciones');loadNotifications()"><div class="icon">🔔</div><b>Notificaciones</b><div class="small">Avisos de MascotaDatos</div></div></div><div class="card action" style="margin-bottom:10px" onclick="show('busquedaGeneral')"><div class="icon">🔎</div><b>Buscar</b><div class="small">Veterinarias, locales y servicios</div></div><div class="card action" style="margin-bottom:10px" onclick="show('ciudades')"><div class="icon">🗺️</div><b>Veterinarias por ciudad</b><div class="small">Copiapó, Caldera, Vallenar y otras comunas de Atacama</div></div>
   <div class="grid">
-    <div class="card action" onclick="show('veterinarias')"><div class="icon">🏥</div><b>Veterinarias</b><div class="small">Dirección, horarios y contacto</div></div>
+    <div class="card action" onclick="show('ciudades')"><div class="icon">🏥</div><b>Veterinarias</b><div class="small">Por ciudad, ubicación y contacto</div></div>
     <div class="card action" onclick="show('urgencias')"><div class="icon">🚨</div><b>Urgencias</b><div class="small">Opciones de atención</div></div>
     <div class="card action" onclick="show('insumosCiudad')"><div class="icon">🛒</div><b>Insumos y locales</b><div class="small">Alimentos y productos</div></div>
     <div class="card action" onclick="show('adopcion2')"><div class="icon">🏠</div><b>Adopción</b><div class="small">Organizaciones y avisos</div></div>
@@ -94,7 +94,7 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
     <div class="card action" onclick="show('publicidad')"><div class="icon">📢</div><b>Publica tu local</b><div class="small">Para negocios de mascotas</div></div>
   </div>
   <div class="notice" style="margin-top:12px">La información real se incorporará y revisará progresivamente. Los precios no se mostrarán como confirmados hasta contar con una fuente o actualización del negocio.</div>
-  <footer>MascotaDatos V35 Profesional · versión 1.2.8.</footer>
+  <footer>MascotaDatos V35 Profesional · versión 1.3.0.</footer>
 </section>
 
 <section id="veterinarias" class="view">
@@ -218,8 +218,8 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
 <section id="perdidos" class="view">
   <button class="back" onclick="show('inicio')">← Volver</button><h2>🔎 Perdidos y encontrados</h2>
   <div class="grid">
-    <div class="card action" onclick="alert('Formulario de publicación: próximamente')"><div class="icon">🐾</div><b>Perdí mi mascota</b><div class="small">Foto, características, sector y fecha.</div></div>
-    <div class="card action" onclick="alert('Formulario de publicación: próximamente')"><div class="icon">❤️</div><b>Encontré una mascota</b><div class="small">Foto, sector y forma segura de contacto.</div></div>
+    <div class="card action" onclick="show('publicarPerdida')"><div class="icon">🐾</div><b>Perdí mi mascota</b><div class="small">Foto, características, sector y fecha.</div></div>
+    <div class="card action" onclick="show('publicarEncontrada')"><div class="icon">❤️</div><b>Encontré una mascota</b><div class="small">Foto, sector y forma segura de contacto.</div></div>
   </div>
   <h2>Seguridad</h2><div class="notice">No publiques RUT, dirección de casa ni otros datos personales sensibles. En la versión real podremos proteger el contacto dentro de la aplicación.</div>
 </section>
@@ -239,9 +239,9 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
     <h3>¿Tienes un negocio para mascotas?</h3>
     <p class="small">Envía los datos de tu negocio. La solicitud quedará pendiente de revisión y, si se aprueba, aparecerá en MascotaDatos.</p>
     <div class="notice">🛡️ <b>Seguridad:</b> revisamos las solicitudes antes de publicarlas. La etiqueta de verificado indica que MascotaDatos revisó la ficha, pero no garantiza la identidad, conducta ni las transacciones de terceros. No envíes dinero ni datos sensibles solo por una publicación.</div>
-    <form class="form" onsubmit="submitBusiness(e)">
+    <form class="form" onsubmit="submitBusiness(event)">
       <label>Nombre del negocio<input name="name" required maxlength="120" placeholder="Ej.: Veterinaria Mi Mascota"></label>
-      <label>Tipo de negocio<select name="category" required><option value="">Selecciona</option><option value="veterinaria">Veterinaria</option><option value="insumos">Tienda / insumos</option><option value="servicio">Servicio para mascotas</option><option value="otro">Otro</option></select></label>
+      <label>Tipo de negocio<select name="category" required><option value="">Selecciona</option><option value="veterinaria">Veterinaria</option><option value="insumos">Tienda / insumos</option><option value="peluquería">Peluquería</option><option value="paseador">Paseador</option><option value="cuidador">Cuidador</option><option value="transporte">Transporte</option><option value="hotel">Hotel para mascotas</option><option value="domicilio">Atención a domicilio</option><option value="otro">Otro</option></select></label>
       <label>Ciudad<select name="city_id" class="citySelect" required><option value="">Cargando ciudades…</option></select></label>
       <label>Dirección<input name="address" maxlength="200" placeholder="Calle y número"></label>
       <label>Teléfono<input name="phone" maxlength="40" placeholder="+56 9…"></label>
@@ -358,12 +358,12 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
   <button class="back" onclick="show('inicio')">← Volver</button>
   <h2>✂️ Servicios</h2>
   <div class="grid">
-    <div class="card action" onclick="loadServices('peluquería')"><div class="icon">✂️</div><b>Peluquerías</b></div>
-    <div class="card action" onclick="loadServices('paseador')"><div class="icon">🐕</div><b>Paseadores</b></div>
-    <div class="card action" onclick="loadServices('cuidador')"><div class="icon">🏠</div><b>Cuidadores</b></div>
-    <div class="card action" onclick="loadServices('transporte')"><div class="icon">🚗</div><b>Transporte</b></div>
-    <div class="card action" onclick="loadServices('hotel')"><div class="icon">🏨</div><b>Hoteles</b></div>
-    <div class="card action" onclick="loadServices('domicilio')"><div class="icon">🏥</div><b>Atención a domicilio</b></div>
+    <div class="card action" onclick="loadServices('peluquería',this)"><div class="icon">✂️</div><b>Peluquerías</b></div>
+    <div class="card action" onclick="loadServices('paseador',this)"><div class="icon">🐕</div><b>Paseadores</b></div>
+    <div class="card action" onclick="loadServices('cuidador',this)"><div class="icon">🏠</div><b>Cuidadores</b></div>
+    <div class="card action" onclick="loadServices('transporte',this)"><div class="icon">🚗</div><b>Transporte</b></div>
+    <div class="card action" onclick="loadServices('hotel',this)"><div class="icon">🏨</div><b>Hoteles</b></div>
+    <div class="card action" onclick="loadServices('domicilio',this)"><div class="icon">🏥</div><b>Atención a domicilio</b></div>
   </div>
   <div id="serviceResults" class="list" style="margin-top:16px"></div>
 </section>
@@ -543,19 +543,22 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
 
 <nav>
 <button class="active" data-view="inicio" onclick="show('inicio')"><span>🏠</span>Inicio</button>
-<button data-view="veterinarias" onclick="show('veterinarias')"><span>🏥</span>Veterinarias</button>
-<button data-view="insumos" onclick="show('insumosCiudad')"><span>🛒</span>Insumos</button>
-<button data-view="adopcion" onclick="show('adopcion2')"><span>🏠</span>Adopción</button>
-<button data-view="perdidos" onclick="show('perdidos2')"><span>🔎</span>Perdidos</button>
+<button data-view="ciudades" onclick="show('ciudades')"><span>🏥</span>Veterinarias</button>
+<button data-view="insumosCiudad" onclick="show('insumosCiudad')"><span>🛒</span>Insumos</button>
+<button data-view="adopcion2" onclick="show('adopcion2')"><span>🏠</span>Adopción</button>
+<button data-view="perdidos2" onclick="show('perdidos2')"><span>🔎</span>Perdidos</button>
 </nav>
 
 <script>
-function show(id){
+function show(id,fromHistory){
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
- document.getElementById(id).classList.add('active');
+ const target=document.getElementById(id)||document.getElementById('inicio');
+ id=target.id; target.classList.add('active');
  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));
+ if(!fromHistory && location.hash!=='#'+id) history.pushState({view:id},'', '#'+id);
  scrollTo({top:0,behavior:'smooth'});
 }
+window.addEventListener('popstate',()=>show((history.state&&history.state.view)||'inicio',true));
 function filterItems(q,id){
  q=q.toLowerCase().trim();
  document.querySelectorAll('#'+id+' .item').forEach(el=>{
@@ -641,47 +644,78 @@ async function loadShops(city){
   try{
     const {data,error}=await sb.from('businesses').select('id,name,address,phone,category,verification_status,updated_at,cities!inner(name)').eq('cities.name',city).order('name');
     if(error) throw error;
-    const list=(data||[]).filter(x=>(x.category||'').toLowerCase()!=='veterinaria');
+    const online=(data||[]).filter(x=>!(x.category||'').toLowerCase().includes('veterinaria'));
+    const local=shops.filter(x=>x.ciudad===city).map(x=>({name:x.nombre,address:x.direccion,phone:x.telefono,category:x.categoria,verification_status:x.estado}));
+    const list=[...online];
+    local.forEach(item=>{if(!list.some(x=>normalizeText(x.name)===normalizeText(item.name)))list.push(item);});
     let h='<h2>📍 '+esc(city)+'</h2>';
-    if(!list.length){h+='<div class="notice">Todavía no hay locales o servicios registrados en la base online para esta ciudad.</div>';}
-    else {h+='<div class="notice">☁️ Información actualizada desde MascotaDatos.</div><div class="list">'+list.map(x=>'<div class="item"><div class="top"><h3>'+esc(x.name)+'</h3><span class="badge">'+esc(x.category||'Servicio')+'</span></div><div class="meta">📍 '+esc(x.address||'Dirección no indicada')+'<br>📞 '+esc(x.phone||'Por verificar')+'<br><button class="btn" style="margin-top:8px" onclick="openMap('+JSON.stringify((x.address||'')+', '+city+', Atacama, Chile')+')">📍 Ver ubicación</button> <button class="btn" style="margin-top:8px" onclick="openReviews('+Number(x.id)+','+JSON.stringify(x.name||'Negocio')+')">⭐ Opiniones</button></div></div>').join('')+'</div>';}
+    if(!list.length){h+='<div class="notice">Todavía no hay locales registrados para esta ciudad.</div>';}
+    else {h+='<div class="notice">☁️ Directorio combinado: base online y fichas guardadas en la aplicación.</div><div class="list">'+list.map(x=>renderBusinessCard(x,city)) .join('')+'</div>';}
     box.innerHTML=h;
   }catch(err){
     const list=shops.filter(x=>x.ciudad===city);
     let h='<h2>📍 '+esc(city)+'</h2><div class="notice">⚠️ No se pudo actualizar la base online. Mostrando la información disponible en la aplicación.</div>';
-    if(list.length) h+='<div class="list">'+list.map(x=>'<div class="item"><div class="top"><h3>'+esc(x.nombre)+'</h3><span class="badge">'+esc(x.categoria)+'</span></div><div class="meta">📍 '+esc(x.direccion)+'<br>📞 '+esc(x.telefono||'Por verificar')+'</div></div>').join('')+'</div>';
+    if(list.length) h+='<div class="list">'+list.map(x=>renderBusinessCard({name:x.nombre,address:x.direccion,phone:x.telefono,category:x.categoria},city)).join('')+'</div>';
+    else h+='<div class="notice">Todavía no hay fichas disponibles para esta ciudad.</div>';
     box.innerHTML=h;
   }
 }
 
-async function loadServices(kind){
+const serviceData=[
+  {kind:'peluquería',name:'Estética Canina Copiapó',address:'San Antonio 3167, Copiapó',phone:'+56 9 5428 8889',category:'Peluquería canina'},
+  {kind:'peluquería',name:'Isacura Spa Canino',address:'Plaza Wheelwright 1252, Copiapó',phone:'+56 9 6765 3013',category:'Peluquería canina'},
+  {kind:'peluquería',name:'Sammy Pets',address:'Av. El Palomar 1936, Copiapó',phone:'+56 9 4553 2892',category:'Peluquería canina'}
+];
+function normalizeText(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();}
+function openPhone(phone){
+  const clean=String(phone||'').replace(/[^+\d]/g,'');
+  if(!clean){alert('Esta ficha todavía no tiene un teléfono registrado.');return;}
+  window.location.href='tel:'+clean;
+}
+function renderBusinessCard(x,city){
+  const address=x.address||'Dirección por verificar',phone=x.phone||'Teléfono por verificar';
+  return '<div class="item"><div class="top"><h3>'+esc(x.name||'Servicio')+'</h3><span class="badge">'+esc(x.category||'Servicio')+'</span></div><div class="meta">📍 '+esc(address)+'<br>📞 '+esc(phone)+'<br><button class="btn" type="button" style="margin-top:8px" onclick="openMap('+JSON.stringify(address+', '+(city||'Atacama')+', Chile')+')">📍 Ubicación</button>'+(x.phone?' <button class="btn" type="button" style="margin-top:8px" onclick="openPhone('+JSON.stringify(x.phone)+')">📞 Llamar</button>':'')+(x.id?' <button class="btn" type="button" style="margin-top:8px" onclick="openReviews('+Number(x.id)+','+JSON.stringify(x.name||'Negocio')+')">⭐ Opiniones</button>':'')+'</div></div>';
+}
+async function loadServices(kind,card){
   const labels={'peluquería':'Peluquerías','paseador':'Paseadores','cuidador':'Cuidadores','transporte':'Transporte','hotel':'Hoteles','domicilio':'Atención a domicilio'};
   const box=document.getElementById('serviceResults');
+  document.querySelectorAll('#servicios2 .action').forEach(x=>x.classList.toggle('selected',x===card));
   box.innerHTML='<div class="notice">⏳ Buscando '+esc(labels[kind]||kind)+'…</div>';
   try{
     const {data,error}=await sb.from('businesses').select('id,name,address,phone,category,verification_status,cities(name)').ilike('category','%'+kind+'%').order('name');
     if(error) throw error;
-    if(!data?.length){box.innerHTML='<div class="notice">Todavía no hay '+esc((labels[kind]||kind).toLowerCase())+' registrados. Puedes sugerir uno desde Publicar negocio.</div>';return;}
-    box.innerHTML='<h2>'+esc(labels[kind]||kind)+'</h2>'+data.map(x=>'<div class="item"><div class="top"><h3>'+esc(x.name)+'</h3><span class="badge">'+esc(x.cities?.name||'Atacama')+'</span></div><div class="meta">📍 '+esc(x.address||'Dirección por verificar')+'<br>📞 '+esc(x.phone||'Teléfono por verificar')+'<br><button class="btn" style="margin-top:8px" onclick="openMap('+JSON.stringify((x.address||'')+', '+(x.cities?.name||'Atacama')+', Chile')+')">📍 Ver ubicación</button> <button class="btn" style="margin-top:8px" onclick="openReviews('+Number(x.id)+','+JSON.stringify(x.name||'Negocio')+')">⭐ Opiniones</button></div></div>').join('');
-  }catch(err){box.innerHTML='<div class="notice">⚠️ No se pudieron cargar los servicios. Revisa tu conexión e intenta nuevamente.</div>';}
+    const list=[...(data||[])];
+    serviceData.filter(x=>x.kind===kind).forEach(item=>{if(!list.some(x=>normalizeText(x.name)===normalizeText(item.name)))list.push(item);});
+    if(!list.length){box.innerHTML='<h2>'+esc(labels[kind]||kind)+'</h2><div class="notice">Todavía no hay '+esc((labels[kind]||kind).toLowerCase())+' verificados. Puedes registrar uno desde “Publica tu local”.</div>';return;}
+    box.innerHTML='<h2>'+esc(labels[kind]||kind)+'</h2>'+list.map(x=>renderBusinessCard(x,x.cities?.name||'Copiapó')).join('');
+    box.scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(err){
+    const list=serviceData.filter(x=>x.kind===kind);
+    box.innerHTML='<h2>'+esc(labels[kind]||kind)+'</h2>'+(list.length?list.map(x=>renderBusinessCard(x,'Copiapó')).join(''):'<div class="notice">⚠️ No hay fichas disponibles en esta categoría por el momento.</div>');
+  }
 }
 
 
 const globalData = [{"tipo": "Veterinaria", "nombre": "Hospital Clínico Veterinario Huellitas", "direccion": "Callejón José Joaquín Vallejo 630, Copiapó", "telefono": "+56 52 223 3133 / +56 9 7444 4971", "estado": "publicado"}, {"tipo": "Veterinaria", "nombre": "Veterinaria Copiapó Ltda.", "direccion": "Av. Henríquez 252, Copiapó", "telefono": "+56 55 296 8704", "estado": "publicado"}, {"tipo": "Veterinaria", "nombre": "Hospital Clínico Veterinario Incavet Copiapó", "direccion": "El Inca 440, Copiapó", "telefono": "+56 9 9523 7407", "estado": "publicado"}, {"tipo": "Veterinaria", "nombre": "Clínica Veterinaria Asis", "direccion": "Miguel Gallo 923, Copiapó", "telefono": "+56 52 221 5180", "estado": "por_verificar"}, {"tipo": "Veterinaria", "nombre": "Clínica Veterinaria Los Pimientos", "direccion": "Los Carrera 1267/1268 A, Copiapó", "telefono": "+56 52 223 6811", "estado": "por_verificar"}, {"tipo": "Veterinaria", "nombre": "Unidad Veterinaria Municipal de Copiapó", "direccion": "Atacama 1049, Copiapó", "telefono": "+56 9 7616 2582 / +56 9 8922 0084", "estado": "por_verificar"}, {"tipo": "Veterinaria", "nombre": "Clínica Veterinaria Mc Kotta", "direccion": "Bernardo O'Higgins 815, Copiapó", "telefono": "+56 9 9699 4699", "estado": "verificado_fuente_oficial"}, {"tipo": "Veterinaria", "nombre": "CEMEVET", "direccion": "Bernardo O'Higgins 1253, Copiapó", "telefono": "+56 55 292 0792", "estado": "publicado"}, {"tipo": "Veterinaria", "nombre": "Clínica Veterinaria Auravet SPA", "direccion": "Bernardo O'Higgins 991, Copiapó", "telefono": "+56 9 5702 3723", "estado": "publicado"}, {"tipo": "Veterinaria", "nombre": "Consulta Veterinaria Dr. Ricardo Veliz G.", "direccion": "Juan Martínez 111, Copiapó", "telefono": "+56 9 9421 0258", "estado": "publicado"}, {"tipo": "Veterinaria", "nombre": "Centro Quirúrgico Veterinario CEQVET", "direccion": "Luis Flores 483, Copiapó", "telefono": "+56 9 7644 8018", "estado": "publicado"}, {"tipo": "Veterinaria", "nombre": "Munay Vet — Clínica Veterinaria", "direccion": "Av. Ignacio Carrera Pinto 743, Copiapó", "telefono": "+56 9 7374 6914", "estado": "verificado_fuente_oficial"}, {"tipo": "Veterinaria", "nombre": "PAGAROMA PET", "direccion": "Ingreso por Circunvalación, San Antonio 3167, Copiapó", "telefono": "+56 9 9313 2939", "estado": "publicado"}, {"tipo": "Veterinaria", "nombre": "Juan Pedro Silva Moya — consulta/profesional", "direccion": "Hugo Bordoli 1355, Copiapó", "telefono": "+56 52 224 1057", "estado": "publicado"}, {"tipo": "Veterinaria", "nombre": "Santa María Clínica Veterinaria", "direccion": "Bernardo O'Higgins 991, Copiapó", "telefono": "", "estado": "por_verificar"}, {"tipo": "Pet shop", "nombre": "Ciudad Mascota", "direccion": "Los Carrera 1036, Copiapó", "telefono": "+56 9 5215 0987", "estado": "fuente_estructurada"}, {"tipo": "Farmacia veterinaria", "nombre": "FarmVet Los Mancos O'Higgins 21", "direccion": "Bernardo O'Higgins 21, Copiapó", "telefono": "+56 9 5830 0433", "estado": "fuente_estructurada"}, {"tipo": "Pet shop", "nombre": "Tienda de mascotas Betta", "direccion": "Bernardo O'Higgins 397, Copiapó", "telefono": "", "estado": "fuente_estructurada"}, {"tipo": "Tienda de mascotas", "nombre": "Mascotas Copiapó", "direccion": "Manuel Antonio Caro 4179, Copiapó", "telefono": "", "estado": "fuente_estructurada"}, {"tipo": "Pet shop", "nombre": "Maskolandia", "direccion": "Los Loros 1335, Copiapó", "telefono": "+56 9 7466 3039", "estado": "fuente_estructurada"}, {"tipo": "Alimentos y accesorios", "nombre": "MATANDA PET", "direccion": "Los Carrera 2354, Copiapó", "telefono": "+56 9 5664 1895", "estado": "fuente_estructurada"}, {"tipo": "Pet shop", "nombre": "Petshop Lissette", "direccion": "Sur 1389, El Palomar, Copiapó", "telefono": "+56 9 5906 5061", "estado": "fuente_estructurada"}, {"tipo": "Peces y acuarios", "nombre": "Peces Aqua Fish Copiapó", "direccion": "Pje. Padre Liborio 5842, Copiapó", "telefono": "", "estado": "fuente_estructurada"}, {"tipo": "Alimentos para animales", "nombre": "Emporio Animal", "direccion": "Dulcinea 943, Copiapó", "telefono": "", "estado": "fuente_estructurada"}, {"tipo": "Productos para mascotas", "nombre": "DISTRITO ANIMAL", "direccion": "Ruta 5 KM 812, Copiapó", "telefono": "+56 9 4572 6784", "estado": "fuente_estructurada"}, {"tipo": "Alimentos", "nombre": "Yapo Pet Food", "direccion": "Av. Henríquez 627, Palomar, Local 22, Copiapó", "telefono": "+56 9 8541 0035", "estado": "fuente_publica"}, {"tipo": "Productos para mascotas", "nombre": "Patitas Atacama", "direccion": "Parcela 39-C, Lote 10, Piedra Colgada Norte, Copiapó", "telefono": "+56 9 9151 3063", "estado": "fuente_publica"}, {"tipo": "Pet shop", "nombre": "Panchitas Pet Shop", "direccion": "La Cruz 678, Copiapó", "telefono": "+56 9 2078 3151", "estado": "fuente_publica"}, {"tipo": "Farmacia veterinaria", "nombre": "La casa de Mini", "direccion": "Pedro de Valdivia N°3389, Copiapó", "telefono": "+56 9 3909 6648", "estado": "fuente_estructurada"}, {"tipo": "Pet shop/mascotas", "nombre": "Sammy's Happy Pets", "direccion": "Juan Martínez 274, Caldera", "telefono": "+56 9 5772 0066", "estado": "fuente_publica"}, {"tipo": "Centro veterinario/pet", "nombre": "Petland", "direccion": "Hacienda Cavancha Parcela F2, Vallenar", "telefono": "+56 9 8378 4608", "estado": "fuente_publica"}, {"tipo": "Centro veterinario", "nombre": "Centro Veterinario Renacer Pets", "direccion": "Faez 1016, Vallenar", "telefono": "", "estado": "fuente_publica"}, {"tipo": "Pet shop", "nombre": "Pet Dog Cat", "direccion": "Pasaje General Bonilla 359, Chañaral", "telefono": "+56 9 4869 0247", "estado": "fuente_publica"}, {"tipo": "Tienda de mascotas", "nombre": "Animal Shopping", "direccion": "Zuleta 240, Chañaral", "telefono": "+56 9 9336 8841", "estado": "fuente_publica"}, {"tipo": "Veterinaria/insumos", "nombre": "Safivet", "direccion": "Av. El Tofo 047 E, local 2, El Salvador", "telefono": "", "estado": "fuente_publica"}, {"tipo": "Servicio para mascotas", "nombre": "Mauricio Carrillo Vidal", "direccion": "Riquelme 153, Huasco", "telefono": "+56 9 9302 4982", "estado": "fuente_publica"}];
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function doGlobalSearch(){
-  const q=(document.getElementById('globalSearch').value||'').toLowerCase().trim();
+  const q=normalizeText(document.getElementById('globalSearch').value||'');
   const box=document.getElementById('globalResults');
   if(!q){box.innerHTML='<div class="notice">Escribe algo para comenzar la búsqueda.</div>';return;}
-  const hits=globalData.filter(x=>(x.nombre+' '+x.direccion+' '+x.tipo).toLowerCase().includes(q)).slice(0,30);
+  const searchable=[...globalData,...serviceData.map(x=>({nombre:x.name,direccion:x.address,telefono:x.phone,tipo:x.category,estado:'ficha_publica'}))];
+  const hits=searchable.filter(x=>normalizeText(x.nombre+' '+x.direccion+' '+x.tipo).includes(q)).slice(0,30);
   if(!hits.length){box.innerHTML='<div class="notice">No encontramos una ficha con esa búsqueda todavía.</div>';return;}
   box.innerHTML=hits.map(x=>'<div class="item"><div class="top"><h3>'+esc(x.nombre)+'</h3><span class="badge">'+esc(x.tipo)+'</span></div><div class="meta">📍 '+esc(x.direccion)+'<br>📞 '+esc(x.telefono||'Por verificar')+'<br>Estado: '+esc(x.estado||'Por verificar')+'<br><button class="btn" style="margin-top:8px" onclick="openMap('+JSON.stringify(x.direccion)+')">📍 Ver ubicación</button></div></div>').join('');
 }
 
 
 async function getCityIdByForm(form){
-  const id=form.querySelector('[name="city_id"]')?.value;
-  return id ? Number(id) : null;
+  const value=form.querySelector('[name="city_id"]')?.value;
+  if(!value)return null;
+  if(/^\d+$/.test(value))return Number(value);
+  const {data,error}=await sb.from('cities').select('id').eq('name',value).limit(1).maybeSingle();
+  if(error||!data?.id)throw new Error('No se pudo confirmar la ciudad. Revisa tu conexión e intenta nuevamente.');
+  return Number(data.id);
 }
 async function uploadPetPhoto(file,userId){
   if(!file)return null;
@@ -711,7 +745,9 @@ async function savePost(e,type){
     const cityId=await getCityIdByForm(form);
     const file=fd.get('photo');
     const photoPath=await uploadPetPhoto(file,user.id);
-    const payload={user_id:user.id,post_type:type,pet_type:fd.get('pet_type'),name:fd.get('name')||null,city_id:cityId,sector:fd.get('sector')||null,description:fd.get('description'),event_date:fd.get('event_date')||null,photo_url:photoPath,contact_method:fd.get('contact_method'),status:'pendiente'};
+    const age=String(fd.get('age')||'').trim();
+    const description=(age?'Edad aproximada: '+age+'. ':'')+String(fd.get('description')||'').trim();
+    const payload={user_id:user.id,post_type:type,pet_type:fd.get('pet_type'),name:fd.get('name')||null,city_id:cityId,sector:fd.get('sector')||null,description,event_date:fd.get('event_date')||null,photo_url:photoPath,contact_method:fd.get('contact_method'),status:'pendiente'};
     const {error}=await sb.from('pet_posts').insert(payload);
     if(error){
       if(photoPath) await sb.storage.from('pet-photos').remove([photoPath]);
@@ -848,7 +884,8 @@ async function moderatePost(id,status){
   loadModeration();
   if(window.mascotaSession) loadMyPosts();
 }
-function fillCitySelects(data){document.querySelectorAll('.citySelect').forEach(sel=>{sel.innerHTML='<option value="">Selecciona una ciudad</option>'+data.map(c=>'<option value="'+c.id+'">'+esc(c.name)+'</option>').join('');});}
+const LOCAL_CITIES=['Copiapó','Caldera','Vallenar','Chañaral','Huasco','Freirina','Diego de Almagro','Tierra Amarilla','Alto del Carmen'];
+function fillCitySelects(data){document.querySelectorAll('.citySelect').forEach(sel=>{const previous=sel.value;sel.innerHTML='<option value="">Selecciona una ciudad</option>'+data.map(c=>'<option value="'+esc(c.id||c.name)+'">'+esc(c.name)+'</option>').join('');if([...sel.options].some(o=>o.value===previous))sel.value=previous;});}
 
 function demoAccount(e){e.preventDefault();const x=document.getElementById('accountMsg');x.style.display='block';x.innerHTML='ℹ️ Usa el formulario de Mi cuenta para registrarte o iniciar sesión.';}
 function demoReport(e){e.preventDefault();sendReport(e);}
@@ -870,6 +907,7 @@ sb.auth.onAuthStateChange((event)=>{if(event==='PASSWORD_RECOVERY'){const b=docu
 
 async function checkOnline(){
   const el=document.getElementById('onlineStatus');
+  if(!window.mascotaCities){const fallback=LOCAL_CITIES.map(name=>({id:name,name,region:'Región de Atacama'}));window.mascotaCities=fallback;fillCitySelects(fallback);}
   try{
     const {data,error}=await sb.from('cities').select('name').order('name');
     if(error) throw error;
@@ -877,7 +915,9 @@ async function checkOnline(){
     el.style.display='block';
     window.mascotaCities=data; fillCitySelects(data);
   }catch(e){
-    el.innerHTML='⚠️ Sin conexión a la base online en este momento';
+    const fallback=LOCAL_CITIES.map(name=>({id:name,name,region:'Región de Atacama'}));
+    window.mascotaCities=fallback; fillCitySelects(fallback);
+    el.innerHTML='⚠️ Sin conexión a la base online en este momento. <button class="btn" type="button" onclick="checkOnline()" style="margin-left:6px">🔄 Reintentar</button>';
   }
 }
 
@@ -889,8 +929,10 @@ async function submitBusiness(e){
   if(!user){msg.innerHTML='ℹ️ Para publicar un negocio primero debes <b>crear una cuenta o iniciar sesión</b> en Mi cuenta.';return;}
   if(!user.email_confirmed_at){msg.innerHTML='🔐 Para enviar una solicitud necesitas <b>confirmar tu correo electrónico</b>. Revisa tu bandeja de entrada y luego vuelve a intentarlo.';return;}
   const fd=new FormData(form);
+  let cityId;
+  try{cityId=await getCityIdByForm(form);}catch(err){msg.textContent='❌ '+err.message;return;}
   const payload={
-    user_id:user.id, city_id:Number(fd.get('city_id')), name:String(fd.get('name')||'').trim(),
+    user_id:user.id, city_id:cityId, name:String(fd.get('name')||'').trim(),
     category:String(fd.get('category')||'').trim(), address:String(fd.get('address')||'').trim()||null,
     phone:String(fd.get('phone')||'').trim()||null, website:String(fd.get('website')||'').trim()||null,
     contact_email:String(fd.get('contact_email')||'').trim()||null, notes:String(fd.get('notes')||'').trim()||null
@@ -920,8 +962,7 @@ async function registerAccount(e){
 }
 
 function prefillKnownAccount(){
-  const e=document.querySelector('input[name=\"email\"]');
-  if(e && !e.value) e.value='alttorres@hotmail.com';
+  return;
 }
 
 function showRecovery(){prefillKnownAccount();const b=document.getElementById('recoveryBox');if(b)b.style.display='block';const e=document.querySelector('input[name="email"]'),r=document.getElementById('recovery-email');if(e&&r&&e.value)r.value=e.value;if(r)r.focus();}
