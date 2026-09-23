@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         final WebViewAssetLoader loader = new WebViewAssetLoader.Builder()
                 .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                .addPathHandler("/res/", new WebViewAssetLoader.ResourcesPathHandler(this))
                 .build();
 
         webView.setWebViewClient(new WebViewClient() {
@@ -83,10 +84,16 @@ public class MainActivity extends AppCompatActivity {
         if ("https".equalsIgnoreCase(scheme) || "http".equalsIgnoreCase(scheme)) {
             String host = uri.getHost();
             if ("appassets.androidplatform.net".equalsIgnoreCase(host)) return false;
-            try { startActivity(new Intent(Intent.ACTION_VIEW, uri)); return true; }
-            catch (ActivityNotFoundException ignored) { return false; }
         }
-        return false;
+        if ("https".equalsIgnoreCase(scheme)
+                || "http".equalsIgnoreCase(scheme)
+                || "mailto".equalsIgnoreCase(scheme)
+                || "tel".equalsIgnoreCase(scheme)
+                || "geo".equalsIgnoreCase(scheme)) {
+            try { startActivity(new Intent(Intent.ACTION_VIEW, uri)); return true; }
+            catch (ActivityNotFoundException ignored) { return true; }
+        }
+        return true;
     }
 
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
