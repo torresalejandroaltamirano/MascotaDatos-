@@ -8,11 +8,11 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "cl.mascotadatos.app"
+        applicationId = "cl.mascotadatos.app.v35"
         minSdk = 24
         targetSdk = 36
         versionCode = 35
-        versionName = "1.2.8"
+        versionName = "1.2.8-separada"
     }
 
     buildFeatures {
