@@ -17,11 +17,11 @@ android {
     }
 
     defaultConfig {
-        applicationId = "cl.mascotadatos.app.v35"
+        applicationId = "cl.mascotadatos.app.v35final"
         minSdk = 24
         targetSdk = 36
-        versionCode = 39
-        versionName = "1.3.2-separada"
+        versionCode = 40
+        versionName = "1.3.3-instalable"
     }
 
     buildTypes {
