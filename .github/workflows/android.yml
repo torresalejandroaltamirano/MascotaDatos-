@@ -37,6 +37,11 @@ jobs:
         run: |
           node -e "const fs=require('fs'),vm=require('vm');const h=fs.readFileSync('app/src/main/assets/index.html','utf8');const r=/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi;let m;while((m=r.exec(h))){if(m[1].trim())new vm.Script(m[1]);}"
 
+      - name: Preparar firma estable de pruebas
+        run: |
+          mkdir -p ci
+          base64 --decode ci/mascotadatos-debug.keystore.b64 > ci/mascotadatos-debug.keystore
+
       - name: Compilar APK y AAB
         run: gradle assembleDebug bundleRelease --stacktrace
 
