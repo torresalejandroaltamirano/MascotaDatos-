@@ -20,13 +20,16 @@ android {
         applicationId = "cl.mascotadatos.app.v35final"
         minSdk = 24
         targetSdk = 36
-        versionCode = 40
-        versionName = "1.3.3-instalable"
+        versionCode = 41
+        versionName = "1.3.4-release"
     }
 
     buildTypes {
         getByName("debug") {
             signingConfig = signingConfigs.getByName("stableDebug")
+        }
+        getByName("release") {
+            isMinifyEnabled = false
         }
     }
 
