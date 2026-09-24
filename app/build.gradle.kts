@@ -8,7 +8,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "cl.mascotadatos.app"
+        applicationId = "cl.mascotadatos.app.v135test"
         minSdk = 24
         targetSdk = 36
         versionCode = 13
