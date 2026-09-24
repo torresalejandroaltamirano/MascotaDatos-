@@ -37,19 +37,30 @@ jobs:
         run: |
           node -e "const fs=require('fs'),vm=require('vm');const h=fs.readFileSync('app/src/main/assets/index.html','utf8');const r=/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi;let m;while((m=r.exec(h))){if(m[1].trim())new vm.Script(m[1]);}"
 
-      - name: Preparar firma estable de pruebas
+      - name: Preparar clave estable
         run: |
           mkdir -p ci
           base64 --decode ci/mascotadatos-debug.keystore.b64 > ci/mascotadatos-debug.keystore
+          keytool -list -keystore ci/mascotadatos-debug.keystore -storepass mascotadatos2026 -alias mascotadatos
 
-      - name: Compilar APK y AAB
-        run: gradle assembleDebug bundleRelease --stacktrace
+      - name: Compilar APK release y AAB
+        run: gradle assembleRelease bundleRelease --stacktrace
 
-      - name: Guardar APK
+      - name: Alinear y firmar APK compatible
+        run: |
+          $ANDROID_HOME/build-tools/36.0.0/zipalign -p -f 4             app/build/outputs/apk/release/app-release-unsigned.apk             app/build/outputs/apk/release/MascotaDatos-1.3.4-release.apk
+          $ANDROID_HOME/build-tools/36.0.0/apksigner sign             --ks ci/mascotadatos-debug.keystore             --ks-pass pass:mascotadatos2026             --ks-key-alias mascotadatos             --key-pass pass:mascotadatos2026             --v1-signing-enabled true             --v2-signing-enabled true             --v3-signing-enabled true             app/build/outputs/apk/release/MascotaDatos-1.3.4-release.apk
+
+      - name: Verificar APK antes de publicar
+        run: |
+          $ANDROID_HOME/build-tools/36.0.0/apksigner verify --verbose --print-certs             app/build/outputs/apk/release/MascotaDatos-1.3.4-release.apk
+          $ANDROID_HOME/build-tools/36.0.0/aapt dump badging             app/build/outputs/apk/release/MascotaDatos-1.3.4-release.apk
+
+      - name: Guardar APK release verificado
         uses: actions/upload-artifact@v4
         with:
-          name: MascotaDatos-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: MascotaDatos-APK-RELEASE
+          path: app/build/outputs/apk/release/MascotaDatos-1.3.4-release.apk
 
       - name: Guardar AAB sin firma
         uses: actions/upload-artifact@v4
