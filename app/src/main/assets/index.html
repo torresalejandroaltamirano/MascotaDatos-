@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b4d4a">
-<title>MascotaDatos — V35 Profesional 1.3.0</title>
+<title>MascotaDatos — V35 Profesional 1.3.1</title>
 <style>
 :root{--teal:#0b4d4a;--cream:#fff8eb;--brown:#4a2d18;--terra:#bd542b;--gold:#d98a25;--line:#eadcc8;--muted:#6f665c}
 *{box-sizing:border-box}body{margin:0;background:#e9e2d7;font-family:Arial,Helvetica,sans-serif;color:var(--brown)}
@@ -94,7 +94,7 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
     <div class="card action" onclick="show('publicidad')"><div class="icon">📢</div><b>Publica tu local</b><div class="small">Para negocios de mascotas</div></div>
   </div>
   <div class="notice" style="margin-top:12px">La información real se incorporará y revisará progresivamente. Los precios no se mostrarán como confirmados hasta contar con una fuente o actualización del negocio.</div>
-  <footer>MascotaDatos V35 Profesional · versión 1.3.0.</footer>
+  <footer>MascotaDatos V35 Profesional · versión 1.3.1.</footer>
 </section>
 
 <section id="veterinarias" class="view">
@@ -181,8 +181,8 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
   <button class="back" onclick="show('inicio')">← Volver</button><h2>🚨 Urgencias</h2>
   <div class="notice">Esta sección sirve para encontrar opciones de atención. Ante una emergencia grave, busca atención veterinaria inmediata. No reemplaza una evaluación profesional.</div>
   <div class="list" style="margin-top:10px">
-    <div class="item"><div class="top"><h3>ATACAMA PETS</h3><span class="badge">Servicio de urgencias</span></div><div class="meta">📍 Las Heras 344, Copiapó<br>📞 +56 52 223 2374<br>🕐 Horarios publicados varían por día; confirmar antes de acudir.</div></div>
-    <div class="item"><div class="top"><h3>Hospital Clínico Veterinario Huellitas</h3><span class="badge">Hasta medianoche*</span></div><div class="meta">📍 Callejón José Joaquín Vallejo 630<br>📞 +56 9 7444 4971<br>🕐 09:00–00:00 según su información publicada.</div></div>
+    <div class="item"><div class="top"><h3>ATACAMA PETS</h3><span class="badge">Servicio de urgencias</span></div><div class="meta">📍 Las Heras 344, Copiapó<br>📞 +56 52 223 2374<br>🕐 Horarios publicados varían por día; confirmar antes de acudir.<br><button class="btn" type="button" style="margin-top:8px" onclick="openMap('Las Heras 344, Copiapó, Chile')">📍 Ubicación</button> <button class="btn" type="button" style="margin-top:8px" onclick="openPhone('+56 52 223 2374')">📞 Llamar</button></div></div>
+    <div class="item"><div class="top"><h3>Hospital Clínico Veterinario Huellitas</h3><span class="badge">Hasta medianoche*</span></div><div class="meta">📍 Callejón José Joaquín Vallejo 630<br>📞 +56 9 7444 4971<br>🕐 09:00–00:00 según su información publicada.<br><button class="btn" type="button" style="margin-top:8px" onclick="openMap('Callejón José Joaquín Vallejo 630, Copiapó, Chile')">📍 Ubicación</button> <button class="btn" type="button" style="margin-top:8px" onclick="openPhone('+56 9 7444 4971')">📞 Llamar</button></div></div>
   </div>
   <div class="small" style="margin-top:10px">*No se presenta como servicio 24 horas.</div>
 </section>
@@ -252,7 +252,7 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
     </form>
     <div id="businessMsg" class="notice" style="display:none;margin-top:12px"></div>
   </div>
-  <h2>Modelo futuro</h2>
+  <h2>Opciones de publicación</h2>
   <div class="grid">
     <div class="card"><div class="icon">🆓</div><b>Ficha básica</b><div class="small">Información esencial del negocio.</div></div>
     <div class="card action" onclick="show('publicidadPagada');loadActiveAds()"><div class="icon">⭐</div><b>Destacada</b><div class="small">Publicidad y mayor visibilidad.</div></div>
@@ -498,7 +498,7 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
   <div class="list">
     <div class="item"><h3>🔒 Datos personales</h3><div class="meta">Solo se solicitarán los datos necesarios para la función utilizada.</div></div>
     <div class="item"><h3>🛡️ Moderación</h3><div class="meta">Panel para revisar avisos pendientes (requiere permiso).</div><button class="btn" onclick="show('moderacion');loadModeration()">Abrir moderación</button></div><div class="item"><h3>👑 Administración</h3><div class="meta">Solicitudes, opiniones, publicidad y reportes. Solo cuentas autorizadas.</div><button class="btn" onclick="show('admin');loadAdminPanel()">Abrir panel administrador</button></div><div class="item"><h3>🚩 Reportar</h3><div class="meta">Las publicaciones podrán ser denunciadas para revisión.</div><button class="btn" onclick="show('reportar')">Reportar publicación</button></div>
-    <div class="item"><h3>🚫 Bloquear</h3><div class="meta">Función reservada para una fase posterior. Por ahora, el sistema permite reportar publicaciones para revisión.</div></div>
+    <div class="item"><h3>🚫 Publicaciones ocultas</h3><div class="meta">Puedes ocultar avisos que no quieras seguir viendo en este dispositivo.</div><button class="btn" type="button" onclick="clearHiddenPosts()">Volver a mostrar avisos ocultos</button></div>
     <div class="item"><h3>🗑️ Eliminar</h3><div class="meta">El propietario podrá solicitar eliminación de su publicación.</div></div>
   </div>
 </section>
@@ -551,6 +551,8 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
 
 <script>
 function show(id,fromHistory){
+ const aliases={veterinarias:'ciudades',insumos:'insumosCiudad',adopcion:'adopcion2',perdidos:'perdidos2',servicios:'servicios2',region:'ciudades'};
+ id=aliases[id]||id;
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
  const target=document.getElementById(id)||document.getElementById('inicio');
  id=target.id; target.classList.add('active');
@@ -778,14 +780,19 @@ async function loadPublicPosts(type){
   box.innerHTML='<div class="notice">⏳ Cargando avisos…</div>';
   const {data,error}=await sb.from('pet_posts').select('id,post_type,pet_type,name,sector,description,event_date,photo_url,created_at,city_id,cities(name)').eq('status','publicada').eq('post_type',type).order('created_at',{ascending:false}).limit(50);
   if(error){box.innerHTML='<div class="notice">⚠️ No se pudieron cargar los avisos.</div>';return;}
-  if(!data?.length){box.innerHTML='<div class="notice">Todavía no hay avisos publicados en esta categoría.</div>';return;}
-  const likeCounts=await getLikeCounts(data.map(x=>Number(x.id)));
+  const hidden=getHiddenPosts();
+  const visibleData=(data||[]).filter(x=>!hidden.has(Number(x.id)));
+  if(!visibleData.length){box.innerHTML='<div class="notice">Todavía no hay avisos visibles en esta categoría.</div>';return;}
+  const likeCounts=await getLikeCounts(visibleData.map(x=>Number(x.id)));
   const sessionResult=await sb.auth.getSession();
   const currentUser=sessionResult.data?.session?.user||null;
-  const myLikes=currentUser?await getMyLikes(data.map(x=>Number(x.id)),currentUser.id):new Set();
-  box.innerHTML=data.map((x,i)=>{const id=Number(x.id);const imgId='pubimg_'+type+'_'+i;const phId='pubph_'+type+'_'+i;const count=likeCounts[id]||0;const liked=myLikes.has(id);return '<div class="item"><div class="top"><h3>'+esc(x.name||x.pet_type||'Mascota')+'</h3><span class="badge">'+esc(x.pet_type||'Mascota')+'</span></div><div style="margin-top:9px"><div id="'+phId+'" class="notice">⏳ Cargando fotografía…</div><img id="'+imgId+'" alt="Fotografía de mascota publicada" style="display:none;width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin-top:8px"></div><div class="meta">📍 '+esc(x.cities?.name||'Ciudad no indicada')+(x.sector?' · '+esc(x.sector):'')+'<br>'+esc(x.description)+(x.event_date?'<br>📅 '+esc(x.event_date):'')+'<br><button class="btn" style="margin-top:8px" onclick="toggleLike('+id+',this)" data-liked="'+(liked?'1':'0')+'">'+(liked?'❤️':'🤍')+' Me gusta <span class="likeCount">'+count+'</span></button> <button class="btn" style="margin-top:8px" onclick="showReportFor('+id+')">🚩 Reportar</button></div></div>';}).join('');
-  data.forEach((x,i)=>loadPublishedPhoto(Number(x.id),'pubimg_'+type+'_'+i,'pubph_'+type+'_'+i));
+  const myLikes=currentUser?await getMyLikes(visibleData.map(x=>Number(x.id)),currentUser.id):new Set();
+  box.innerHTML=visibleData.map((x,i)=>{const id=Number(x.id);const imgId='pubimg_'+type+'_'+i;const phId='pubph_'+type+'_'+i;const count=likeCounts[id]||0;const liked=myLikes.has(id);return '<div class="item" data-post-id="'+id+'"><div class="top"><h3>'+esc(x.name||x.pet_type||'Mascota')+'</h3><span class="badge">'+esc(x.pet_type||'Mascota')+'</span></div><div style="margin-top:9px"><div id="'+phId+'" class="notice">⏳ Cargando fotografía…</div><img id="'+imgId+'" alt="Fotografía de mascota publicada" style="display:none;width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin-top:8px"></div><div class="meta">📍 '+esc(x.cities?.name||'Ciudad no indicada')+(x.sector?' · '+esc(x.sector):'')+'<br>'+esc(x.description)+(x.event_date?'<br>📅 '+esc(x.event_date):'')+'<br><button class="btn" style="margin-top:8px" onclick="toggleLike('+id+',this)" data-liked="'+(liked?'1':'0')+'">'+(liked?'❤️':'🤍')+' Me gusta <span class="likeCount">'+count+'</span></button> <button class="btn" style="margin-top:8px" onclick="showReportFor('+id+')">🚩 Reportar</button> <button class="btn" style="margin-top:8px" onclick="hidePost('+id+',this)">🚫 Ocultar</button></div></div>';}).join('');
+  visibleData.forEach((x,i)=>loadPublishedPhoto(Number(x.id),'pubimg_'+type+'_'+i,'pubph_'+type+'_'+i));
 }
+function getHiddenPosts(){try{return new Set(JSON.parse(localStorage.getItem('mascotadatos_hidden_posts')||'[]').map(Number));}catch(_){return new Set();}}
+function hidePost(id,button){if(!confirm('¿Ocultar esta publicación en este dispositivo?'))return;const hidden=getHiddenPosts();hidden.add(Number(id));localStorage.setItem('mascotadatos_hidden_posts',JSON.stringify([...hidden]));button.closest('.item')?.remove();}
+function clearHiddenPosts(){localStorage.removeItem('mascotadatos_hidden_posts');alert('Los avisos ocultos volverán a aparecer cuando abras su categoría.');}
 async function getLikeCounts(ids){
   if(!ids.length)return {};
   const {data}=await sb.from('pet_post_likes').select('post_id').in('post_id',ids);
