@@ -9,8 +9,8 @@ android {
 
     defaultConfig {
         applicationId = "cl.mascotadatos.app.v135test"
-        minSdk = 24
-        targetSdk = 36
+        minSdk = 21
+        targetSdk = 35
         versionCode = 13
         versionName = "1.3.5"
     }
