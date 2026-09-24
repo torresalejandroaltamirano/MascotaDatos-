@@ -7,12 +7,27 @@ android {
     namespace = "cl.mascotadatos.app"
     compileSdk = 36
 
+    signingConfigs {
+        create("stableDebug") {
+            storeFile = rootProject.file("ci/mascotadatos-debug.keystore")
+            storePassword = "mascotadatos2026"
+            keyAlias = "mascotadatos"
+            keyPassword = "mascotadatos2026"
+        }
+    }
+
     defaultConfig {
         applicationId = "cl.mascotadatos.app.v35"
         minSdk = 24
         targetSdk = 36
-        versionCode = 38
-        versionName = "1.3.1-separada"
+        versionCode = 39
+        versionName = "1.3.2-separada"
+    }
+
+    buildTypes {
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("stableDebug")
+        }
     }
 
     buildFeatures {
