@@ -1,10 +1,7 @@
-name: Compilar REDYA Android
+name: Verificar MascotaDatos Android
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   build:
@@ -33,11 +30,11 @@ jobs:
           yes | sdkmanager --licenses || true
           sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
-      - name: Compilar APK
+      - name: Verificar compilacion
         run: gradle assembleDebug --stacktrace
 
-      - name: Guardar APK
+      - name: Guardar APK de prueba
         uses: actions/upload-artifact@v4
         with:
-          name: REDYA-APK
+          name: MascotaDatos-APK-PRUEBA
           path: app/build/outputs/apk/debug/app-debug.apk
