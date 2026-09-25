@@ -9,31 +9,40 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Descargar proyecto
         uses: actions/checkout@v4
-
+      - name: Bloquear compilaciones incompletas
+        run: |
+          test -s app/src/main/assets/index.html
+          test -s app/src/main/assets/data/mascotadatos.json
+          INDEX_SIZE=$(wc -c < app/src/main/assets/index.html)
+          DATA_SIZE=$(wc -c < app/src/main/assets/data/mascotadatos.json)
+          echo "index.html: $INDEX_SIZE bytes"
+          echo "mascotadatos.json: $DATA_SIZE bytes"
+          test "$INDEX_SIZE" -ge 2000000
+          test "$DATA_SIZE" -ge 10000
       - name: Configurar Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-
       - name: Configurar Gradle 8.13
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
-
       - name: Instalar Android API 36
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
-
-      - name: Compilar APK de prueba
+      - name: Compilar APK
         run: gradle assembleDebug --stacktrace
-
-      - name: Diagnosticar APK antes de instalar
+      - name: Verificar contenido dentro del APK
+        run: |
+          unzip -l app/build/outputs/apk/debug/app-debug.apk | tee apk-contenido.txt
+          unzip -l app/build/outputs/apk/debug/app-debug.apk | grep -q "assets/index.html"
+          unzip -l app/build/outputs/apk/debug/app-debug.apk | grep -q "assets/data/mascotadatos.json"
+      - name: Diagnosticar APK
         run: |
           echo "=== BADGING ===" | tee apk-diagnostico.txt
           $ANDROID_HOME/build-tools/36.0.0/aapt2 dump badging app/build/outputs/apk/debug/app-debug.apk | tee -a apk-diagnostico.txt
@@ -41,11 +50,11 @@ jobs:
           $ANDROID_HOME/build-tools/36.0.0/apksigner verify --verbose --print-certs app/build/outputs/apk/debug/app-debug.apk | tee -a apk-diagnostico.txt
           echo "=== ZIPALIGN ===" | tee -a apk-diagnostico.txt
           $ANDROID_HOME/build-tools/36.0.0/zipalign -c -v 4 app/build/outputs/apk/debug/app-debug.apk | tee -a apk-diagnostico.txt
-
-      - name: Guardar APK y diagnóstico
+      - name: Guardar APK verificado
         uses: actions/upload-artifact@v4
         with:
-          name: MascotaDatos-1.3.5-DIAGNOSTICO
+          name: MascotaDatos-1.3.5-VERIFICADO
           path: |
             app/build/outputs/apk/debug/app-debug.apk
             apk-diagnostico.txt
+            apk-contenido.txt
