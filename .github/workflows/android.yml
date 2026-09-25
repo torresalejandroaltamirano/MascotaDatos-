@@ -33,11 +33,19 @@ jobs:
       - name: Compilar APK de prueba
         run: gradle assembleDebug --stacktrace
 
-      - name: Verificar firma del APK
-        run: $ANDROID_HOME/build-tools/36.0.0/apksigner verify --verbose app/build/outputs/apk/debug/app-debug.apk
+      - name: Diagnosticar APK antes de instalar
+        run: |
+          echo "=== BADGING ===" | tee apk-diagnostico.txt
+          $ANDROID_HOME/build-tools/36.0.0/aapt2 dump badging app/build/outputs/apk/debug/app-debug.apk | tee -a apk-diagnostico.txt
+          echo "=== FIRMA ===" | tee -a apk-diagnostico.txt
+          $ANDROID_HOME/build-tools/36.0.0/apksigner verify --verbose --print-certs app/build/outputs/apk/debug/app-debug.apk | tee -a apk-diagnostico.txt
+          echo "=== ZIPALIGN ===" | tee -a apk-diagnostico.txt
+          $ANDROID_HOME/build-tools/36.0.0/zipalign -c -v 4 app/build/outputs/apk/debug/app-debug.apk | tee -a apk-diagnostico.txt
 
-      - name: Guardar APK de prueba
+      - name: Guardar APK y diagnóstico
         uses: actions/upload-artifact@v4
         with:
-          name: MascotaDatos-1.3.5-APK-PRUEBA
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: MascotaDatos-1.3.5-DIAGNOSTICO
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            apk-diagnostico.txt
