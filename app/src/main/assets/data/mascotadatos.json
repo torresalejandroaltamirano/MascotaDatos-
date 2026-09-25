@@ -7,12 +7,12 @@
     "alcance_geografico": "Región de Atacama, organizada por ciudad/comuna"
   },
   "veterinarias": [
-    {"nombre":"Hospital Clínico Veterinario Huellitas","direccion":"Callejón José Joaquín Vallejo 630, Copiapó","telefono":"+56 52 223 3133 / +56 9 7444 4971","horario":"09:00–00:00","estado":"publicado"},
-    {"nombre":"Veterinaria Copiapó Ltda.","direccion":"Av. Henríquez 252, Copiapó","telefono":"+56 55 296 8704","estado":"publicado"},
-    {"nombre":"Hospital Clínico Veterinario Incavet Copiapó","direccion":"El Inca 440, Copiapó","telefono":"+56 9 9523 7407","estado":"publicado"},
-    {"nombre":"Clínica Veterinaria Asis","direccion":"Miguel Gallo 923, Copiapó","telefono":"+56 52 221 5180","estado":"por_verificar"},
-    {"nombre":"Clínica Veterinaria Los Pimientos","direccion":"Los Carrera 1267/1268 A, Copiapó","telefono":"+56 52 223 6811","estado":"por_verificar"},
-    {"nombre":"Unidad Veterinaria Municipal de Copiapó","direccion":"Atacama 1049, Copiapó","telefono":"+56 9 7616 2582 / +56 9 8922 0084","estado":"por_verificar"},
+    {"nombre":"Hospital Clínico Veterinario Huellitas","direccion":"Callejón José Joaquín Vallejo 630, Copiapó","telefono":"+56 52 223 3133 / +56 9 7444 4971","horario":"09:00–00:00","estado":"publicado","fuente":"sitio/directorio público; verificar antes del lanzamiento"},
+    {"nombre":"Veterinaria Copiapó Ltda.","direccion":"Av. Henríquez 252, Copiapó","telefono":"+56 55 296 8704","horario":"Lun–Vie 09:00–13:00 y 14:30–17:00; Sáb 10:00–14:00","estado":"publicado","fuente":"directorio público; verificar antes del lanzamiento"},
+    {"nombre":"Hospital Clínico Veterinario Incavet Copiapó","direccion":"El Inca 440, Copiapó","telefono":"+56 9 9523 7407","horario":"Lun–Jue 10:00–20:00; Vie 10:00–19:00; Sáb 10:00–16:00","estado":"publicado","fuente":"directorio público; verificar antes del lanzamiento"},
+    {"nombre":"Clínica Veterinaria Asis","direccion":"Miguel Gallo 923, Copiapó","telefono":"+56 52 221 5180","horario":"Consultar horario actualizado","estado":"por_verificar","fuente":"directorio público"},
+    {"nombre":"Clínica Veterinaria Los Pimientos","direccion":"Los Carrera 1267/1268 A, Copiapó","telefono":"+56 52 223 6811","horario":"Lun–Jue 09:30–19:00; Vie 09:30–19:30; Sáb 09:30–19:00; Dom cerrado","estado":"por_verificar","fuente":"fuentes públicas muestran discrepancia 1267/1268 A; verificar con el local"},
+    {"nombre":"Unidad Veterinaria Municipal de Copiapó","direccion":"Atacama 1049, Copiapó","telefono":"+56 9 7616 2582 / +56 9 8922 0084","horario":"Consultar disponibilidad municipal actual","estado":"por_verificar","fuente":"Municipalidad de Copiapó"},
     {"nombre":"Clínica Veterinaria Mc Kotta","direccion":"Bernardo O'Higgins 815, Copiapó","telefono":"+56 9 9699 4699","estado":"verificado_fuente_oficial"},
     {"nombre":"CEMEVET","direccion":"Bernardo O'Higgins 1253, Copiapó","telefono":"+56 55 292 0792","estado":"publicado"},
     {"nombre":"Clínica Veterinaria Auravet SPA","direccion":"Bernardo O'Higgins 991, Copiapó","telefono":"+56 9 5702 3723","estado":"publicado"},
@@ -20,25 +20,53 @@
     {"nombre":"Centro Quirúrgico Veterinario CEQVET","direccion":"Luis Flores 483, Copiapó","telefono":"+56 9 7644 8018","estado":"publicado"},
     {"nombre":"Munay Vet — Clínica Veterinaria","direccion":"Av. Ignacio Carrera Pinto 743, Copiapó","telefono":"+56 9 7374 6914","estado":"verificado_fuente_oficial"},
     {"nombre":"PAGAROMA PET","direccion":"Ingreso por Circunvalación, San Antonio 3167, Copiapó","telefono":"+56 9 9313 2939","estado":"publicado"},
-    {"nombre":"Juan Pedro Silva Moya — consulta/profesional","direccion":"Hugo Bordoli 1355, Copiapó","telefono":"+56 52 224 1057","estado":"publicado","tipo":"profesional"}
+    {"nombre":"Juan Pedro Silva Moya — consulta/profesional","direccion":"Hugo Bordoli 1355, Copiapó","telefono":"+56 52 224 1057","estado":"publicado","tipo":"profesional"},
+    {"nombre":"Santa María Clínica Veterinaria","direccion":"Bernardo O'Higgins 991, Copiapó","estado":"por_verificar","nota":"Posible duplicado de ficha en la misma dirección; confirmar si es establecimiento independiente."}
   ],
-  "ciudades": {
-    "Copiapó":"Capital regional; base inicial y mayor cobertura.",
-    "Caldera":"Se agregan veterinarias identificadas públicamente.",
-    "Vallenar":"Se agregan veterinarias identificadas públicamente.",
-    "Tierra Amarilla":"Pendiente de levantamiento y verificación.",
-    "Chañaral":"Pendiente de levantamiento y verificación.",
-    "Diego de Almagro":"Pendiente de levantamiento y verificación.",
-    "El Salvador":"Pendiente de levantamiento y verificación.",
-    "Huasco":"Pendiente de levantamiento y verificación.",
-    "Freirina":"Pendiente de levantamiento y verificación.",
-    "Alto del Carmen":"Pendiente de levantamiento y verificación."
-  },
+  "insumos": [
+    {"nombre":"Ciudad Mascota","direccion":"Los Carrera 1036, Copiapó","telefono":"+56 9 5215 0987","estado":"por_verificar"},
+    {"nombre":"Tienda de mascotas Betta","direccion":"Bernardo O'Higgins 397, Copiapó","estado":"por_verificar"},
+    {"nombre":"Mascotas Copiapó","direccion":"Manuel Antonio Caro 4179, Copiapó","estado":"por_verificar"},
+    {"nombre":"Petshop Lissette","direccion":"Sur 1389, El Palomar, Copiapó","telefono":"+56 9 5906 5061","estado":"por_verificar"}
+  ],
+  "adopcion":[{"nombre":"Programa de adopción municipal","ubicacion":"Copiapó","contacto":"+56 9 7616 2582","estado":"informacion_publica","nota":"La Municipalidad informó en 2025 que realizaba un programa de adopción y orientaba mediante sus redes sociales/contacto."}],
+  "servicios":[
+    {"nombre":"Estética Canina Copiapó","direccion":"San Antonio 3167, Copiapó","telefono":"+56 9 5428 8889","estado":"por_verificar"},
+    {"nombre":"Isacura Spa Canino","direccion":"Pl. Wheelwright 1252, Copiapó","telefono":"+56 9 6765 3013","estado":"por_verificar"},
+    {"nombre":"Sammy Pets","direccion":"Av. El Palomar 1936, Copiapó","telefono":"+56 9 4553 2892","estado":"por_verificar"}
+  ],
+  "ciudades":{"Copiapó":"Capital regional; base inicial y mayor cobertura.","Caldera":"Se agregan veterinarias identificadas públicamente.","Vallenar":"Se agregan veterinarias identificadas públicamente.","Tierra Amarilla":"Pendiente de levantamiento y verificación.","Chañaral":"Pendiente de levantamiento y verificación.","Diego de Almagro":"Pendiente de levantamiento y verificación.","El Salvador":"Pendiente de levantamiento y verificación.","Huasco":"Pendiente de levantamiento y verificación.","Freirina":"Pendiente de levantamiento y verificación.","Alto del Carmen":"Pendiente de levantamiento y verificación."},
   "veterinarias_region":[
-    {"ciudad":"Caldera","nombre":"Veterinaria Caldera","direccion":"Batallón de Atacama 715, Caldera","telefono":"+56 9 7988 3323","estado":"identificada_publicamente"},
-    {"ciudad":"Caldera","nombre":"Clínica Veterinaria VETERTECH Atacama","direccion":"Av. Diego de Almeyda 112, Caldera","telefono":"+56 9 8449 4971","estado":"identificada_publicamente"},
-    {"ciudad":"Vallenar","nombre":"Clínica Veterinaria Smartpet","direccion":"Alonso de Ercilla 390, Vallenar","telefono":"+56 51 261 4990","estado":"identificada_publicamente"},
-    {"ciudad":"Vallenar","nombre":"Centro Veterinario Vallenar","direccion":"Arturo Prat 1595, Vallenar","telefono":"+56 51 261 3149","estado":"identificada_publicamente"}
+    {"ciudad":"Caldera","nombre":"Veterinaria Caldera","direccion":"Batallón de Atacama 715, Caldera","telefono":"+56 9 7988 3323","horario":"Lun-Vie 09:30–13:30 y 14:30–18:00; Sáb 09:30–13:30","estado":"identificada_publicamente"},
+    {"ciudad":"Caldera","nombre":"Clínica Veterinaria VETERTECH Atacama","direccion":"Av. Diego de Almeyda 112, Caldera","telefono":"+56 9 8449 4971","horario":"Lun-Vie 10:00–13:00 y 15:30–19:30; Sáb 10:00–13:00","estado":"identificada_publicamente"},
+    {"ciudad":"Vallenar","nombre":"Vaterinaria Petland Cavancha","direccion":"Vallenar, Atacama","estado":"identificada_publicamente","nota":"Dirección exacta y teléfono pendientes de verificación."},
+    {"ciudad":"Vallenar","nombre":"Clínica Veterinaria Smartpet","direccion":"Alonso de Ercilla 390, Vallenar","telefono":"+56 51 261 4990","horario":"09:00–21:00 todos los días según ficha pública","estado":"identificada_publicamente"},
+    {"ciudad":"Vallenar","nombre":"Centro Veterinario Vallenar","direccion":"Arturo Prat 1595, Vallenar","telefono":"+56 51 261 3149","horario":"Lun-Vie 10:00–14:00 y 16:00–20:00; Sáb 10:30–14:00","estado":"identificada_publicamente"}
   ],
-  "politicas":{"verificacion":"Cada ficha debe tener fuente y fecha de revisión; si hay discrepancias, mostrar Por verificar.","privacidad":"No publicar RUT, domicilio particular u otros datos personales innecesarios.","publicidad":"La publicidad pagada será una capa separada de la ficha informativa básica."}
+  "insumos_locales":[
+    {"ciudad":"Copiapó","nombre":"Ciudad Mascota","direccion":"Los Carrera 1036, Copiapó","telefono":"+56 9 5215 0987","categoria":"Pet shop","estado":"fuente_estructurada"},
+    {"ciudad":"Copiapó","nombre":"FarmVet Los Mancos O'Higgins 21","direccion":"Bernardo O'Higgins 21, Copiapó","telefono":"+56 9 5830 0433","categoria":"Farmacia veterinaria","estado":"fuente_estructurada"},
+    {"ciudad":"Copiapó","nombre":"Tienda de mascotas Betta","direccion":"Bernardo O'Higgins 397, Copiapó","categoria":"Pet shop","estado":"fuente_estructurada"},
+    {"ciudad":"Copiapó","nombre":"Mascotas Copiapó","direccion":"Manuel Antonio Caro 4179, Copiapó","categoria":"Tienda de mascotas","estado":"fuente_estructurada"},
+    {"ciudad":"Copiapó","nombre":"Maskolandia","direccion":"Los Loros 1335, Copiapó","telefono":"+56 9 7466 3039","categoria":"Pet shop","estado":"fuente_estructurada"},
+    {"ciudad":"Copiapó","nombre":"MATANDA PET","direccion":"Los Carrera 2354, Copiapó","telefono":"+56 9 5664 1895","categoria":"Alimentos y accesorios","estado":"fuente_estructurada"},
+    {"ciudad":"Copiapó","nombre":"Petshop Lissette","direccion":"Sur 1389, El Palomar, Copiapó","telefono":"+56 9 5906 5061","categoria":"Pet shop","estado":"fuente_estructurada"},
+    {"ciudad":"Copiapó","nombre":"Peces Aqua Fish Copiapó","direccion":"Pje. Padre Liborio 5842, Copiapó","categoria":"Peces y acuarios","estado":"fuente_estructurada"},
+    {"ciudad":"Copiapó","nombre":"Emporio Animal","direccion":"Dulcinea 943, Copiapó","categoria":"Alimentos para animales","estado":"fuente_estructurada"},
+    {"ciudad":"Copiapó","nombre":"DISTRITO ANIMAL","direccion":"Ruta 5 KM 812, Copiapó","telefono":"+56 9 4572 6784","categoria":"Productos para mascotas","estado":"fuente_estructurada"},
+    {"ciudad":"Copiapó","nombre":"Yapo Pet Food","direccion":"Av. Henríquez 627, Palomar, Local 22, Copiapó","telefono":"+56 9 8541 0035","categoria":"Alimentos","estado":"fuente_publica"},
+    {"ciudad":"Copiapó","nombre":"Patitas Atacama","direccion":"Parcela 39-C, Lote 10, Piedra Colgada Norte, Copiapó","telefono":"+56 9 9151 3063","categoria":"Productos para mascotas","estado":"fuente_publica"},
+    {"ciudad":"Copiapó","nombre":"Panchitas Pet Shop","direccion":"La Cruz 678, Copiapó","telefono":"+56 9 2078 3151","categoria":"Pet shop","estado":"fuente_publica"},
+    {"ciudad":"Copiapó","nombre":"La casa de Mini","direccion":"Pedro de Valdivia N°3389, Copiapó","telefono":"+56 9 3909 6648","categoria":"Farmacia veterinaria","estado":"fuente_estructurada"},
+    {"ciudad":"Caldera","nombre":"Sammy's Happy Pets","direccion":"Juan Martínez 274, Caldera","telefono":"+56 9 5772 0066","categoria":"Pet shop/mascotas","estado":"fuente_publica"},
+    {"ciudad":"Vallenar","nombre":"Petland","direccion":"Hacienda Cavancha Parcela F2, Vallenar","telefono":"+56 9 8378 4608","categoria":"Centro veterinario/pet","estado":"fuente_publica"},
+    {"ciudad":"Vallenar","nombre":"Centro Veterinario Renacer Pets","direccion":"Faez 1016, Vallenar","categoria":"Centro veterinario","estado":"fuente_publica"},
+    {"ciudad":"Chañaral","nombre":"Pet Dog Cat","direccion":"Pasaje General Bonilla 359, Chañaral","telefono":"+56 9 4869 0247","categoria":"Pet shop","estado":"fuente_publica"},
+    {"ciudad":"Chañaral","nombre":"Animal Shopping","direccion":"Zuleta 240, Chañaral","telefono":"+56 9 9336 8841","categoria":"Tienda de mascotas","estado":"fuente_publica"},
+    {"ciudad":"El Salvador","nombre":"Safivet","direccion":"Av. El Tofo 047 E, local 2, El Salvador","categoria":"Veterinaria/insumos","estado":"fuente_publica"},
+    {"ciudad":"Huasco","nombre":"Mauricio Carrillo Vidal","direccion":"Riquelme 153, Huasco","telefono":"+56 9 9302 4982","categoria":"Servicio para mascotas","estado":"fuente_publica"}
+  ],
+  "politicas":{"publicacion":"Información comercial pública puede incorporarse como directorio, sin copiar material gráfico protegido.","verificacion":"Cada ficha debe tener fuente y fecha de revisión; si hay discrepancias, mostrar Por verificar.","precios":"No mostrar precios como actuales salvo fuente vigente o actualización del negocio.","privacidad":"No publicar RUT, domicilio particular u otros datos personales innecesarios.","publicidad":"La publicidad pagada será una capa separada de la ficha informativa básica."},
+  "seguridad":{"cuentas":"Requeridas para publicaciones comunitarias en la versión online.","moderacion":"Publicaciones denunciables y revisables.","contacto":"Se recomienda contacto intermediado para perdidos/encontrados.","fotos":"Almacenamiento de imágenes con acceso controlado.","minimizacion":"Solicitar solo datos necesarios.","estado":"Prototipo local; backend online aún pendiente."},
+  "marca_visual":{"nombre":"MascotaDatos","archivo":"assets/mascotadatos-logo.png","uso":["inicio","marca interna","futuro icono Android"],"estado":"logo aprobado por el usuario para el prototipo","nota":"La revisión/registro de marca se hará antes del lanzamiento."}
 }
