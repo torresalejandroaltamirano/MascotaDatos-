@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "app": "MascotaDatos",
+    "region": "Copiapó y alrededores",
+    "last_review": "2026-08-30",
+    "policy": "Publicar solo información verificable; marcar datos dudosos como 'Por verificar'.",
+    "alcance_geografico": "Región de Atacama, organizada por ciudad/comuna"
+  },
+  "veterinarias": [
+    {"nombre":"Hospital Clínico Veterinario Huellitas","direccion":"Callejón José Joaquín Vallejo 630, Copiapó","telefono":"+56 52 223 3133 / +56 9 7444 4971","horario":"09:00–00:00","estado":"publicado"},
+    {"nombre":"Veterinaria Copiapó Ltda.","direccion":"Av. Henríquez 252, Copiapó","telefono":"+56 55 296 8704","estado":"publicado"},
+    {"nombre":"Hospital Clínico Veterinario Incavet Copiapó","direccion":"El Inca 440, Copiapó","telefono":"+56 9 9523 7407","estado":"publicado"},
+    {"nombre":"Clínica Veterinaria Asis","direccion":"Miguel Gallo 923, Copiapó","telefono":"+56 52 221 5180","estado":"por_verificar"},
+    {"nombre":"Clínica Veterinaria Los Pimientos","direccion":"Los Carrera 1267/1268 A, Copiapó","telefono":"+56 52 223 6811","estado":"por_verificar"},
+    {"nombre":"Unidad Veterinaria Municipal de Copiapó","direccion":"Atacama 1049, Copiapó","telefono":"+56 9 7616 2582 / +56 9 8922 0084","estado":"por_verificar"},
+    {"nombre":"Clínica Veterinaria Mc Kotta","direccion":"Bernardo O'Higgins 815, Copiapó","telefono":"+56 9 9699 4699","estado":"verificado_fuente_oficial"},
+    {"nombre":"CEMEVET","direccion":"Bernardo O'Higgins 1253, Copiapó","telefono":"+56 55 292 0792","estado":"publicado"},
+    {"nombre":"Clínica Veterinaria Auravet SPA","direccion":"Bernardo O'Higgins 991, Copiapó","telefono":"+56 9 5702 3723","estado":"publicado"},
+    {"nombre":"Consulta Veterinaria Dr. Ricardo Veliz G.","direccion":"Juan Martínez 111, Copiapó","telefono":"+56 9 9421 0258","estado":"publicado"},
+    {"nombre":"Centro Quirúrgico Veterinario CEQVET","direccion":"Luis Flores 483, Copiapó","telefono":"+56 9 7644 8018","estado":"publicado"},
+    {"nombre":"Munay Vet — Clínica Veterinaria","direccion":"Av. Ignacio Carrera Pinto 743, Copiapó","telefono":"+56 9 7374 6914","estado":"verificado_fuente_oficial"},
+    {"nombre":"PAGAROMA PET","direccion":"Ingreso por Circunvalación, San Antonio 3167, Copiapó","telefono":"+56 9 9313 2939","estado":"publicado"},
+    {"nombre":"Juan Pedro Silva Moya — consulta/profesional","direccion":"Hugo Bordoli 1355, Copiapó","telefono":"+56 52 224 1057","estado":"publicado","tipo":"profesional"}
+  ],
+  "ciudades": {
+    "Copiapó":"Capital regional; base inicial y mayor cobertura.",
+    "Caldera":"Se agregan veterinarias identificadas públicamente.",
+    "Vallenar":"Se agregan veterinarias identificadas públicamente.",
+    "Tierra Amarilla":"Pendiente de levantamiento y verificación.",
+    "Chañaral":"Pendiente de levantamiento y verificación.",
+    "Diego de Almagro":"Pendiente de levantamiento y verificación.",
+    "El Salvador":"Pendiente de levantamiento y verificación.",
+    "Huasco":"Pendiente de levantamiento y verificación.",
+    "Freirina":"Pendiente de levantamiento y verificación.",
+    "Alto del Carmen":"Pendiente de levantamiento y verificación."
+  },
+  "veterinarias_region":[
+    {"ciudad":"Caldera","nombre":"Veterinaria Caldera","direccion":"Batallón de Atacama 715, Caldera","telefono":"+56 9 7988 3323","estado":"identificada_publicamente"},
+    {"ciudad":"Caldera","nombre":"Clínica Veterinaria VETERTECH Atacama","direccion":"Av. Diego de Almeyda 112, Caldera","telefono":"+56 9 8449 4971","estado":"identificada_publicamente"},
+    {"ciudad":"Vallenar","nombre":"Clínica Veterinaria Smartpet","direccion":"Alonso de Ercilla 390, Vallenar","telefono":"+56 51 261 4990","estado":"identificada_publicamente"},
+    {"ciudad":"Vallenar","nombre":"Centro Veterinario Vallenar","direccion":"Arturo Prat 1595, Vallenar","telefono":"+56 51 261 3149","estado":"identificada_publicamente"}
+  ],
+  "politicas":{"verificacion":"Cada ficha debe tener fuente y fecha de revisión; si hay discrepancias, mostrar Por verificar.","privacidad":"No publicar RUT, domicilio particular u otros datos personales innecesarios.","publicidad":"La publicidad pagada será una capa separada de la ficha informativa básica."}
+}
