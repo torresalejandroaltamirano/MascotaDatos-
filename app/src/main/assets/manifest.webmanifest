@@ -7,5 +7,12 @@
   "background_color": "#f8f0df",
   "theme_color": "#075b59",
   "lang": "es-CL",
-  "icons": [{"src":"assets/mascotadatos-logo.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]
+  "icons": [
+    {
+      "src": "assets/mascotadatos-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
