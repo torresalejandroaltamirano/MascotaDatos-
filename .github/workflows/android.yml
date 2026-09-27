@@ -1,4 +1,4 @@
-name: Verificar MascotaDatos Android
+name: Compilar MascotaDatos Android
 
 on:
   workflow_dispatch:
@@ -12,45 +12,56 @@ jobs:
     steps:
       - name: Descargar proyecto
         uses: actions/checkout@v4
-      - name: Bloquear compilaciones incompletas
+
+      - name: Validar fuente V35 de cierre
         run: |
+          set -euo pipefail
           test -s app/src/main/assets/index.html
           test -s app/src/main/assets/data/mascotadatos.json
-          INDEX_SIZE=$(wc -c < app/src/main/assets/index.html)
-          DATA_SIZE=$(wc -c < app/src/main/assets/data/mascotadatos.json)
-          echo "index.html: $INDEX_SIZE bytes"
-          echo "mascotadatos.json: $DATA_SIZE bytes"
-          test "$INDEX_SIZE" -ge 2000000
-          test "$DATA_SIZE" -ge 10000
+          test -s app/src/main/assets/assets/logo.png
+          test -s app/src/main/assets/assets/mascotadatos-logo.png
+          test "$(wc -c < app/src/main/assets/index.html)" -eq 2260198
+          test "$(wc -c < app/src/main/assets/data/mascotadatos.json)" -eq 14013
+          echo "d827021aad12fdd9ef1892c6c55e2a004ec9ec45b5f795a8134a10aed5905fa9  app/src/main/assets/index.html" | sha256sum -c -
+          echo "94a4d137910e86d5fe51ba03b76624ce773b778c3c57953e9569700f063a2ba6  app/src/main/assets/data/mascotadatos.json" | sha256sum -c -
+          echo "cda2085333356bca3ecb8ef458a9440bec3bea0383397d5c4626453ebe4d7fce  app/src/main/assets/assets/logo.png" | sha256sum -c -
+          echo "79368c873dda99bdddd16342c6750d029cdfd91f241162435420ca1e44f96a51  app/src/main/assets/assets/mascotadatos-logo.png" | sha256sum -c -
+          echo "4a6d999cd13c2f85d04648978cb411ecd09eabe87cc66880c6045b73dc0392af  app/src/main/assets/manifest.webmanifest" | sha256sum -c -
+          echo "0f58634eb5fb3a8cca303917b7072d7987c2995ee017cb402494cd09d396995a  app/src/main/assets/sw.js" | sha256sum -c -
+
       - name: Configurar Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
       - name: Configurar Gradle 8.13
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
+
       - name: Instalar Android API 36
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
       - name: Compilar APK
         run: gradle assembleDebug --stacktrace
-      - name: Verificar contenido dentro del APK
+
+      - name: Verificar APK 1.3.5
         run: |
-          unzip -l app/build/outputs/apk/debug/app-debug.apk | tee apk-contenido.txt
-          unzip -l app/build/outputs/apk/debug/app-debug.apk | grep -q "assets/index.html"
-          unzip -l app/build/outputs/apk/debug/app-debug.apk | grep -q "assets/data/mascotadatos.json"
-      - name: Diagnosticar APK
-        run: |
-          echo "=== BADGING ===" | tee apk-diagnostico.txt
-          $ANDROID_HOME/build-tools/36.0.0/aapt2 dump badging app/build/outputs/apk/debug/app-debug.apk | tee -a apk-diagnostico.txt
-          echo "=== FIRMA ===" | tee -a apk-diagnostico.txt
-          $ANDROID_HOME/build-tools/36.0.0/apksigner verify --verbose --print-certs app/build/outputs/apk/debug/app-debug.apk | tee -a apk-diagnostico.txt
-          echo "=== ZIPALIGN ===" | tee -a apk-diagnostico.txt
-          $ANDROID_HOME/build-tools/36.0.0/zipalign -c -v 4 app/build/outputs/apk/debug/app-debug.apk | tee -a apk-diagnostico.txt
-      - name: Guardar APK verificado
+          set -euo pipefail
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          test -s "$APK"
+          unzip -l "$APK" | tee apk-contenido.txt
+          grep -q 'assets/index.html' apk-contenido.txt
+          grep -q 'assets/data/mascotadatos.json' apk-contenido.txt
+          $ANDROID_HOME/build-tools/36.0.0/aapt2 dump badging "$APK" | tee apk-diagnostico.txt
+          grep -q "package: name='cl.mascotadatos.app' versionCode='13' versionName='1.3.5'" apk-diagnostico.txt
+          $ANDROID_HOME/build-tools/36.0.0/apksigner verify --verbose "$APK" | tee -a apk-diagnostico.txt
+          $ANDROID_HOME/build-tools/36.0.0/zipalign -c -v 4 "$APK" | tee -a apk-diagnostico.txt
+
+      - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
           name: MascotaDatos-1.3.5-VERIFICADO
