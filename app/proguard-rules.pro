@@ -1,0 +1,1 @@
+# REDYA release rules
