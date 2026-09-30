@@ -998,3 +998,111 @@ function cityByName(name){
 }
 
 sb.auth.onAuthStateChange((_event,session)=>{
+  const el=document.getElementById('onlineStatus');
+  if(session) el.innerHTML='☁️ <b>Conectado</b> · sesión iniciada';
+  else if(el) el.innerHTML='☁️ <b>Conectado</b> · sin sesión';
+  updateSessionUI(session);
+});
+checkOnline();
+sb.auth.getSession().then(({data})=>{updateSessionUI(data.session); loadMyPosts();});
+</script>
+<script>
+(function(){
+  function counter(input){
+    var el=document.querySelector('[data-counter-for="'+input.id+'"]');
+    if(el) el.textContent=input.value.length+' caracteres';
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('.toggle-password');
+    if(!b)return;
+    var i=document.getElementById(b.dataset.target);
+    if(!i)return;
+    var show=i.type==='password';
+    i.type=show?'text':'password';
+    b.textContent=show?'🙈':'👁️';
+    b.setAttribute('aria-label',show?'Ocultar contraseña':'Mostrar contraseña');
+  });
+  document.addEventListener('input',function(e){
+    if(e.target&&e.target.matches&&e.target.matches('input[type="password"],input[type="text"]')){
+      if(document.querySelector('[data-counter-for="'+e.target.id+'"]')) counter(e.target);
+    }
+  });
+  document.querySelectorAll('.password-counter').forEach(function(el){
+    var i=document.getElementById(el.dataset.counterFor); if(i) counter(i);
+  });
+})();
+async function loadNotifications(){
+  const box=document.getElementById('notificationsResults');
+  if(!box) return;
+  const {data:{user}}=await sb.auth.getUser();
+  if(!user){ box.innerHTML='<div class="notice">🔐 Inicia sesión para ver tus notificaciones.</div>'; return; }
+  box.innerHTML='<div class="notice">⏳ Cargando notificaciones…</div>';
+  const {data,error}=await sb.from('notifications').select('id,type,title,message,post_id,business_submission_id,read_at,created_at').order('created_at',{ascending:false}).limit(50);
+  if(error){ box.innerHTML='<div class="notice">⚠️ No se pudieron cargar las notificaciones.</div>'; return; }
+  if(!data||!data.length){ box.innerHTML='<div class="notice">No tienes notificaciones nuevas.</div>'; return; }
+  box.innerHTML=data.map(n=>'<div class="item" style="opacity:'+(n.read_at?'0.7':'1')+'"><div class="top"><h3>'+esc(n.title)+'</h3>'+(!n.read_at?'<span class="badge">Nueva</span>':'')+'</div><div class="meta">'+esc(n.message)+'<br><small>'+new Date(n.created_at).toLocaleString('es-CL')+'</small></div>'+(!n.read_at?'<button class="btn" style="margin-top:8px" onclick="markNotificationRead('+n.id+');this.parentElement.style.opacity=\"0.7\";this.remove()">Marcar como leída</button>':'')+'</div>').join('');
+}
+async function markNotificationRead(id){ await sb.from('notifications').update({read_at:new Date().toISOString()}).eq('id',id); }
+
+</script>
+
+<!-- MASCOTADATOS_PUBLICIDAD_NUEVA -->
+<section id="publicidad" class="screen">
+  <div class="card">
+    <h2>📢 Publicita en MascotaDatos</h2>
+    <p class="small">Si eres empresa o profesional y quieres promocionarte, envía tu solicitud. La publicidad es independiente de la ficha gratuita.</p>
+    <form id="adForm" onsubmit="submitAdRequest(event)">
+      <input name="business_name" placeholder="Nombre del negocio o profesional" required>
+      <input name="contact_name" placeholder="Nombre de contacto" required>
+      <input name="contact_email" type="email" placeholder="Correo de contacto" required>
+      <input name="contact_phone" placeholder="Teléfono o WhatsApp">
+      <select name="ad_type" required>
+        <option value="destacada">Publicidad destacada</option>
+        <option value="premium">Publicidad premium</option>
+        <option value="patrocinio">Patrocinio</option>
+      </select>
+      <textarea name="message" maxlength="1000" placeholder="Cuéntanos qué quieres promocionar"></textarea>
+      <button class="btn" type="submit">📨 Solicitar publicidad</button>
+    </form>
+    <div id="adMsg" class="notice" style="display:none;margin-top:10px"></div>
+    <div id="activeAds" style="margin-top:16px"></div>
+  </div>
+</section>
+<script>
+async function loadActiveAds(){
+  const box=document.getElementById('activeAds');
+  if(!box) return;
+  box.innerHTML='';
+  const today=new Date().toISOString().slice(0,10);
+  const {data,error}=await sb.from('ad_requests').select('id,business_name,ad_type,message,start_date,end_date').eq('status','aprobada').lte('start_date',today).or('end_date.is.null,end_date.gte.'+today).order('start_date',{ascending:false});
+  if(error||!data||!data.length) return;
+  box.innerHTML='<h3>📣 Publicidad activa</h3>'+data.map(a=>'<div class="item"><div class="top"><h3>'+esc(a.business_name)+'</h3><span class="badge">'+esc(a.ad_type)+'</span></div>'+(a.message?'<div class="meta">'+esc(a.message)+'</div>':'')+'</div>').join('');
+}
+
+async function submitAdRequest(e){
+  e.preventDefault();
+  const msg=document.getElementById('adMsg');
+  msg.style.display='block'; msg.textContent='⏳ Enviando solicitud…';
+  const {data:{user}}=await sb.auth.getUser();
+  if(!user){msg.textContent='🔐 Debes iniciar sesión para solicitar publicidad.';return;}
+  if(!user.email_confirmed_at){msg.textContent='📧 Primero debes confirmar tu correo electrónico.';return;}
+  const fd=new FormData(e.target);
+  const payload={
+    user_id:user.id,
+    business_name:String(fd.get('business_name')||'').trim(),
+    contact_name:String(fd.get('contact_name')||'').trim(),
+    contact_email:String(fd.get('contact_email')||'').trim(),
+    contact_phone:String(fd.get('contact_phone')||'').trim()||null,
+    ad_type:String(fd.get('ad_type')||'destacada'),
+    message:String(fd.get('message')||'').trim()||null
+  };
+  const {error}=await sb.from('ad_requests').insert(payload);
+  if(error){msg.textContent='❌ No se pudo enviar la solicitud. Inténtalo nuevamente.';return;}
+  msg.textContent='✅ Solicitud recibida. MascotaDatos la revisará y se pondrá en contacto contigo.';
+  e.target.reset();
+}
+loadActiveAds();
+</script>
+<!-- FIN MASCOTADATOS_PUBLICIDAD_NUEVA -->
+</body>
+</html>
