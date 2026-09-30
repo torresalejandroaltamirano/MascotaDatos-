@@ -86,3 +86,5 @@ jobs:
             app/build/outputs/apk/release/MascotaDatos-1.3.5-release.apk
             app/build/outputs/bundle/release/MascotaDatos-1.3.5-release.aab
           if-no-files-found: error
+
+# trigger-release-signature-test-v2
