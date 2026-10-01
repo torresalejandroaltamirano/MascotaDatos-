@@ -27,57 +27,59 @@ jobs:
         with:
           gradle-version: '8.13'
 
+      - name: Configurar Android SDK API 36
+        uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools platforms;android-36 build-tools;36.0.0
 
       - name: Preparar firma MascotaDatos
         env:
           MASCOTADATOS_KEYSTORE_BASE64: ${{ secrets.MASCOTADATOS_KEYSTORE_BASE64 }}
         run: |
+          set -euo pipefail
           test -n "$MASCOTADATOS_KEYSTORE_BASE64"
-          echo "$MASCOTADATOS_KEYSTORE_BASE64" | base64 --decode > mascotadatos-release.keystore
+          printf '%s' "$MASCOTADATOS_KEYSTORE_BASE64" | base64 --decode > mascotadatos-release.keystore
           test -s mascotadatos-release.keystore
+          chmod 600 mascotadatos-release.keystore
+          keytool -list -keystore mascotadatos-release.keystore -storepass "$MASCOTADATOS_KEYSTORE_PASSWORD" -alias "$MASCOTADATOS_KEY_ALIAS" >/dev/null
+        env:
+          MASCOTADATOS_KEYSTORE_BASE64: ${{ secrets.MASCOTADATOS_KEYSTORE_BASE64 }}
+          MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
+          MASCOTADATOS_KEY_ALIAS: ${{ secrets.MASCOTADATOS_KEY_ALIAS }}
 
-      - name: Generar APK y AAB Release
+      - name: Compilar APK y AAB Release
+        env:
+          MASCOTADATOS_KEYSTORE_PATH: mascotadatos-release.keystore
+          MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
+          MASCOTADATOS_KEY_ALIAS: ${{ secrets.MASCOTADATOS_KEY_ALIAS }}
+          MASCOTADATOS_KEY_PASSWORD: ${{ secrets.MASCOTADATOS_KEY_PASSWORD }}
         run: |
+          set -euo pipefail
           gradle assembleRelease bundleRelease --stacktrace
+          test -s app/build/outputs/apk/release/app-release.apk
+          test -s app/build/outputs/bundle/release/app-release.aab
 
-      - name: Firmar y verificar APK
-        env:
-          MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
-          MASCOTADATOS_KEY_ALIAS: ${{ secrets.MASCOTADATOS_KEY_ALIAS }}
-          MASCOTADATOS_KEY_PASSWORD: ${{ secrets.MASCOTADATOS_KEY_PASSWORD }}
+      - name: Verificar APK firmado v1 v2 v3
         run: |
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" sign \
-            --ks mascotadatos-release.keystore \
-            --ks-pass env:MASCOTADATOS_KEYSTORE_PASSWORD \
-            --ks-key-alias "$MASCOTADATOS_KEY_ALIAS" \
-            --key-pass env:MASCOTADATOS_KEY_PASSWORD \
-            --out app/build/outputs/apk/release/MascotaDatos-1.3.5-release.apk \
-            app/build/outputs/apk/release/app-release-unsigned.apk
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs \
-            app/build/outputs/apk/release/MascotaDatos-1.3.5-release.apk
+          set -euo pipefail
+          APK=app/build/outputs/apk/release/app-release.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$APK"
+          cp "$APK" app/build/outputs/apk/release/MascotaDatos-1.3.5-FIRMADO.apk
+          sha256sum app/build/outputs/apk/release/MascotaDatos-1.3.5-FIRMADO.apk
 
-      - name: Firmar y verificar AAB
-        env:
-          MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
-          MASCOTADATOS_KEY_ALIAS: ${{ secrets.MASCOTADATOS_KEY_ALIAS }}
-          MASCOTADATOS_KEY_PASSWORD: ${{ secrets.MASCOTADATOS_KEY_PASSWORD }}
+      - name: Verificar AAB firmado
         run: |
-          jarsigner \
-            -keystore mascotadatos-release.keystore \
-            -storepass "$MASCOTADATOS_KEYSTORE_PASSWORD" \
-            -keypass "$MASCOTADATOS_KEY_PASSWORD" \
-            app/build/outputs/bundle/release/app-release.aab \
-            "$MASCOTADATOS_KEY_ALIAS"
-          jarsigner -verify -verbose -certs app/build/outputs/bundle/release/app-release.aab
-          mv app/build/outputs/bundle/release/app-release.aab app/build/outputs/bundle/release/MascotaDatos-1.3.5-release.aab
+          set -euo pipefail
+          AAB=app/build/outputs/bundle/release/app-release.aab
+          jarsigner -verify -verbose -certs "$AAB"
+          cp "$AAB" app/build/outputs/bundle/release/MascotaDatos-1.3.5-FIRMADO.aab
+          sha256sum app/build/outputs/bundle/release/MascotaDatos-1.3.5-FIRMADO.aab
 
-      - name: Guardar APK y AAB
+      - name: Guardar APK y AAB firmados
         uses: actions/upload-artifact@v4
         with:
-          name: MascotaDatos-1.3.5-RELEASE
+          name: MascotaDatos-1.3.5-FIRMADO
           path: |
-            app/build/outputs/apk/release/MascotaDatos-1.3.5-release.apk
-            app/build/outputs/bundle/release/MascotaDatos-1.3.5-release.aab
+            app/build/outputs/apk/release/MascotaDatos-1.3.5-FIRMADO.apk
+            app/build/outputs/bundle/release/MascotaDatos-1.3.5-FIRMADO.aab
           if-no-files-found: error
-
-# trigger-release-signature-test-v2
