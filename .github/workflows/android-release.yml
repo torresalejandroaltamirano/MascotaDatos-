@@ -2,6 +2,9 @@ name: Generar MascotaDatos 1.3.5 firmado
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - v35-profesional
 
 jobs:
   release:
