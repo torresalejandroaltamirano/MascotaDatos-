@@ -35,6 +35,8 @@ jobs:
       - name: Preparar firma MascotaDatos
         env:
           MASCOTADATOS_KEYSTORE_BASE64: ${{ secrets.MASCOTADATOS_KEYSTORE_BASE64 }}
+          MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
+          MASCOTADATOS_KEY_ALIAS: ${{ secrets.MASCOTADATOS_KEY_ALIAS }}
         run: |
           set -euo pipefail
           test -n "$MASCOTADATOS_KEYSTORE_BASE64"
@@ -42,10 +44,6 @@ jobs:
           test -s mascotadatos-release.keystore
           chmod 600 mascotadatos-release.keystore
           keytool -list -keystore mascotadatos-release.keystore -storepass "$MASCOTADATOS_KEYSTORE_PASSWORD" -alias "$MASCOTADATOS_KEY_ALIAS" >/dev/null
-        env:
-          MASCOTADATOS_KEYSTORE_BASE64: ${{ secrets.MASCOTADATOS_KEYSTORE_BASE64 }}
-          MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
-          MASCOTADATOS_KEY_ALIAS: ${{ secrets.MASCOTADATOS_KEY_ALIAS }}
 
       - name: Compilar APK y AAB Release
         env:
@@ -59,7 +57,7 @@ jobs:
           test -s app/build/outputs/apk/release/app-release.apk
           test -s app/build/outputs/bundle/release/app-release.aab
 
-      - name: Verificar APK firmado v1 v2 v3
+      - name: Verificar APK firmado
         run: |
           set -euo pipefail
           APK=app/build/outputs/apk/release/app-release.apk
