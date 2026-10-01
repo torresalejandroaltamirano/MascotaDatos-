@@ -1,4 +1,4 @@
-name: Generar REDYA Release AAB
+name: Generar MascotaDatos 1.3.5 firmado
 
 on:
   workflow_dispatch:
@@ -17,46 +17,78 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-    
-      
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
 
       - name: Instalar Android API 36
         run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
-      - name: Preparar firma
+      - name: Preparar firma MascotaDatos
         env:
-          REDYA_KEYSTORE_BASE64: ${{ secrets.REDYA_KEYSTORE_BASE64 }}
-          REDYA_KEYSTORE_PASSWORD: ${{ secrets.REDYA_KEYSTORE_PASSWORD }}
+          MASCOTADATOS_KEYSTORE_BASE64: ${{ secrets.MASCOTADATOS_KEYSTORE_BASE64 }}
+          MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
         run: |
-          printf '%s' "$REDYA_KEYSTORE_BASE64" | tr -d '\r\n\t ' | base64 --decode > redya-release.keystore
-          test -s redya-release.keystore
-          keytool -list -keystore redya-release.keystore -storepass "$REDYA_KEYSTORE_PASSWORD" >/dev/null
+          test -n "$MASCOTADATOS_KEYSTORE_BASE64"
+          test -n "$MASCOTADATOS_KEYSTORE_PASSWORD"
+          printf '%s' "$MASCOTADATOS_KEYSTORE_BASE64" | tr -d '\r\n\t ' | base64 --decode > mascotadatos-release.jks
+          test -s mascotadatos-release.jks
+          keytool -list -keystore mascotadatos-release.jks -storepass "$MASCOTADATOS_KEYSTORE_PASSWORD" >/dev/null
 
-      - name: Generar AAB Release
+      - name: Compilar APK y AAB Release
         run: |
-          chmod +x ./gradlew
-          ./gradlew bundleRelease --stacktrace
+          gradle assembleRelease bundleRelease --stacktrace
+
+      - name: Firmar APK
+        env:
+          MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
+          MASCOTADATOS_KEY_ALIAS: ${{ secrets.MASCOTADATOS_KEY_ALIAS }}
+          MASCOTADATOS_KEY_PASSWORD: ${{ secrets.MASCOTADATOS_KEY_PASSWORD }}
+        run: |
+          test -n "$MASCOTADATOS_KEY_ALIAS"
+          test -n "$MASCOTADATOS_KEY_PASSWORD"
+          UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
+          SIGNED_APK="app/build/outputs/apk/release/MascotaDatos-1.3.5-signed.apk"
+          $ANDROID_HOME/build-tools/36.0.0/apksigner sign \
+            --ks mascotadatos-release.jks \
+            --ks-key-alias "$MASCOTADATOS_KEY_ALIAS" \
+            --ks-pass env:MASCOTADATOS_KEYSTORE_PASSWORD \
+            --key-pass env:MASCOTADATOS_KEY_PASSWORD \
+            --out "$SIGNED_APK" \
+            "$UNSIGNED_APK"
+          $ANDROID_HOME/build-tools/36.0.0/apksigner verify --verbose --print-certs "$SIGNED_APK"
 
       - name: Firmar AAB
         env:
-          REDYA_KEYSTORE_PASSWORD: ${{ secrets.REDYA_KEYSTORE_PASSWORD }}
-          REDYA_KEY_ALIAS: ${{ secrets.REDYA_KEY_ALIAS }}
-          REDYA_KEY_PASSWORD: ${{ secrets.REDYA_KEY_PASSWORD }}
+          MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
+          MASCOTADATOS_KEY_ALIAS: ${{ secrets.MASCOTADATOS_KEY_ALIAS }}
+          MASCOTADATOS_KEY_PASSWORD: ${{ secrets.MASCOTADATOS_KEY_PASSWORD }}
         run: |
+          AAB="app/build/outputs/bundle/release/app-release.aab"
           jarsigner \
-            -keystore redya-release.keystore \
-            -storepass "$REDYA_KEYSTORE_PASSWORD" \
-            -keypass "$REDYA_KEY_PASSWORD" \
+            -keystore mascotadatos-release.jks \
+            -storepass "$MASCOTADATOS_KEYSTORE_PASSWORD" \
+            -keypass "$MASCOTADATOS_KEY_PASSWORD" \
             -sigalg SHA256withRSA \
             -digestalg SHA-256 \
-            app/build/outputs/bundle/release/app-release.aab \
-            "$REDYA_KEY_ALIAS"
-          jarsigner -verify -verbose app/build/outputs/bundle/release/app-release.aab
+            "$AAB" \
+            "$MASCOTADATOS_KEY_ALIAS"
+          jarsigner -verify -verbose "$AAB"
 
-      - name: Guardar AAB
+      - name: Generar hashes SHA-256
+        run: |
+          sha256sum app/build/outputs/apk/release/MascotaDatos-1.3.5-signed.apk > MascotaDatos-1.3.5-SHA256.txt
+          sha256sum app/build/outputs/bundle/release/app-release.aab >> MascotaDatos-1.3.5-SHA256.txt
+          cat MascotaDatos-1.3.5-SHA256.txt
+
+      - name: Guardar APK, AAB y hashes
         uses: actions/upload-artifact@v4
         with:
-          name: REDYA-AAB-RELEASE
-          path: app/build/outputs/bundle/release/app-release.aab
+          name: MascotaDatos-1.3.5-RELEASE
+          path: |
+            app/build/outputs/apk/release/MascotaDatos-1.3.5-signed.apk
+            app/build/outputs/bundle/release/app-release.aab
+            MascotaDatos-1.3.5-SHA256.txt
