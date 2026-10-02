@@ -45,27 +45,29 @@ jobs:
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
-      - name: Compilar APK
-        run: gradle assembleDebug --stacktrace
+      - name: Compilar APK release sin exponer clave
+        run: gradle assembleRelease --stacktrace
 
-      - name: Verificar APK 1.3.5
+      - name: Verificar APK 1.3.5 sin firmar
         run: |
           set -euo pipefail
-          APK=app/build/outputs/apk/debug/app-debug.apk
+          APK=app/build/outputs/apk/release/app-release-unsigned.apk
           test -s "$APK"
           unzip -l "$APK" | tee apk-contenido.txt
           grep -q 'assets/index.html' apk-contenido.txt
           grep -q 'assets/data/mascotadatos.json' apk-contenido.txt
           $ANDROID_HOME/build-tools/36.0.0/aapt2 dump badging "$APK" | tee apk-diagnostico.txt
           grep -q "package: name='cl.mascotadatos.app' versionCode='135' versionName='1.3.5'" apk-diagnostico.txt
-          $ANDROID_HOME/build-tools/36.0.0/apksigner verify --verbose "$APK" | tee -a apk-diagnostico.txt
           $ANDROID_HOME/build-tools/36.0.0/zipalign -c -v 4 "$APK" | tee -a apk-diagnostico.txt
+          cp "$ANDROID_HOME/build-tools/36.0.0/lib/apksigner.jar" apksigner.jar
 
-      - name: Guardar APK
+      - name: Guardar APK sin firmar y herramienta oficial
         uses: actions/upload-artifact@v4
         with:
-          name: MascotaDatos-1.3.5-VERIFICADO
+          name: MascotaDatos-1.3.5-UNSIGNED-Y-APKSIGNER
           path: |
-            app/build/outputs/apk/debug/app-debug.apk
+            app/build/outputs/apk/release/app-release-unsigned.apk
+            apksigner.jar
             apk-diagnostico.txt
             apk-contenido.txt
+          if-no-files-found: error
