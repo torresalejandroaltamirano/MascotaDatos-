@@ -13,6 +13,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebResourceResponse;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
@@ -56,6 +57,12 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 return openExternal(Uri.parse(url));
+            }
+            @Override public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (url != null && url.startsWith("https://appassets.androidplatform.net/assets/index.html")) {
+                    view.evaluateJavascript("(function(){var c=document.createElement('link');c.rel='stylesheet';c.href='/assets/final-fixes.css';document.head.appendChild(c);var s=document.createElement('script');s.src='/assets/final-fixes.js';document.body.appendChild(s);})();", null);
+                }
             }
         });
 
