@@ -1,0 +1,18 @@
+{
+  "name": "MascotaDatos",
+  "short_name": "MascotaDatos",
+  "description": "Información útil para cuidar a tu mascota, comenzando por la Región de Atacama.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8f0df",
+  "theme_color": "#075b59",
+  "lang": "es-CL",
+  "icons": [
+    {
+      "src": "assets/mascotadatos-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

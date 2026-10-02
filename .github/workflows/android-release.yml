@@ -1,7 +1,14 @@
-name: Generar REDYA Release AAB
+name: Generar MascotaDatos 1.3.5 Release Firma
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - fix/mascotadatos-1.3.5-release
+    paths:
+      - '.github/workflows/android-release.yml'
+      - 'app/build.gradle.kts'
+      - 'app/src/main/assets/**'
 
 jobs:
   release:
@@ -22,40 +29,57 @@ jobs:
         with:
           gradle-version: '8.13'
 
-      - name: Configurar Android SDK
+      - name: Configurar Android SDK API 36
         uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools platforms;android-36 build-tools;36.0.0
 
-      - name: Instalar Android API 36
-        run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-36" "build-tools;36.0.0"
-
-      - name: Preparar firma
+      - name: Preparar firma MascotaDatos
         env:
-          REDYA_KEYSTORE_BASE64: ${{ secrets.REDYA_KEYSTORE_BASE64 }}
+          MASCOTADATOS_KEYSTORE_BASE64: ${{ secrets.MASCOTADATOS_KEYSTORE_BASE64 }}
+          MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
+          MASCOTADATOS_KEY_ALIAS: ${{ secrets.MASCOTADATOS_KEY_ALIAS }}
         run: |
-        echo "$REDYA_KEYSTORE_BASE64" | base64 --decode > redya-release.keystore
-            test -s redya-release.keystore
+          set -euo pipefail
+          test -n "$MASCOTADATOS_KEYSTORE_BASE64"
+          printf '%s' "$MASCOTADATOS_KEYSTORE_BASE64" | base64 --decode > mascotadatos-release.keystore
+          test -s mascotadatos-release.keystore
+          chmod 600 mascotadatos-release.keystore
+          keytool -list -keystore mascotadatos-release.keystore -storepass "$MASCOTADATOS_KEYSTORE_PASSWORD" -alias "$MASCOTADATOS_KEY_ALIAS" >/dev/null
 
-      - name: Generar AAB Release
-        run: gradle bundleRelease --stacktrace
-
-      - name: Firmar AAB
+      - name: Compilar APK y AAB Release
         env:
-          REDYA_KEYSTORE_PASSWORD: ${{ secrets.REDYA_KEYSTORE_PASSWORD }}
-          REDYA_KEY_ALIAS: ${{ secrets.REDYA_KEY_ALIAS }}
-          REDYA_KEY_PASSWORD: ${{ secrets.REDYA_KEY_PASSWORD }}
+          MASCOTADATOS_KEYSTORE_PATH: mascotadatos-release.keystore
+          MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
+          MASCOTADATOS_KEY_ALIAS: ${{ secrets.MASCOTADATOS_KEY_ALIAS }}
+          MASCOTADATOS_KEY_PASSWORD: ${{ secrets.MASCOTADATOS_KEY_PASSWORD }}
         run: |
-          jarsigner \
-            -keystore redya-release.keystore \
-            -storepass "$REDYA_KEYSTORE_PASSWORD" \
-            -keypass "$REDYA_KEY_PASSWORD" \
-            app/build/outputs/bundle/release/app-release.aab \
-            "$REDYA_KEY_ALIAS"
-          jarsigner -verify -verbose app/build/outputs/bundle/release/app-release.aab
+          set -euo pipefail
+          gradle assembleRelease bundleRelease --stacktrace
+          test -s app/build/outputs/apk/release/app-release.apk
+          test -s app/build/outputs/bundle/release/app-release.aab
 
-      - name: Guardar AAB
+      - name: Verificar APK firmado
+        run: |
+          set -euo pipefail
+          APK=app/build/outputs/apk/release/app-release.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$APK"
+          cp "$APK" app/build/outputs/apk/release/MascotaDatos-1.3.5-FIRMADO.apk
+          sha256sum app/build/outputs/apk/release/MascotaDatos-1.3.5-FIRMADO.apk
+
+      - name: Verificar AAB firmado
+        run: |
+          set -euo pipefail
+          AAB=app/build/outputs/bundle/release/app-release.aab
+          jarsigner -verify -verbose -certs "$AAB"
+          cp "$AAB" app/build/outputs/bundle/release/MascotaDatos-1.3.5-FIRMADO.aab
+          sha256sum app/build/outputs/bundle/release/MascotaDatos-1.3.5-FIRMADO.aab
+
+      - name: Guardar APK y AAB firmados
         uses: actions/upload-artifact@v4
         with:
-          name: REDYA-AAB-RELEASE
-          path: app/build/outputs/bundle/release/app-release.aab
+          name: MascotaDatos-1.3.5-FIRMADO
+          path: |
+            app/build/outputs/apk/release/MascotaDatos-1.3.5-FIRMADO.apk
+            app/build/outputs/bundle/release/MascotaDatos-1.3.5-FIRMADO.aab
+          if-no-files-found: error
