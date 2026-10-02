@@ -27,6 +27,28 @@ function patch(){
       if(!q('.small',card)){var d=document.createElement('div');d.className='small';d.textContent='Ver resultados';card.appendChild(d);}
     });
   }
+  // Modelo de negocio: hacer accionables Ficha básica y Destacada.
+  qa('.card').forEach(function(card){
+    var txt=(card.textContent||'').trim();
+    if(/Ficha básica/i.test(txt) || /^Destacada/i.test(txt)){
+      card.classList.add('action','business-option'); card.setAttribute('role','button'); card.setAttribute('tabindex','0');
+      var tipo=/Destacada/i.test(txt)?'Publicidad destacada':'Ficha básica gratuita';
+      var goBiz=function(){
+        var target=q('#publicidadNegocio')||q('#publicidad')||q('#negocio')||q('#registroNegocio');
+        if(target && target.id && typeof window.show==='function') window.show(target.id);
+        var selects=qa('select');
+        var sel=selects.find(function(s){return /publicidad|ficha|destac/i.test((s.innerText||'')+' '+(s.name||'')+' '+(s.id||''));});
+        if(sel){
+          var opt=Array.from(sel.options).find(function(o){return (o.text||'').toLowerCase().includes(tipo.toLowerCase().split(' ')[0]);});
+          if(opt){sel.value=opt.value;sel.dispatchEvent(new Event('change',{bubbles:true}));}
+        }
+        var form=qa('form').find(function(f){return /Nombre del negocio|Nombre de contacto|promocionar/i.test(f.textContent||'');});
+        if(form){form.scrollIntoView({behavior:'smooth',block:'start'});}
+      };
+      card.onclick=goBiz; card.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();goBiz();}};
+      if(!q('.small.action-hint',card)){var d=document.createElement('div');d.className='small action-hint';d.textContent='Toca para solicitar';card.appendChild(d);}
+    }
+  });
   // Hacer visible Me gusta y Favoritos desde Inicio.
   var favCard=qa('.card.action').find(function(c){return /Favoritos/.test(c.textContent||'')});
   if(favCard){
