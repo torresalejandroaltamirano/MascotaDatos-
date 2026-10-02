@@ -1,1 +1,8 @@
 .form input,.form select,.form textarea{width:100%!important;max-width:100%!important;box-sizing:border-box!important;min-height:46px;font-size:16px;border-radius:10px}.form textarea{min-height:110px}.card.action{cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,.06)}@media(max-width:480px){.form{display:grid!important;grid-template-columns:1fr!important;gap:12px}.form label{display:block;min-width:0}.grid{gap:10px}.card{min-width:0}}
+:root{--md-border:#b8aa98;--md-shadow:0 4px 14px rgba(45,36,25,.10)}
+input,select,textarea{border:2px solid var(--md-border)!important;background:#fff!important;box-shadow:0 1px 3px rgba(45,36,25,.08)!important}
+.card,.notice,.panel,.box{border:1.5px solid #d6c8b7!important;box-shadow:var(--md-shadow)!important}
+.card.action,.business-option{border:2px solid #0b5c56!important;box-shadow:0 5px 16px rgba(11,92,86,.16)!important;transition:transform .12s ease,box-shadow .12s ease}
+.card.action:active,.business-option:active{transform:scale(.985);box-shadow:0 2px 8px rgba(11,92,86,.18)!important}
+.action-hint{margin-top:8px;font-weight:700;color:#0b5c56}
+button,.btn{min-height:48px;border-radius:14px!important;font-weight:700!important;box-shadow:0 3px 10px rgba(11,92,86,.14)!important}
