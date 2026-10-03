@@ -2,6 +2,21 @@
 'use strict';
 function q(s,r){return (r||document).querySelector(s)}
 function qa(s,r){return Array.from((r||document).querySelectorAll(s))}
+var mdScroll={};
+function rememberScreenScroll(){
+  qa('.screen').forEach(function(s){if(s.id && (s.offsetParent!==null || s.classList.contains('active'))) mdScroll[s.id]=window.scrollY||document.documentElement.scrollTop||0;});
+}
+function restoreScreenScroll(){
+  var active=qa('.screen').find(function(s){return s.offsetParent!==null || s.classList.contains('active');});
+  if(active && active.id && mdScroll[active.id]!=null){
+    var y=mdScroll[active.id]; requestAnimationFrame(function(){window.scrollTo(0,y);});
+  }
+}
+document.addEventListener('click',function(e){
+  var a=e.target.closest('a,button,.btn,.card.action,[role="button"]');
+  if(a) rememberScreenScroll();
+},true);
+window.addEventListener('popstate',function(){setTimeout(restoreScreenScroll,80);});
 function patch(){
   // Quitar texto de prueba sin alterar la región.
   qa('header *, .header *, body *').forEach(function(el){
@@ -109,4 +124,6 @@ var observer=new MutationObserver(function(){
 });
 if(document.documentElement) observer.observe(document.documentElement,{childList:true,subtree:true});
 setTimeout(patch,500);
+// Al volver a una pantalla, conservar el punto de lectura en vez de saltar al final/inicio.
+document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(restoreScreenScroll,80);});
 })();
