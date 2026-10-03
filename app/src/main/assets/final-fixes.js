@@ -60,6 +60,45 @@ function patch(){
     var h=q('h2',fav); if(h)h.textContent='❤️ Me gusta y ⭐ Favoritos';
     var notice=q('.notice',fav); if(notice)notice.textContent='Los botones ❤️ Me gusta y ⭐ Guardar aparecen en los avisos publicados de Adopción, Perdidos y Encontrados.';
   }
+
+  // Acciones de cierre: dar respuesta visible a controles que antes parecían inactivos.
+  var fav=q('#favoritos');
+  if(fav){
+    var upd=qa('button,.btn',fav).find(function(x){return /Actualizar/i.test(x.textContent||'');});
+    if(upd){
+      upd.onclick=function(){
+        // Re-renderizar la vista y dar confirmación aun cuando no existan favoritos.
+        if(typeof window.renderFavoritos==='function') window.renderFavoritos();
+        else if(typeof window.loadFavorites==='function') window.loadFavorites();
+        var n=qa('.notice',fav).find(function(x){return /Todavía no|guardad|favorit/i.test(x.textContent||'');});
+        if(n && !/Actualizado/i.test(n.textContent||'')) n.textContent=(n.textContent||'')+' · Actualizado';
+        upd.classList.add('tap-ok'); setTimeout(function(){upd.classList.remove('tap-ok');},350);
+      };
+    }
+  }
+  // Perdidos/Encontrados: asegurar que las tarjetas sean controles de navegación.
+  var pe=qa('.screen,section,div').find(function(x){return /Perdidos y encontrados/i.test((q('h1,h2',x)||{}).textContent||'');});
+  if(pe){
+    qa('.card',pe).forEach(function(card){
+      var t=(card.textContent||'').trim(), target=null;
+      if(/Ver mascotas perdidas/i.test(t)) target='perdidas';
+      if(/Ver encontradas/i.test(t)) target='encontradas';
+      if(target){
+        card.classList.add('action'); card.setAttribute('role','button'); card.setAttribute('tabindex','0');
+        var go=function(){
+          var candidates=qa('[id]').filter(function(el){return new RegExp(target,'i').test(el.id);});
+          if(candidates[0] && typeof window.show==='function') window.show(candidates[0].id);
+          else {
+            var notice=qa('.notice',pe).find(function(x){return /avisos|cargar/i.test(x.textContent||'');});
+            if(notice) notice.textContent='No hay avisos disponibles en esta categoría por el momento.';
+          }
+        };
+        card.onclick=go; card.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};
+      }
+    });
+  }
+  // Nombre definitivo para las opciones comerciales.
+  qa('h1,h2,h3').forEach(function(h){if(/^Modelo futuro$/i.test((h.textContent||'').trim())) h.textContent='Opciones para negocios';});
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',patch); else patch();
 setTimeout(patch,500);
