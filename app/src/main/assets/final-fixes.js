@@ -86,6 +86,30 @@ function patch(){
     var notice=q('.notice',fav); if(notice)notice.textContent='Los botones ❤️ Me gusta y ⭐ Guardar aparecen en los avisos publicados de Adopción, Perdidos y Encontrados.';
   }
 
+  // Notificaciones sin sesión: ofrecer una salida real y evitar un botón Actualizar muerto.
+  var notif=qa('.screen,section,div').find(function(x){
+    return /Notificaciones/i.test((q('h1,h2',x)||{}).textContent||'') && /Inicia sesi[oó]n para ver tus notificaciones/i.test(x.textContent||'');
+  });
+  if(notif){
+    var notice=qa('.notice,.card,p,div',notif).find(function(x){return /Inicia sesi[oó]n para ver tus notificaciones/i.test(x.textContent||'');});
+    if(notice && !q('.md-login-action',notif)){
+      var login=document.createElement('button'); login.type='button'; login.className='btn md-login-action'; login.textContent='🔐 Iniciar sesión';
+      login.onclick=function(){
+        var ids=['miCuenta','cuenta','login','auth','perfil'];
+        var target=ids.find(function(id){return q('#'+id);});
+        if(target && typeof window.show==='function') window.show(target);
+        else { var cuenta=qa('.card').find(function(x){return /Mi cuenta/i.test(x.textContent||'');}); if(cuenta) cuenta.click(); }
+      };
+      notice.insertAdjacentElement('afterend',login);
+    }
+    var refresh=qa('button,.btn',notif).find(function(x){return /Actualizar/i.test(x.textContent||'');});
+    if(refresh){
+      refresh.onclick=function(){
+        var msg=qa('.notice,.card,p,div',notif).find(function(x){return /Inicia sesi[oó]n para ver tus notificaciones/i.test(x.textContent||'');});
+        if(msg){msg.textContent='🔐 Primero inicia sesión para actualizar tus notificaciones.';var b=q('.md-login-action',notif);if(b)b.focus();}
+      };
+    }
+  }
   // Acciones de cierre: dar respuesta visible a controles que antes parecían inactivos.
   var fav=q('#favoritos');
   if(fav){
