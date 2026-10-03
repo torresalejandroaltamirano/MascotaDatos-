@@ -51,7 +51,7 @@ function patch(){
   // Modelo de negocio: hacer accionables Ficha básica y Destacada.
   qa('.card').forEach(function(card){
     var txt=(card.textContent||'').trim();
-    if(/Ficha básica/i.test(txt) || /^Destacada/i.test(txt)){
+    if(/Ficha básica/i.test(txt) || /Destacada/i.test(txt)){
       card.classList.add('action','business-option'); card.setAttribute('role','button'); card.setAttribute('tabindex','0');
       var tipo=/Destacada/i.test(txt)?'Publicidad destacada':'Ficha básica gratuita';
       var goBiz=function(){
@@ -67,7 +67,7 @@ function patch(){
         if(form){form.scrollIntoView({behavior:'smooth',block:'start'});}
       };
       card.onclick=goBiz; card.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();goBiz();}};
-      if(!q('.small.action-hint',card)){var d=document.createElement('div');d.className='small action-hint';d.textContent='Toca para solicitar';card.appendChild(d);}
+      if(!q('.action-hint',card)){var d=document.createElement('div');d.className='small action-hint';d.textContent='Toca para solicitar';card.appendChild(d);}
     }
   });
   // Hacer visible Me gusta y Favoritos desde Inicio.
