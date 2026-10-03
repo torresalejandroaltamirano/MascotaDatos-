@@ -151,6 +151,21 @@ function patch(){
       }
     });
   }
+  // Formularios de negocio: nunca dejar Ciudad bloqueada en "Cargando ciudades...".
+  qa('select').forEach(function(sel){
+    var txt=(sel.textContent||'')+' '+(sel.name||'')+' '+(sel.id||'');
+    if(/Cargando ciudades|ciudad/i.test(txt)){
+      var loading=Array.from(sel.options||[]).some(function(o){return /Cargando ciudades/i.test(o.text||'');});
+      if(loading && (sel.options.length<=2 || !Array.from(sel.options).some(function(o){return /Copiapó|Caldera|Vallenar/i.test(o.text||'');}))){
+        var actual=sel.value; sel.innerHTML='';
+        [['','Selecciona una comuna'],['Copiapó','Copiapó'],['Caldera','Caldera'],['Tierra Amarilla','Tierra Amarilla'],['Chañaral','Chañaral'],['Diego de Almagro','Diego de Almagro'],['Vallenar','Vallenar'],['Freirina','Freirina'],['Huasco','Huasco'],['Alto del Carmen','Alto del Carmen']].forEach(function(p){
+          var o=document.createElement('option');o.value=p[0];o.textContent=p[1];sel.appendChild(o);
+        });
+        if(actual && Array.from(sel.options).some(function(o){return o.value===actual;})) sel.value=actual;
+        sel.disabled=false;
+      }
+    }
+  });
   // Nombre definitivo para las opciones comerciales.
   qa('h1,h2,h3').forEach(function(h){if(/^Modelo futuro$/i.test((h.textContent||'').trim())) h.textContent='Opciones para negocios';});
 }
