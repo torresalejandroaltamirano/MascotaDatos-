@@ -158,6 +158,8 @@ var observer=new MutationObserver(function(){
 });
 if(document.documentElement) observer.observe(document.documentElement,{childList:true,subtree:true});
 setTimeout(patch,500);
-// Al volver a una pantalla, conservar el punto de lectura en vez de saltar al final/inicio.
-document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(restoreScreenScroll,80);});
+// Al regresar desde otra app, no alterar por sí solo la posición de la pantalla actual.
+document.addEventListener('visibilitychange',function(){
+  if(!document.hidden && mdGoingBack) setTimeout(function(){restoreScreenScroll();mdGoingBack=false;},80);
+});
 })();
