@@ -2,27 +2,31 @@
 'use strict';
 function q(s,r){return (r||document).querySelector(s)}
 function qa(s,r){return Array.from((r||document).querySelectorAll(s))}
-var mdScroll={};
+var mdScroll={}, mdCurrent=null, mdGoingBack=false;
 function visibleScreen(){
   return qa('.screen').find(function(s){return s.classList.contains('active') || getComputedStyle(s).display!=='none';});
 }
 function rememberScreenScroll(){
   var s=visibleScreen();
-  if(s && s.id) mdScroll[s.id]={page:window.scrollY||document.documentElement.scrollTop||0,inside:s.scrollTop||0};
+  if(s && s.id){mdCurrent=s.id;mdScroll[s.id]={page:window.scrollY||document.documentElement.scrollTop||0,inside:s.scrollTop||0};}
+}
+function topOfScreen(){
+  var s=visibleScreen(); if(!s)return;
+  s.scrollTop=0; requestAnimationFrame(function(){window.scrollTo(0,0);});
 }
 function restoreScreenScroll(){
-  var s=visibleScreen();
-  if(s && s.id && mdScroll[s.id]){
-    var p=mdScroll[s.id];
-    requestAnimationFrame(function(){s.scrollTop=p.inside||0;window.scrollTo(0,p.page||0);});
-  }
+  var s=visibleScreen(); if(!s)return;
+  var p=s.id&&mdScroll[s.id]; if(!p)return topOfScreen();
+  requestAnimationFrame(function(){s.scrollTop=p.inside||0;window.scrollTo(0,p.page||0);});
 }
 document.addEventListener('click',function(e){
-  var a=e.target.closest('a,button,.btn,.card.action,[role="button"]');
-  if(a) rememberScreenScroll();
+  var a=e.target.closest('a,button,.btn,.card.action,[role="button"]'); if(!a)return;
+  var isBack=/volver|atrás|atras/i.test((a.textContent||'')+' '+(a.getAttribute('aria-label')||''));
+  rememberScreenScroll(); mdGoingBack=isBack;
+  setTimeout(function(){ if(mdGoingBack) restoreScreenScroll(); else topOfScreen(); mdGoingBack=false; },100);
 },true);
-window.addEventListener('popstate',function(){setTimeout(restoreScreenScroll,120);});
-window.addEventListener('hashchange',function(){setTimeout(restoreScreenScroll,120);});
+window.addEventListener('popstate',function(){mdGoingBack=true;setTimeout(function(){restoreScreenScroll();mdGoingBack=false;},120);});
+window.addEventListener('hashchange',function(){setTimeout(function(){if(mdGoingBack)restoreScreenScroll();else topOfScreen();},120);});
 function patch(){
   // Quitar texto de prueba sin alterar la región.
   qa('header *, .header *, body *').forEach(function(el){
