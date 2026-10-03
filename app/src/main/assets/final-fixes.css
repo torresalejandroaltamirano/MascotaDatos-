@@ -6,3 +6,18 @@ input,select,textarea{border:2px solid var(--md-border)!important;background:#ff
 .card.action:active,.business-option:active{transform:scale(.985);box-shadow:0 2px 8px rgba(11,92,86,.18)!important}
 .action-hint{margin-top:8px;font-weight:700;color:#0b5c56}
 button,.btn{min-height:48px;border-radius:14px!important;font-weight:700!important;box-shadow:0 3px 10px rgba(11,92,86,.14)!important}
+
+/* Pulido final de campos de búsqueda y formularios en móvil */
+#globalSearch,input[type="search"],.screen input[type="text"]{
+  width:100%!important;max-width:100%!important;min-height:52px!important;
+  padding:12px 14px!important;font-size:17px!important;line-height:1.25!important;
+  border:2px solid #9f917f!important;border-radius:14px!important;
+  box-sizing:border-box!important;background:#fff!important;
+}
+#busquedaGeneral .notice{margin-top:12px!important}
+@media(max-width:480px){
+  #busquedaGeneral{padding-left:24px!important;padding-right:24px!important}
+  #busquedaGeneral input{width:100%!important;min-height:52px!important}
+  .form input,.form select{min-height:52px!important;padding:11px 14px!important}
+  .form textarea{min-height:120px!important;padding:12px 14px!important}
+}
