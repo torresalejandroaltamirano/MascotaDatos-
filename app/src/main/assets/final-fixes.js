@@ -2,31 +2,36 @@
 'use strict';
 function q(s,r){return (r||document).querySelector(s)}
 function qa(s,r){return Array.from((r||document).querySelectorAll(s))}
-var mdScroll={}, mdCurrent=null, mdGoingBack=false;
+var mdScroll={}, mdBackStack=[], mdInternalNav=false;
 function visibleScreen(){
   return qa('.screen').find(function(s){return s.classList.contains('active') || getComputedStyle(s).display!=='none';});
 }
-function rememberScreenScroll(){
-  var s=visibleScreen();
-  if(s && s.id){mdCurrent=s.id;mdScroll[s.id]={page:window.scrollY||document.documentElement.scrollTop||0,inside:s.scrollTop||0};}
+function screenState(){
+  var s=visibleScreen(); if(!s||!s.id)return null;
+  return {id:s.id,page:window.scrollY||document.documentElement.scrollTop||0,inside:s.scrollTop||0};
 }
-function topOfScreen(){
-  var s=visibleScreen(); if(!s)return;
-  s.scrollTop=0; requestAnimationFrame(function(){window.scrollTo(0,0);});
+function restoreState(st){
+  if(!st)return;
+  requestAnimationFrame(function(){
+    var s=q('#'+st.id); if(s)s.scrollTop=st.inside||0;
+    window.scrollTo(0,st.page||0);
+  });
 }
-function restoreScreenScroll(){
-  var s=visibleScreen(); if(!s)return;
-  var p=s.id&&mdScroll[s.id]; if(!p)return topOfScreen();
-  requestAnimationFrame(function(){s.scrollTop=p.inside||0;window.scrollTo(0,p.page||0);});
-}
+function topNow(){requestAnimationFrame(function(){var s=visibleScreen();if(s)s.scrollTop=0;window.scrollTo(0,0);});}
 document.addEventListener('click',function(e){
   var a=e.target.closest('a,button,.btn,.card.action,[role="button"]'); if(!a)return;
-  var isBack=/volver|atrás|atras/i.test((a.textContent||'')+' '+(a.getAttribute('aria-label')||''));
-  rememberScreenScroll(); mdGoingBack=isBack;
-  setTimeout(function(){ if(mdGoingBack) restoreScreenScroll(); else topOfScreen(); mdGoingBack=false; },100);
+  var back=/volver|atrás|atras/i.test((a.textContent||'')+' '+(a.getAttribute('aria-label')||''));
+  if(back){
+    var prev=mdBackStack.pop(); setTimeout(function(){restoreState(prev);},160); return;
+  }
+  var before=screenState(); if(!before)return;
+  setTimeout(function(){
+    var after=screenState();
+    if(after && after.id!==before.id){mdBackStack.push(before);topNow();}
+  },160);
 },true);
-window.addEventListener('popstate',function(){mdGoingBack=true;setTimeout(function(){restoreScreenScroll();mdGoingBack=false;},120);});
-window.addEventListener('hashchange',function(){setTimeout(function(){if(mdGoingBack)restoreScreenScroll();else topOfScreen();},120);});
+window.addEventListener('popstate',function(){var prev=mdBackStack.pop();setTimeout(function(){restoreState(prev);},160);});
+window.addEventListener('hashchange',function(){setTimeout(function(){var s=visibleScreen();if(s)topNow();},100);});
 function patch(){
   // Quitar texto de prueba sin alterar la región.
   qa('header *, .header *, body *').forEach(function(el){
@@ -158,8 +163,5 @@ var observer=new MutationObserver(function(){
 });
 if(document.documentElement) observer.observe(document.documentElement,{childList:true,subtree:true});
 setTimeout(patch,500);
-// Al regresar desde otra app, no alterar por sí solo la posición de la pantalla actual.
-document.addEventListener('visibilitychange',function(){
-  if(!document.hidden && mdGoingBack) setTimeout(function(){restoreScreenScroll();mdGoingBack=false;},80);
-});
+// Reanudar la app no modifica el desplazamiento actual.
 })();
