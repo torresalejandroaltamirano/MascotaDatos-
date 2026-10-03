@@ -101,5 +101,12 @@ function patch(){
   qa('h1,h2,h3').forEach(function(h){if(/^Modelo futuro$/i.test((h.textContent||'').trim())) h.textContent='Opciones para negocios';});
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',patch); else patch();
+// Reaplicar únicamente cuando la interfaz cambie, para cubrir pantallas renderizadas dinámicamente.
+var patchTimer=null;
+var observer=new MutationObserver(function(){
+  clearTimeout(patchTimer);
+  patchTimer=setTimeout(patch,80);
+});
+if(document.documentElement) observer.observe(document.documentElement,{childList:true,subtree:true});
 setTimeout(patch,500);
 })();
