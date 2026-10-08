@@ -72,7 +72,17 @@ public class MainActivity extends AppCompatActivity {
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
-                if (webView != null && webView.canGoBack()) webView.goBack(); else finish();
+                if (webView == null) { finish(); return; }
+                webView.evaluateJavascript(
+                    "(function(){try{" +
+                    "if(typeof window.mascotaDatosBack==='function') return window.mascotaDatosBack()?'handled':'unhandled';" +
+                    "return 'unhandled';" +
+                    "}catch(e){return 'unhandled';}})()",
+                    result -> {
+                        if ("\\"handled\\"".equals(result)) return;
+                        if (webView != null && webView.canGoBack()) webView.goBack();
+                        else finish();
+                    });
             }
         });
     }
