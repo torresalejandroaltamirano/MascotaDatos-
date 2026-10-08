@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     "return 'unhandled';" +
                     "}catch(e){return 'unhandled';}})()",
                     result -> {
-                        if ("\\"handled\\"".equals(result)) return;
+                        if ("\"handled\"".equals(result)) return;
                         if (webView != null && webView.canGoBack()) webView.goBack();
                         else finish();
                     });
