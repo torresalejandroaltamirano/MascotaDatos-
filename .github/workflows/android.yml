@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - v35-profesional
+      - v1.3.11-cierre
 
 jobs:
   build:
