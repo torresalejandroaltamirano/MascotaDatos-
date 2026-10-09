@@ -31,6 +31,19 @@ document.addEventListener('click',function(e){
   },160);
 },true);
 window.addEventListener('popstate',function(){var prev=mdBackStack.pop();setTimeout(function(){restoreState(prev);},160);});
+// Permite al botón Atrás nativo regresar dentro de la interfaz de una sola página.
+window.mascotaDatosGoBack = function(){
+  if (!mdBackStack.length) return false;
+  var prev=mdBackStack.pop();
+  var target=q('#'+prev.id);
+  if(!target || typeof window.show!=='function') {
+    mdBackStack.push(prev);
+    return false;
+  }
+  window.show(prev.id);
+  setTimeout(function(){restoreState(prev);},160);
+  return true;
+};
 // Los cambios de hash no deben desplazar la pantalla sin una navegación explícita.
 function patch(){
   // Quitar texto de prueba sin alterar la región.
