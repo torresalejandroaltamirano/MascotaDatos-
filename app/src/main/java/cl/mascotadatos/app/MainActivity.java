@@ -102,7 +102,15 @@ public class MainActivity extends AppCompatActivity {
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
-                if (webView != null && webView.canGoBack()) webView.goBack(); else finish();
+                if (webView == null) { finish(); return; }
+                webView.evaluateJavascript(
+                    "(function(){return typeof window.mascotaDatosGoBack==='function' && window.mascotaDatosGoBack();})()",
+                    result -> {
+                        if ("true".equals(result)) return;
+                        if (webView != null && webView.canGoBack()) webView.goBack();
+                        else finish();
+                    }
+                );
             }
         });
     }
