@@ -191,5 +191,58 @@ var observer=new MutationObserver(function(){
 });
 if(document.documentElement) observer.observe(document.documentElement,{childList:true,subtree:true});
 setTimeout(patch,500);
+
+// Directorio único por ciudad, basado en datos locales y sin servicios externos obligatorios.
+(function(){
+  var records=null, currentCity='Copiapó', installed=false;
+  function clean(t){return (t||'').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+  function el(tag,cls,txt){var n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;}
+  function draw(){
+    var target=document.getElementById('md-vet-results');if(!target)return;
+    target.replaceChildren();
+    if(!records){target.appendChild(el('div','notice','Cargando directorio local…'));return;}
+    var search=document.getElementById('md-vet-search'),term=clean(search&&search.value);
+    var matches=records.filter(function(x){return x.ciudad===currentCity && clean([x.nombre,x.direccion,x.telefono].join(' ')).includes(term);});
+    target.appendChild(el('div','small',matches.length+' resultados en '+currentCity));
+    if(!matches.length)target.appendChild(el('div','notice','No hay fichas disponibles con esta búsqueda.'));
+    matches.forEach(function(x){
+      var card=el('div','item');
+      card.appendChild(el('h3','',x.nombre||'Veterinaria'));
+      card.appendChild(el('div','meta','📍 '+(x.direccion||'Dirección por verificar')));
+      if(x.telefono)card.appendChild(el('div','meta','📞 '+x.telefono));
+      if(x.horario)card.appendChild(el('div','meta','🕐 '+x.horario));
+      if(x.estado!=='verificado_fuente_oficial')card.appendChild(el('div','small','Datos por confirmar antes de visitar'));
+      target.appendChild(card);
+    });
+  }
+  function init(){
+    if(installed)return;
+    var section=document.getElementById('veterinarias'),old=document.getElementById('vet');
+    if(!section||!old)return;
+    installed=true;
+    var oldSearch=section.querySelector('.search');if(oldSearch)oldSearch.style.display='none';
+    old.style.display='none';
+    var controls=el('div','form');
+    var label=el('label','','Ciudad');
+    var select=el('select');select.id='md-vet-city';
+    ['Copiapó','Caldera','Vallenar','Tierra Amarilla','Chañaral','Diego de Almagro','Huasco','Freirina','Alto del Carmen'].forEach(function(c){var o=el('option','',c);o.value=c;select.appendChild(o);});
+    select.value=currentCity;
+    select.addEventListener('change',function(){currentCity=select.value;draw();});
+    label.appendChild(select);controls.appendChild(label);
+    var input=el('input');input.id='md-vet-search';input.type='search';input.placeholder='Buscar veterinaria o sector';input.addEventListener('input',draw);
+    controls.appendChild(input);
+    var results=el('div','list');results.id='md-vet-results';
+    old.before(controls,results);
+    fetch('/assets/data/mascotadatos.json').then(function(r){if(!r.ok)throw Error('No disponible');return r.json();}).then(function(data){
+      records=Array.isArray(data.veterinarias_unificadas)?data.veterinarias_unificadas:[];draw();
+    }).catch(function(){results.replaceChildren(el('div','notice','No fue posible cargar el directorio. Intenta abrir la sección nuevamente.'));});
+    var back=section.querySelector('button.back');if(back)back.setAttribute('onclick',"show('inicio')");
+    // La tarjeta inicial de ciudades dirige al mismo directorio, sin duplicar categorías.
+    document.querySelectorAll('[onclick="show(\'ciudades\')"]').forEach(function(n){n.setAttribute('onclick',"show('veterinarias')");});
+    draw();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
 // Reanudar la app no modifica el desplazamiento actual.
 })();
