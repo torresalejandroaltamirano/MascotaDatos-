@@ -31,7 +31,7 @@ document.addEventListener('click',function(e){
   },160);
 },true);
 window.addEventListener('popstate',function(){var prev=mdBackStack.pop();setTimeout(function(){restoreState(prev);},160);});
-window.addEventListener('hashchange',function(){setTimeout(function(){var s=visibleScreen();if(s)topNow();},100);});
+// Los cambios de hash no deben desplazar la pantalla sin una navegación explícita.
 function patch(){
   // Quitar texto de prueba sin alterar la región.
   qa('header *, .header *, body *').forEach(function(el){
