@@ -113,6 +113,11 @@ jobs:
             exit 1
           fi
 
+      - name: Eliminar archivo temporal de firma
+        if: always()
+        run: |
+          rm -f mascotadatos-release.jks
+
       - name: Generar hashes SHA-256
         run: |
           sha256sum app/build/outputs/apk/release/MascotaDatos-1.3.11-signed.apk > MascotaDatos-1.3.11-SHA256.txt
