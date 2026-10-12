@@ -4,11 +4,27 @@ if(window.__mdNavigationInstalled)return;
 if(typeof window.show!=='function')return;
 window.__mdNavigationInstalled=true;
 var originalShow=window.show, history=[];
+var screenPositions=Object.create(null);
 function active(){return document.querySelector('.view.active');}
 function snapshot(){var v=active();if(!v)return null;return {id:v.id,scrollY:window.scrollY,innerY:v.scrollTop,fields:Array.from(v.querySelectorAll('input,select,textarea')).map(function(el){return {el:el,value:el.value,checked:el.checked};})};}
 function restore(s){if(!s)return;requestAnimationFrame(function(){requestAnimationFrame(function(){s.fields.forEach(function(f){if(f.el&&f.el.isConnected){f.el.value=f.value;if(f.el.type==='checkbox'||f.el.type==='radio')f.el.checked=f.checked;}});var v=document.getElementById(s.id);if(v)v.scrollTop=s.innerY;window.scrollTo(0,s.scrollY);});});}
-window.show=function(id){if(id==='veterinarias')id='ciudades';var current=active();if(!document.getElementById(id))return;if(current&&current.id===id)return;if(current&&id!=='inicio')history.push(snapshot());if(id==='inicio')history.length=0;originalShow(id);};
-function goBack(){var prev=history.pop();if(prev){originalShow(prev.id);restore(prev);return true;}var v=active();if(v&&v.id!=='inicio'&&document.getElementById('inicio')){originalShow('inicio');return true;}return false;}
+window.show=function(id){
+  if(id==='veterinarias')id='ciudades';
+  var current=active();if(!document.getElementById(id))return;
+  if(current&&current.id===id)return;
+  if(current){var previous=snapshot();screenPositions[current.id]=previous;if(id!=='inicio')history.push(previous);}
+  if(id==='inicio')history.length=0;
+  originalShow(id);
+  // La pantalla solicitada debe conservar su posición anterior cuando se reabre.
+  if(screenPositions[id])restore(screenPositions[id]);
+};
+function goBack(){
+  var current=snapshot();if(current)screenPositions[current.id]=current;
+  var prev=history.pop();
+  if(prev){originalShow(prev.id);restore(prev);return true;}
+  var v=active();if(v&&v.id!=='inicio'&&document.getElementById('inicio')){originalShow('inicio');if(screenPositions.inicio)restore(screenPositions.inicio);return true;}
+  return false;
+}
 // Unificar la portada: el directorio por ciudad es el único acceso a Veterinarias.
 var oldCard=document.querySelector('#inicio .card.action[onclick="show(\'veterinarias\')"]');
 if(oldCard)oldCard.remove();
