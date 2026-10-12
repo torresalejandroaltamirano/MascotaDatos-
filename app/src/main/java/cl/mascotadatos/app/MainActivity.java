@@ -44,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
             @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return loader.shouldInterceptRequest(request.getUrl());
             }
+            @Override public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (url != null && url.startsWith("https://appassets.androidplatform.net/assets/index.html")) {
+                    view.evaluateJavascript("(function(){if(document.getElementById('md-stable-nav-script'))return;var s=document.createElement('script');s.id='md-stable-nav-script';s.src='/assets/md-navigation-stable.js';document.head.appendChild(s);})()", null);
+                }
+            }
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return openExternal(request.getUrl());
             }
