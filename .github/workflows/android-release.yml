@@ -79,6 +79,17 @@ jobs:
             "$UNSIGNED_APK"
           $ANDROID_HOME/build-tools/36.0.0/apksigner verify --verbose --print-certs "$SIGNED_APK"
 
+      - name: Validar APK firmada para actualizar 1.3.10
+        run: |
+          set -euo pipefail
+          APK="app/build/outputs/apk/release/MascotaDatos-1.3.11-signed.apk"
+          EXPECTED="CADAF8B58B5055A83312D9C4531AE574B9EE68FBDE615AB1BA1401D4225F9FCC"
+          INFO="$("$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs "$APK")"
+          ACTUAL="$(printf '%s\\n' "$INFO" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -n 1 | tr -d ':[:space:]' | tr '[:lower:]' '[:upper:]')"
+          test "$ACTUAL" = "$EXPECTED" || { echo "::error::La APK final tiene un certificado diferente."; exit 1; }
+          BADGING="$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK")"
+          printf '%s\\n' "$BADGING" | grep -q "package: name='cl.mascotadatos.app' versionCode='1311' versionName='1.3.11'"
+
       - name: Firmar AAB
         env:
           MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
