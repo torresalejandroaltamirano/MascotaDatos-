@@ -33,11 +33,22 @@ jobs:
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
-      - name: Compilar APK
-        run: gradle assembleDebug --stacktrace
+      - name: Verificar recursos de la interfaz
+        run: |
+          test -s app/src/main/assets/index.html || { echo 'ERROR: index.html ausente o vacio'; exit 1; }
+          test -s app/src/main/assets/md-navigation-stable.js || { echo 'ERROR: puente de navegacion ausente'; exit 1; }
+
+      - name: Compilar APK de prueba y AAB de diagnostico
+        run: gradle assembleDebug bundleRelease --stacktrace
 
       - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
           name: MascotaDatos-APK
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Guardar AAB de diagnostico sin firma de publicacion
+        uses: actions/upload-artifact@v4
+        with:
+          name: MascotaDatos-AAB-SIN-FIRMA
+          path: app/build/outputs/bundle/release/*.aab
