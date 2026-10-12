@@ -105,7 +105,13 @@ jobs:
             -digestalg SHA-256 \
             "$AAB" \
             "$MASCOTADATOS_KEY_ALIAS"
-          jarsigner -verify -verbose "$AAB"
+          jarsigner -verify -strict "$AAB"
+          EXPECTED="CADAF8B58B5055A83312D9C4531AE574B9EE68FBDE615AB1BA1401D4225F9FCC"
+          CERT_SHA="$(keytool -printcert -jarfile "$AAB" | sed -n 's/.*SHA256: //p' | head -n 1 | tr -d ':[:space:]' | tr '[:lower:]' '[:upper:]')"
+          if [ "$CERT_SHA" != "$EXPECTED" ]; then
+            echo "::error::El certificado del AAB no coincide con la firma de MascotaDatos."
+            exit 1
+          fi
 
       - name: Generar hashes SHA-256
         run: |
