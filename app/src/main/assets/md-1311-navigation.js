@@ -14,6 +14,26 @@ var oldCard=document.querySelector('#inicio .card.action[onclick="show(\'veterin
 if(oldCard)oldCard.remove();
 var cityCard=document.querySelector('#inicio .card.action[onclick="show(\'ciudades\')"]');
 if(cityCard){var title=cityCard.querySelector('b');if(title)title.textContent='Veterinarias';}
+// Buscador local sobre las fichas de la ciudad seleccionada, sin cambiar de pantalla.
+var cityBox=document.getElementById('cityContent');
+if(cityBox){
+  var observer=new MutationObserver(function(){
+    if(cityBox.querySelector('#mdCitySearch'))return;
+    var items=cityBox.querySelectorAll('.item');
+    if(!items.length)return;
+    var field=document.createElement('input');
+    field.id='mdCitySearch';field.type='search';field.placeholder='Buscar veterinaria, dirección o teléfono';
+    field.setAttribute('aria-label','Buscar veterinarias en esta ciudad');
+    field.style.cssText='width:100%;box-sizing:border-box;padding:12px;margin:10px 0;border-radius:10px;border:1px solid #9ca3af;font-size:16px';
+    var heading=cityBox.querySelector('h2');
+    if(heading)heading.insertAdjacentElement('afterend',field);else cityBox.prepend(field);
+    field.addEventListener('input',function(){
+      var q=field.value.trim().toLocaleLowerCase('es');
+      cityBox.querySelectorAll('.item').forEach(function(item){item.style.display=item.textContent.toLocaleLowerCase('es').includes(q)?'':'none';});
+    });
+  });
+  observer.observe(cityBox,{childList:true});
+}
 document.addEventListener('mascotadatos:back',function(e){if(goBack())e.preventDefault();});
 document.addEventListener('click',function(e){var b=e.target.closest('button.back');if(!b)return;if(goBack()){e.preventDefault();e.stopImmediatePropagation();}},true);
 })();
