@@ -45,7 +45,12 @@ jobs:
         run: |
           test -n "$MASCOTADATOS_KEY_ALIAS"
           EXPECTED="CADAF8B58B5055A83312D9C4531AE574B9EE68FBDE615AB1BA1401D4225F9FCC"
-          ACTUAL="$(keytool -list -v -keystore mascotadatos-release.jks -alias "$MASCOTADATOS_KEY_ALIAS" -storepass "$MASCOTADATOS_KEYSTORE_PASSWORD" | sed -n 's/.*SHA256: //p' | head -n 1 | tr -d ':[:space:]' | tr '[:lower:]' '[:upper:]')"
+          KEYINFO="$(keytool -list -v -keystore mascotadatos-release.jks -alias "$MASCOTADATOS_KEY_ALIAS" -storepass "$MASCOTADATOS_KEYSTORE_PASSWORD")"
+          if ! printf '%s\n' "$KEYINFO" | grep -q 'PrivateKeyEntry'; then
+            echo "::error::El alias indicado no contiene una clave privada; no se puede firmar una actualización."
+            exit 1
+          fi
+          ACTUAL="$(printf '%s\n' "$KEYINFO" | sed -n 's/.*SHA256: //p' | head -n 1 | tr -d ':[:space:]' | tr '[:lower:]' '[:upper:]')"
           if [ "$ACTUAL" != "$EXPECTED" ]; then
             echo "::error::El certificado de firma no coincide con la APK aprobada; se detiene la compilación."
             exit 1
