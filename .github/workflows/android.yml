@@ -7,6 +7,7 @@ on:
       - main
       - v35-profesional
       - v1.3.11-cierre
+      - test/mascotadatos-1311-navegacion-estable
 
 jobs:
   build:
