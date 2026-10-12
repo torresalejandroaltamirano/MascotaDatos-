@@ -19,6 +19,10 @@ import androidx.webkit.WebViewAssetLoader;
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
     private ValueCallback<Uri[]> fileCallback;
+    // Saved position for navigation between full WebView documents.
+    private int previousScrollX = 0;
+    private int previousScrollY = 0;
+    private boolean restoreScrollOnLoad = false;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +47,15 @@ public class MainActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient() {
             @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return loader.shouldInterceptRequest(request.getUrl());
+            }
+            @Override public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (restoreScrollOnLoad) {
+                    restoreScrollOnLoad = false;
+                    final int x = previousScrollX;
+                    final int y = previousScrollY;
+                    view.post(() -> view.scrollTo(x, y));
+                }
             }
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return openExternal(request.getUrl());
@@ -72,7 +85,12 @@ public class MainActivity extends AppCompatActivity {
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
-                if (webView != null && webView.canGoBack()) webView.goBack(); else finish();
+                if (webView != null && webView.canGoBack()) {
+                    previousScrollX = webView.getScrollX();
+                    previousScrollY = webView.getScrollY();
+                    restoreScrollOnLoad = true;
+                    webView.goBack();
+                } else finish();
             }
         });
     }
