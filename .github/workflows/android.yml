@@ -39,7 +39,36 @@ jobs:
           test -s app/src/main/assets/md-navigation-stable.js || { echo 'ERROR: puente de navegacion ausente'; exit 1; }
 
       - name: Compilar APK de prueba
-        run: gradle assembleDebug --stacktrace --console=plain
+        shell: bash
+        run: |
+          set -o pipefail
+          gradle assembleDebug --stacktrace --console=plain 2>&1 | tee gradle-apk.log
+
+      - name: Resumir error de compilacion
+        if: failure()
+        shell: bash
+        run: |
+          {
+            echo "## MascotaDatos 1.3.11 - Diagnostico APK"
+            echo "Rama: ${GITHUB_REF_NAME}"
+            echo "Commit: ${GITHUB_SHA}"
+            echo '### Primeras lineas relevantes del error'
+            echo '```text'
+            if [ -f gradle-apk.log ]; then
+              grep -n -m 30 -E '(^FAILURE:|^\* What went wrong:|^\* Exception is:|Execution failed for task|^e: |^error: |error:|A failure occurred|Could not resolve|Caused by:)' gradle-apk.log || true
+            else
+              echo "No se genero el registro de Gradle."
+            fi
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Guardar registro de diagnostico
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MascotaDatos-Gradle-Diagnostico
+          path: gradle-apk.log
+          if-no-files-found: warn
 
       - name: Guardar APK
         uses: actions/upload-artifact@v4
