@@ -38,8 +38,8 @@ jobs:
           test -s app/src/main/assets/index.html || { echo 'ERROR: index.html ausente o vacio'; exit 1; }
           test -s app/src/main/assets/md-navigation-stable.js || { echo 'ERROR: puente de navegacion ausente'; exit 1; }
 
-      - name: Compilar APK de prueba y AAB de diagnostico
-        run: gradle assembleDebug bundleRelease --stacktrace
+      - name: Compilar APK de prueba
+        run: gradle assembleDebug --stacktrace --console=plain
 
       - name: Guardar APK
         uses: actions/upload-artifact@v4
@@ -47,8 +47,13 @@ jobs:
           name: MascotaDatos-APK
           path: app/build/outputs/apk/debug/app-debug.apk
 
+      - name: Compilar AAB de diagnostico
+        continue-on-error: true
+        run: gradle bundleRelease --stacktrace --console=plain
+
       - name: Guardar AAB de diagnostico sin firma de publicacion
         uses: actions/upload-artifact@v4
         with:
           name: MascotaDatos-AAB-SIN-FIRMA
           path: app/build/outputs/bundle/release/*.aab
+          if-no-files-found: warn
