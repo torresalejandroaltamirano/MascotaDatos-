@@ -3,8 +3,8 @@ import hashlib
 p=Path("app/src/main/assets/index.html")
 b=p.read_bytes()
 def sha(x): return hashlib.sha1(b"blob "+str(len(x)).encode()+b"\0"+x).hexdigest()
-src="a29a8b10889b2b4f986cb3252638ea7f588c759f"
-dst="5c834b7903bfdfaa2664f574141a941bdf0763b0"
+src="95dce6d4534c52ef5b48b07ef86b2dd2b9605cc2"
+dst="1ab8f559bcb5084fed0ae6a93f54f4f1bd31141c"
 if sha(b)==dst: print("already corrected"); quit()
 if sha(b)!=src: raise SystemExit("Source mismatch, do not overwrite")
 s=b.decode()
