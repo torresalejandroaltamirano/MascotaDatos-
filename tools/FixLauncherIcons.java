@@ -34,5 +34,11 @@ public final class FixLauncherIcons {
       if (!ImageIO.write(target,"png",file)) throw new IllegalStateException("Unable to write PNG: "+file);
       System.out.println("Valid PNG: "+file+" ("+size+"x"+size+")");
     }
+    File logo = new File(base+"drawable-nodpi/logo_mascotadatos.png");
+    if (!logo.isFile()) throw new IllegalStateException("Official logo missing: "+logo);
+    BufferedImage logoImage = ImageIO.read(logo);
+    if (logoImage == null || !ImageIO.write(logoImage, "png", logo))
+      throw new IllegalStateException("Failed to convert official logo to valid PNG");
+    System.out.println("Valid official logo PNG: "+logo);
   }
 }
