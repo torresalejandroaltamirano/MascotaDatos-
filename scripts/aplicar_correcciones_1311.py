@@ -4,7 +4,7 @@ p=Path("app/src/main/assets/index.html")
 b=p.read_bytes()
 def sha(x): return hashlib.sha1(b"blob "+str(len(x)).encode()+b"\0"+x).hexdigest()
 src="95dce6d4534c52ef5b48b07ef86b2dd2b9605cc2"
-dst="240dcc46d4e31bbae58716b4fef91206e8314967"
+dst="65e86993eb009c1cf166c78e24785ec2c8add24c"
 if sha(b)==dst: print("already corrected"); quit()
 if sha(b)!=src: raise SystemExit("Source mismatch, do not overwrite")
 s=b.decode()
@@ -67,6 +67,39 @@ change('function showReportFor(id)', favorites_functions + 'function showReportF
 like_needle = """</span></button> <button class="btn" style="margin-top:8px" onclick="showReportFor('+id+')">🚩 Reportar</button>"""
 like_patch = """</span></button> <button class="btn" style="margin-top:8px" onclick="toggleFavorite('+id+',this)">⭐ Guardar</button> <button class="btn" style="margin-top:8px" onclick="showReportFor('+id+')">🚩 Reportar</button>"""
 change(like_needle, like_patch)
+
+# Una sola entrada visual de Veterinarias en inicio; el acceso abre ciudades.
+duplicate_city_card = """<div class="card action" style="margin-bottom:10px" onclick="show('ciudades')"><div class="icon">🗺️</div><b>Veterinarias por ciudad</b><div class="small">Copiapó, Caldera, Vallenar y otras comunas de Atacama</div></div>"""
+change(duplicate_city_card, "")
+change("""<div class="card action" onclick="show('ciudades')"><div class="icon">🏥</div><b>Veterinarias</b><div class="small">Dirección, horarios y contacto</div></div>""",
+       """<div class="card action" onclick="show('ciudades')"><div class="icon">🏥</div><b>Veterinarias</b><div class="small">Seleccionar ciudad · buscar fichas</div></div>""")
+city_search_js = r"""function mdRenderCity(h){
+ const box=document.getElementById('cityContent');
+ if(!box)return;
+ box.innerHTML=h;
+ const wrapper=document.createElement('div');
+ wrapper.className='search';
+ const input=document.createElement('input');
+ input.type='search';
+ input.placeholder='Buscar veterinaria por nombre o dirección...';
+ input.setAttribute('aria-label','Buscar veterinarias en la ciudad');
+ input.addEventListener('input',()=>{
+   const q=input.value.toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+   box.querySelectorAll('.item').forEach(el=>{
+     const txt=(el.textContent||'').toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+     el.style.display=!q||txt.includes(q)?'':'none';
+   });
+ });
+ wrapper.appendChild(input);
+ const title=box.querySelector('h2');
+ if(title)title.after(wrapper);else box.prepend(wrapper);
+}
+"""
+change("async function city(id){", city_search_js + "async function city(id){")
+needle_city = "   box.innerHTML=h;\n   mdCityLegacyCopiapo(id);"
+if s.count(needle_city) != 2:
+    raise SystemExit("Directorio ciudades cambió; no se modifica a ciegas")
+s = s.replace(needle_city, "   mdRenderCity(h);\n   mdCityLegacyCopiapo(id);")
 out=s.encode()
 if sha(out)!=dst: raise SystemExit("Result SHA mismatch: "+sha(out))
 p.write_bytes(out)
