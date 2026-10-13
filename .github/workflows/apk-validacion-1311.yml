@@ -26,6 +26,11 @@ jobs:
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0"
       - name: Validar codigo
         run: python3 scripts/check_release_1311.py
+      - name: Reparar formato de iconos Android
+        run: |
+          javac tools/FixLauncherIcons.java
+          java -cp tools FixLauncherIcons
+
       - name: Compilar APK debug
         run: gradle assembleDebug --stacktrace
       - name: Compilar APK y AAB Release sin firma (solo verificaciones)
