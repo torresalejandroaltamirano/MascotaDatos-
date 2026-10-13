@@ -1,10 +1,7 @@
-name: Generar MascotaDatos 1.3.5 firmado
+name: Generar MascotaDatos 1.3.11 firmado
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - v35-profesional
 
 jobs:
   release:
@@ -54,7 +51,7 @@ jobs:
           test -n "$MASCOTADATOS_KEY_ALIAS"
           test -n "$MASCOTADATOS_KEY_PASSWORD"
           UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
-          SIGNED_APK="app/build/outputs/apk/release/MascotaDatos-1.3.5-signed.apk"
+          SIGNED_APK="app/build/outputs/apk/release/MascotaDatos-1.3.11-signed.apk"
           $ANDROID_HOME/build-tools/36.0.0/apksigner sign \
             --ks mascotadatos-release.jks \
             --ks-key-alias "$MASCOTADATOS_KEY_ALIAS" \
@@ -83,15 +80,15 @@ jobs:
 
       - name: Generar hashes SHA-256
         run: |
-          sha256sum app/build/outputs/apk/release/MascotaDatos-1.3.5-signed.apk > MascotaDatos-1.3.5-SHA256.txt
-          sha256sum app/build/outputs/bundle/release/app-release.aab >> MascotaDatos-1.3.5-SHA256.txt
-          cat MascotaDatos-1.3.5-SHA256.txt
+          sha256sum app/build/outputs/apk/release/MascotaDatos-1.3.11-signed.apk > MascotaDatos-1.3.11-SHA256.txt
+          sha256sum app/build/outputs/bundle/release/app-release.aab >> MascotaDatos-1.3.11-SHA256.txt
+          cat MascotaDatos-1.3.11-SHA256.txt
 
       - name: Guardar APK, AAB y hashes
         uses: actions/upload-artifact@v4
         with:
-          name: MascotaDatos-1.3.5-RELEASE
+          name: MascotaDatos-1.3.11-RELEASE
           path: |
-            app/build/outputs/apk/release/MascotaDatos-1.3.5-signed.apk
+            app/build/outputs/apk/release/MascotaDatos-1.3.11-signed.apk
             app/build/outputs/bundle/release/app-release.aab
-            MascotaDatos-1.3.5-SHA256.txt
+            MascotaDatos-1.3.11-SHA256.txt
