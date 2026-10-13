@@ -52,6 +52,14 @@ if re.search(r"Aplicaci[oó]n en etapa de pruebas", html, re.I): errors.append("
 if re.search(r"MascotaDatos\\s+v32", html, re.I): errors.append("Outdated v32 label remains")
 if '<section id="publicidadSolicitud" class="view">' not in html: errors.append("Advertising screen not navigable")
 if "Veterinarias por ciudad" not in html: errors.append("City veterinary access missing")
+if html.count('<div class="card action" onclick="show(\'ciudades\')">') != 1:
+    errors.append("Veterinarias home entry must be unique")
+if "function mdRenderCity(h)" not in html:
+    errors.append("City search UI is missing")
+if html.count("mdRenderCity(h);") != 2:
+    errors.append("Veterinary city search must render in online and offline cases")
+if "Buscar veterinaria por nombre o dirección..." not in html:
+    errors.append("Vet search placeholder missing")
 if errors:
     for e in errors: print("FAIL:", e)
     sys.exit(1)
