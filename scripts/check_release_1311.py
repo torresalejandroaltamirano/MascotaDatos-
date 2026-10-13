@@ -28,6 +28,12 @@ dupes = sorted({v for v in ids if ids.count(v) > 1})
 if dupes: errors.append("Duplicate IDs: " + ", ".join(dupes[:25]))
 if "veterinarias" not in html.lower(): errors.append("Veterinarias screen absent")
 if "logo" not in html.lower(): errors.append("Logo refs absent")
+
+# Publication blockers checked against the actual bundled HTML.
+if re.search(r"Aplicaci[oó]n en etapa de pruebas", html, re.I): errors.append("Outdated trial-stage banner remains")
+if re.search(r"MascotaDatos\\s+v32", html, re.I): errors.append("Outdated v32 label remains")
+if not re.search(r'id=["\\x27]publicidadSolicitud["\\x27]\\s+class=["\\x27]view["\\x27]', html): errors.append("Advertising screen not navigable")
+if "Veterinarias por ciudad" not in html: errors.append("City veterinary access missing")
 if errors:
     for e in errors: print("FAIL:", e)
     sys.exit(1)
