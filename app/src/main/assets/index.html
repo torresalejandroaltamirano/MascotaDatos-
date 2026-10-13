@@ -79,7 +79,7 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
   <div id="onlineStatus" class="notice" style="margin-bottom:10px">☁️ Conectando con MascotaDatos…</div>
   <h2>¿Qué necesitas?</h2><div class="grid" style="margin-bottom:10px"><div class="card action" onclick="show('cuenta')"><div class="icon">👤</div><b>Mi cuenta</b><div class="small">Publicaciones y datos</div></div><div class="card action" onclick="show('seguridad')"><div class="icon">🛡️</div><b>Seguridad</b><div class="small">Privacidad y reportes</div></div><div class="card action" onclick="show('notificaciones');loadNotifications()"><div class="icon">🔔</div><b>Notificaciones</b><div class="small">Avisos de MascotaDatos</div></div></div><div class="card action" style="margin-bottom:10px" onclick="show('busquedaGeneral')"><div class="icon">🔎</div><b>Buscar</b><div class="small">Veterinarias, locales y servicios</div></div><div class="card action" style="margin-bottom:10px" onclick="show('ciudades')"><div class="icon">🗺️</div><b>Veterinarias por ciudad</b><div class="small">Copiapó, Caldera, Vallenar y otras comunas de Atacama</div></div>
   <div class="grid">
-    <div class="card action" onclick="show('veterinarias')"><div class="icon">🏥</div><b>Veterinarias</b><div class="small">Dirección, horarios y contacto</div></div>
+    <div class="card action" onclick="show('ciudades')"><div class="icon">🏥</div><b>Veterinarias</b><div class="small">Dirección, horarios y contacto</div></div>
     <div class="card action" onclick="show('urgencias')"><div class="icon">🚨</div><b>Urgencias</b><div class="small">Opciones de atención</div></div>
     <div class="card action" onclick="show('insumosCiudad')"><div class="icon">🛒</div><b>Insumos y locales</b><div class="small">Alimentos y productos</div></div>
     <div class="card action" onclick="show('adopcion2')"><div class="icon">🏠</div><b>Adopción</b><div class="small">Organizaciones y avisos</div></div>
@@ -540,7 +540,7 @@ footer{font-size:10px;color:#81766b;text-align:center;margin-top:16px}
 
 <nav>
 <button class="active" data-view="inicio" onclick="show('inicio')"><span>🏠</span>Inicio</button>
-<button data-view="veterinarias" onclick="show('veterinarias')"><span>🏥</span>Veterinarias</button>
+<button data-view="veterinarias" onclick="show('ciudades')"><span>🏥</span>Veterinarias</button>
 <button data-view="insumos" onclick="show('insumosCiudad')"><span>🛒</span>Insumos</button>
 <button data-view="adopcion" onclick="show('adopcion2')"><span>🏠</span>Adopción</button>
 <button data-view="perdidos" onclick="show('perdidos2')"><span>🔎</span>Perdidos</button>
@@ -617,7 +617,22 @@ diego:[
 tierra:[],
 alto:[]
 };
-async function city(id){
+async function mdCityLegacyCopiapo(id){
+ if (id !== 'copiapo') return;
+ const source = document.querySelector('#veterinarias #vet');
+ const target = document.getElementById('cityContent');
+ if (!source || !target) return;
+ const card = document.createElement('div');
+ card.className = 'md-vet-legacy';
+ card.innerHTML = '<h3>Otras fichas del directorio de Copiapó</h3><p class="small">Fichas históricas: confirmar datos antes de acudir.</p><div class="search"><input aria-label="Buscar otras veterinarias de Copiapó" placeholder="Buscar nombre o sector..." oninput="filterItems(this.value,\'md-vet-legacy-list\')"></div>';
+ const list = document.createElement('div');
+ list.id = 'md-vet-legacy-list';
+ list.className = 'list';
+ list.innerHTML = source.innerHTML;
+ card.appendChild(list);
+ target.appendChild(card);
+}
+function city(id){
  const names={copiapo:"Copiapó",caldera:"Caldera",vallenar:"Vallenar",chanaral:"Chañaral",huasco:"Huasco",freirina:"Freirina",diego:"Diego de Almagro",tierra:"Tierra Amarilla",alto:"Alto del Carmen"};
  const cityName=names[id];
  const box=document.getElementById('cityContent');
@@ -635,11 +650,13 @@ async function city(id){
      h+='<div class="notice">☁️ Información actualizada desde MascotaDatos.</div><div class="list">'+list.map(x=>'<div class="item"><div class="top"><h3>'+esc(x.name)+'</h3><span class="badge '+(x.verification_status==='verificado'?'':'warn')+'">'+(x.verification_status==='verificado'?'Verificado':'Por verificar')+'</span></div><div class="meta">📍 '+esc(x.address||'Dirección no indicada')+'<br>📞 '+esc(x.phone||'Por verificar')+'<br><button class="btn" style="margin-top:8px" onclick="openMap('+JSON.stringify((x.address||'')+', '+cityName+', Atacama, Chile')+')">📍 Ver ubicación</button> <button class="btn" style="margin-top:8px" onclick="openReviews('+Number(x.id)+','+JSON.stringify(x.name||'Negocio')+')">⭐ Opiniones</button></div></div>').join('')+'</div>';
    }
    box.innerHTML=h;
+   mdCityLegacyCopiapo(id);
  }catch(err){
    const list=cityData[id]||[];
    let h='<h2>📍 '+esc(cityName)+'</h2><div class="notice">⚠️ No se pudo actualizar la base online. Mostrando la información disponible en la aplicación.</div>';
    if(list.length) h+='<div class="list">'+list.map(x=>'<div class="item"><div class="top"><h3>'+esc(x[0])+'</h3><span class="badge">Ficha pública</span></div><div class="meta">📍 '+esc(x[1])+'<br>📞 '+esc(x[2])+'</div></div>').join('')+'</div>';
    box.innerHTML=h;
+   mdCityLegacyCopiapo(id);
  }
 }
 function openMap(q){ window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q),'_blank'); }
