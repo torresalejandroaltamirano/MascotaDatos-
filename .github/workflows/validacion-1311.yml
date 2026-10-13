@@ -12,6 +12,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - name: Aplicar correcciones finales 1.3.11
+        run: python3 scripts/aplicar_correcciones_1311.py
       - name: Comprobar navegacion version e identificadores
         run: python3 scripts/check_release_1311.py
       - name: Comprobar ausencia de secretos versionados
