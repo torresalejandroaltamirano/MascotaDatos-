@@ -63,6 +63,11 @@ jobs:
           fi
           echo "Huella del certificado de firma release coincide con el respaldo verificado."
 
+      - name: Reparar formato de iconos Android
+        run: |
+          javac tools/FixLauncherIcons.java
+          java -cp tools FixLauncherIcons
+
       - name: Compilar APK y AAB Release
         run: |
           gradle assembleRelease bundleRelease --stacktrace
