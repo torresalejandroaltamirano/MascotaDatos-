@@ -36,6 +36,8 @@ ids = parsed.ids
 dupes = sorted({v for v in ids if ids.count(v) > 1})
 if dupes: errors.append("Duplicate HTML IDs: " + ", ".join(dupes[:25]))
 if "veterinarias" not in html.lower(): errors.append("Veterinarias screen absent")
+if html.count('alt="Catedral de Copiapó"') != 1: errors.append("Official Copiapó cathedral image missing or duplicated")
+if 'width:98px;height:68px;object-fit:contain' not in html: errors.append("Copiapó cathedral thumbnail not proportionate")
 if "logo" not in html.lower(): errors.append("Logo refs absent")
 
 # Publication blockers checked against the actual bundled HTML.
