@@ -560,7 +560,7 @@ function show(id){
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
  target.classList.add('active');
  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active', b.dataset.view===id));
- window.scrollTo(0, 0);
+ // No scroll forzado: el navegador conserva la posicion cuando es posible.
  return true;
 }
 window.mascotaDatosBack = function(){
