@@ -36,6 +36,13 @@ ids = parsed.ids
 dupes = sorted({v for v in ids if ids.count(v) > 1})
 if dupes: errors.append("Duplicate HTML IDs: " + ", ".join(dupes[:25]))
 if "veterinarias" not in html.lower(): errors.append("Veterinarias screen absent")
+# La actualización jamás debe perder Favoritos ni los avisos guardados.
+for marker in ('<section id="favoritos" class="view">', 'id="favoritesResults"',
+               'function getFavoriteIds()', 'function setFavoriteIds(',
+               'function toggleFavorite(', 'async function loadFavorites()',
+               "show('favoritos');loadFavorites()"):
+    if marker not in html:
+        errors.append("Feature regression, Favoritos missing: " + marker)
 if html.count('alt="Catedral de Copiapó"') != 1: errors.append("Official Copiapó cathedral image missing or duplicated")
 if 'width:98px;height:68px;object-fit:contain' not in html: errors.append("Copiapó cathedral thumbnail not proportionate")
 if "logo" not in html.lower(): errors.append("Logo refs absent")
