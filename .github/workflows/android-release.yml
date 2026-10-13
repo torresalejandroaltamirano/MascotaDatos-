@@ -34,6 +34,9 @@ jobs:
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
+      - name: Aplicar correcciones finales antes de firmar
+        run: python3 scripts/aplicar_correcciones_1311.py
+
       - name: Validar fuente antes de Release
         run: python3 scripts/check_release_1311.py
 
