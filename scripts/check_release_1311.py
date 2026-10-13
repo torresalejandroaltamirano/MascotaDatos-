@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+"""Non-destructive checks for MascotaDatos Android 1.3.11."""
+import pathlib
+import re
+import sys
+
+root = pathlib.Path(__file__).resolve().parents[1]
+html_path = root / "app/src/main/assets/index.html"
+gradle_path = root / "app/build.gradle.kts"
+java_path = root / "app/src/main/java/cl/mascotadatos/app/MainActivity.java"
+errors = []
+for p in (html_path, gradle_path, java_path):
+    if not p.is_file(): errors.append(f"Missing: {p.relative_to(root)}")
+if errors:
+    print("\n".join(errors))
+    sys.exit(1)
+html = html_path.read_text(encoding="utf-8")
+gradle = gradle_path.read_text(encoding="utf-8")
+java = java_path.read_text(encoding="utf-8")
+if not re.search(r'versionName\s*=\s*"1\.3\.11"', gradle): errors.append("versionName must be 1.3.11")
+if not re.search(r'versionCode\s*=\s*1311\b', gradle): errors.append("versionCode must be 1311")
+if not re.search(r'applicationId\s*=\s*"cl\.mascotadatos\.app"', gradle): errors.append("App ID changed")
+if "mascotaDatosBack" not in java: errors.append("Android Back bridge missing")
+if "window.mascotaDatosBack" not in html: errors.append("Web Back handler absent")
+if re.search(r'scrollTo\s*\(\s*\{\s*top\s*:\s*0\s*,\s*behavior\s*:\s*[\x27\x22]smooth', html): errors.append("Forced animated scroll-to-top remains")
+ids = re.findall(r'\bid\s*=\s*["\x27]([^"\x27]+)["\x27]', html, flags=re.I)
+dupes = sorted({v for v in ids if ids.count(v) > 1})
+if dupes: errors.append("Duplicate IDs: " + ", ".join(dupes[:25]))
+if "veterinarias" not in html.lower(): errors.append("Veterinarias screen absent")
+if "logo" not in html.lower(): errors.append("Logo refs absent")
+if errors:
+    for e in errors: print("FAIL:", e)
+    sys.exit(1)
+print("PASS: static checks. Does not prove Android functionality or signature compatibility.")
