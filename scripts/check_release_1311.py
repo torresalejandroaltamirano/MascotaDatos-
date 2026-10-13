@@ -23,16 +23,25 @@ if not re.search(r'applicationId\s*=\s*"cl\.mascotadatos\.app"', gradle): errors
 if "mascotaDatosBack" not in java: errors.append("Android Back bridge missing")
 if "window.mascotaDatosBack" not in html: errors.append("Web Back handler absent")
 if re.search(r'scrollTo\s*\(\s*\{\s*top\s*:\s*0\s*,\s*behavior\s*:\s*[\x27\x22]smooth', html): errors.append("Forced animated scroll-to-top remains")
-ids = re.findall(r'\bid\s*=\s*["\x27]([^"\x27]+)["\x27]', html, flags=re.I)
+from html.parser import HTMLParser
+class ElementIds(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.ids = []
+    def handle_starttag(self, tag, attrs):
+        self.ids.extend(v for k,v in attrs if k.lower() == "id" and v)
+parsed = ElementIds()
+parsed.feed(html)
+ids = parsed.ids
 dupes = sorted({v for v in ids if ids.count(v) > 1})
-if dupes: errors.append("Duplicate IDs: " + ", ".join(dupes[:25]))
+if dupes: errors.append("Duplicate HTML IDs: " + ", ".join(dupes[:25]))
 if "veterinarias" not in html.lower(): errors.append("Veterinarias screen absent")
 if "logo" not in html.lower(): errors.append("Logo refs absent")
 
 # Publication blockers checked against the actual bundled HTML.
 if re.search(r"Aplicaci[oó]n en etapa de pruebas", html, re.I): errors.append("Outdated trial-stage banner remains")
 if re.search(r"MascotaDatos\\s+v32", html, re.I): errors.append("Outdated v32 label remains")
-if not re.search(r'id=["\\x27]publicidadSolicitud["\\x27]\\s+class=["\\x27]view["\\x27]', html): errors.append("Advertising screen not navigable")
+if '<section id="publicidadSolicitud" class="view">' not in html: errors.append("Advertising screen not navigable")
 if "Veterinarias por ciudad" not in html: errors.append("City veterinary access missing")
 if errors:
     for e in errors: print("FAIL:", e)
