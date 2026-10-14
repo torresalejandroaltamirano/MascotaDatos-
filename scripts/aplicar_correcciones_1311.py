@@ -131,12 +131,10 @@ deletion_js = """async function mdRequestDeletion(){
  if(!confirm('¿Quieres registrar una solicitud de eliminación de tu cuenta y datos asociados? No se eliminará nada automáticamente.'))return;
  box.textContent='Registrando solicitud...';
  try{
-  const {error}=await sb.from('account_deletion_requests').insert({user_id:session.user.id});
-  if(error){
-    if(error.code==='23505'){box.textContent='Ya tienes una solicitud pendiente.';return;}
-    throw error;
-  }
-  box.textContent='Solicitud registrada. El equipo revisará tu petición y verificará tu identidad antes de eliminar información.';
+  const {data,error}=await sb.functions.invoke('account_deletion_requests',{body:{action:'request',confirm:true}});
+  if(error)throw error;
+  if(!data || data.status!=='pending')throw new Error('Respuesta inesperada');
+  box.textContent='Solicitud pendiente registrada en el servidor. El equipo verificará tu identidad y te comunicará el resultado; no se eliminará nada automáticamente.';
  }catch(err){
   box.textContent='No se pudo registrar la solicitud. Intenta nuevamente o escribe a alttorres@hotmail.com.';
  }
