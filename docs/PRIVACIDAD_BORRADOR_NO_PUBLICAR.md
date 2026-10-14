@@ -6,7 +6,7 @@ Estado: documento técnico para revisión, NO es una política definitiva ni dem
 
 ## Responsable y contacto
 - Responsable legal: PENDIENTE DE CONFIRMAR.
-- Correo de privacidad y eliminación de cuentas: PENDIENTE DE VERIFICAR.
+- Correo de privacidad, solicitudes de eliminación de cuentas y soporte (provisional, indicado por el responsable): alttorres@hotmail.com. Antes de publicar, comprobar que recibe mensajes y que el responsable acepta su exposición pública.
 - Fecha de vigencia y URL web pública: PENDIENTES.
 
 ## Datos identificados en el código — verificar contra servidor en funcionamiento
@@ -21,7 +21,7 @@ Estado: documento técnico para revisión, NO es una política definitiva ni dem
 2. Inventariar transferencias internacionales y posibles destinatarios.
 3. Definir plazos de retención y copias de respaldo.
 4. Definir tratamiento de menores y consentimiento según el producto.
-5. Confirmar canal de contacto efectivo y tratamiento de solicitudes de acceso, rectificación y supresión.
+5. Comprobar recepción de correo en alttorres@hotmail.com y definir gestión verificable de solicitudes de acceso, rectificación y supresión.
 6. Completar formulario de Seguridad de datos en Play Console con información VERDADERA.
 
 ## Eliminación de cuenta — arquitectura obligatoria
