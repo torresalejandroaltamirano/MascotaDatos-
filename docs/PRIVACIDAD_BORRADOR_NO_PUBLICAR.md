@@ -6,7 +6,7 @@ Estado: documento técnico para revisión, NO es una política definitiva ni dem
 
 ## Responsable y contacto
 - Responsable legal: PENDIENTE DE CONFIRMAR.
-- Correo de privacidad, solicitudes de eliminación de cuentas y soporte (provisional, indicado por el responsable): alttorres@hotmail.com. Antes de publicar, comprobar que recibe mensajes y que el responsable acepta su exposición pública.
+- Correo público provisional de soporte, privacidad y solicitudes de eliminación: alttorres@hotmail.com. Su publicación fue autorizada expresamente por el titular el 14-10-2026. La recepción efectiva de mensajes aún requiere una prueba. El correo podrá sustituirse posteriormente por uno dedicado a MascotaDatos, actualizando la app, la política de privacidad y Google Play Console.
 - Fecha de vigencia y URL web pública: PENDIENTES.
 
 ## Datos identificados en el código — verificar contra servidor en funcionamiento
@@ -17,11 +17,11 @@ Estado: documento técnico para revisión, NO es una política definitiva ni dem
 - Datos técnicos de conectividad: determinar servicios de terceros y registros efectivamente recogidos.
 
 ## Antes de hacer afirmaciones públicas
-1. Confirmar todas las tablas, buckets, permisos RLS y proveedores utilizados. La instancia Supabase aparece INACTIVE; aún NO está validado el tratamiento real de datos.
+1. Supabase se recuperó y figuraba ACTIVE_HEALTHY en la última consulta; revisar tablas, buckets, permisos RLS y proveedores en funcionamiento antes de publicar.
 2. Inventariar transferencias internacionales y posibles destinatarios.
 3. Definir plazos de retención y copias de respaldo.
 4. Definir tratamiento de menores y consentimiento según el producto.
-5. Comprobar recepción de correo en alttorres@hotmail.com y definir gestión verificable de solicitudes de acceso, rectificación y supresión.
+5. Probar la recepción en alttorres@hotmail.com (su publicación ya está autorizada) y definir gestión verificable de solicitudes de acceso, rectificación y supresión.
 6. Completar formulario de Seguridad de datos en Play Console con información VERDADERA.
 
 ## Eliminación de cuenta — arquitectura obligatoria
