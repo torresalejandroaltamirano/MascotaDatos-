@@ -112,7 +112,15 @@ function showRecovery(){"""
 if len(re.findall(prefill_pattern,s))!=1: raise SystemExit("Prefill source no coincide")
 s=re.sub(prefill_pattern,lambda _:replacement,s,count=1)
 change("function showRecovery(){prefillKnownAccount();", "function showRecovery(){")
+# Verificar todas las correcciones históricas ANTES de añadir privacidad.
+if sha(s.encode())!=dst: raise SystemExit("Base 1.3.11 incorrecta: "+sha(s.encode()))
+
+# Solicitudes de eliminación: solo contacto, nunca borrado automático ficticio.
+privacy_card = """<div class="card" id="md-privacy-contact" style="margin-top:12px"><h3>Privacidad y eliminación de cuenta</h3><p class="small">Puedes solicitar la eliminación de tu cuenta y datos asociados. El envío abre tu aplicación de correo; no borra automáticamente los datos.</p><a class="btn" href="mailto:alttorres@hotmail.com?subject=Solicitud%20de%20eliminacion%20de%20cuenta%20MascotaDatos&body=Solicito%20la%20eliminacion%20de%20mi%20cuenta%20MascotaDatos%20y%20sus%20datos%20asociados.">Solicitar eliminación por correo</a><p class="small">No envíes contraseñas ni códigos de verificación. Soporte: alttorres@hotmail.com</p></div>"""
+change('<div id="sessionBox" class="notice">Comprobando sesión…</div>', '<div id="sessionBox" class="notice">Comprobando sesión…</div>'+privacy_card)
+# La sección de Seguridad también ofrece contacto sin duplicar la cuenta.
+change('<h2>🛡️ Seguridad y privacidad</h2>', '<h2>🛡️ Seguridad y privacidad</h2><p class="small">Consultas de privacidad: <a href="mailto:alttorres@hotmail.com?subject=Consulta%20privacidad%20MascotaDatos">alttorres@hotmail.com</a></p>')
 out=s.encode()
-if sha(out)!=dst: raise SystemExit("Result SHA mismatch: "+sha(out))
+if out.count(b'id="md-privacy-contact"')!=1: raise SystemExit("Privacy contact missing or duplicated")
 p.write_bytes(out)
 print("PASS: exact corrected source")
