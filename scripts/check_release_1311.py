@@ -44,7 +44,8 @@ if "Solicitar eliminación por correo" not in html: errors.append("Account delet
 if "mailto:alttorres@hotmail.com?subject=" not in html: errors.append("Privacy contact mailto missing")
 if 'Intent.ACTION_SENDTO' not in java or '"mailto".equalsIgnoreCase(scheme)' not in java: errors.append("Android native mailto intent missing")
 if "async function mdRequestDeletion()" not in html: errors.append("Authenticated deletion request handler missing")
-if "account_deletion_requests" not in html: errors.append("Deletion request table not referenced")
+if "sb.functions.invoke(\'account_deletion_requests\'" not in html: errors.append("Authenticated deletion API not invoked")
+if "sb.from(\'account_deletion_requests\').insert" in html: errors.append("Client must not directly insert arbitrary account deletion IDs")
 if "Registrar solicitud desde mi sesión" not in html: errors.append("Deletion request button missing")
 if "veterinarias" not in html.lower(): errors.append("Veterinarias screen absent")
 # La actualización jamás debe perder Favoritos ni los avisos guardados.
