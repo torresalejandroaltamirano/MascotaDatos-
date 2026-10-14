@@ -120,6 +120,29 @@ privacy_card = """<div class="card" id="md-privacy-contact" style="margin-top:12
 change('<div id="sessionBox" class="notice">Comprobando sesión…</div>', '<div id="sessionBox" class="notice">Comprobando sesión…</div>'+privacy_card)
 # La sección de Seguridad también ofrece contacto sin duplicar la cuenta.
 change('<h2>🛡️ Seguridad y privacidad</h2>', '<h2>🛡️ Seguridad y privacidad</h2><p class="small">Consultas de privacidad: <a href="mailto:alttorres@hotmail.com?subject=Consulta%20privacidad%20MascotaDatos">alttorres@hotmail.com</a></p>')
+# Solicitud autenticada, se almacena con RLS. No borra datos por sí sola.
+change('<div id="sessionBox" class="notice">Comprobando sesión…</div>', '<div id="sessionBox" class="notice">Comprobando sesión…</div>') if False else None
+change('Solicitar eliminación por correo</a>', 'Solicitar eliminación por correo</a><button class="btn" type="button" style="margin-top:10px" onclick="mdRequestDeletion()">Registrar solicitud desde mi sesión</button><div class="small" id="md-deletion-status" role="status" aria-live="polite"></div>')
+deletion_js = """async function mdRequestDeletion(){
+ const box=document.getElementById('md-deletion-status');
+ if(!box)return;
+ const session=window.mascotaSession;
+ if(!session?.user?.id){box.textContent='Inicia sesión en Mi cuenta para registrar una solicitud. También puedes usar el correo de soporte.';return;}
+ if(!confirm('¿Quieres registrar una solicitud de eliminación de tu cuenta y datos asociados? No se eliminará nada automáticamente.'))return;
+ box.textContent='Registrando solicitud...';
+ try{
+  const {error}=await sb.from('account_deletion_requests').insert({user_id:session.user.id});
+  if(error){
+    if(error.code==='23505'){box.textContent='Ya tienes una solicitud pendiente.';return;}
+    throw error;
+  }
+  box.textContent='Solicitud registrada. El equipo revisará tu petición y verificará tu identidad antes de eliminar información.';
+ }catch(err){
+  box.textContent='No se pudo registrar la solicitud. Intenta nuevamente o escribe a alttorres@hotmail.com.';
+ }
+}
+"""
+change('async function logoutAccount(){', deletion_js+'async function logoutAccount(){')
 out=s.encode()
 if out.count(b'id="md-privacy-contact"')!=1: raise SystemExit("Privacy contact missing or duplicated")
 p.write_bytes(out)
