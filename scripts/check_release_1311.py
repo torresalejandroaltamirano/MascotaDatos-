@@ -35,6 +35,10 @@ parsed.feed(html)
 ids = parsed.ids
 dupes = sorted({v for v in ids if ids.count(v) > 1})
 if dupes: errors.append("Duplicate HTML IDs: " + ", ".join(dupes[:25]))
+if "function showRecovery(){prefillKnownAccount();" in html:
+    errors.append("Password recovery must not prefill a known account")
+if re.search(r"function prefillKnownAccount\\(\\)\\s*\\{[^}]*\\.value\\s*=", html):
+    errors.append("Personal email prefill is prohibited")
 if "veterinarias" not in html.lower(): errors.append("Veterinarias screen absent")
 # La actualización jamás debe perder Favoritos ni los avisos guardados.
 for marker in ('<section id="favoritos" class="view">', 'id="favoritesResults"',
