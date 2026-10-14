@@ -39,6 +39,10 @@ if "function showRecovery(){prefillKnownAccount();" in html:
     errors.append("Password recovery must not prefill a known account")
 if re.search(r"function prefillKnownAccount\\(\\)\\s*\\{[^}]*\\.value\\s*=", html):
     errors.append("Personal email prefill is prohibited")
+if html.count('id="md-privacy-contact"') != 1: errors.append("Account deletion contact missing or duplicate")
+if "Solicitar eliminación por correo" not in html: errors.append("Account deletion request button missing")
+if "mailto:alttorres@hotmail.com?subject=" not in html: errors.append("Privacy contact mailto missing")
+if 'Intent.ACTION_SENDTO' not in java or '"mailto".equalsIgnoreCase(scheme)' not in java: errors.append("Android native mailto intent missing")
 if "veterinarias" not in html.lower(): errors.append("Veterinarias screen absent")
 # La actualización jamás debe perder Favoritos ni los avisos guardados.
 for marker in ('<section id="favoritos" class="view">', 'id="favoritesResults"',
