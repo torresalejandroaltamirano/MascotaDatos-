@@ -4,7 +4,7 @@ p=Path("app/src/main/assets/index.html")
 b=p.read_bytes()
 def sha(x): return hashlib.sha1(b"blob "+str(len(x)).encode()+b"\0"+x).hexdigest()
 src="95dce6d4534c52ef5b48b07ef86b2dd2b9605cc2"
-dst="65e86993eb009c1cf166c78e24785ec2c8add24c"
+dst="b30af9f795e59866d257adae419a00e185cb9546"
 if sha(b)==dst: print("already corrected"); quit()
 if sha(b)!=src: raise SystemExit("Source mismatch, do not overwrite")
 s=b.decode()
@@ -100,6 +100,18 @@ needle_city = "   box.innerHTML=h;\n   mdCityLegacyCopiapo(id);"
 if s.count(needle_city) != 2:
     raise SystemExit("Directorio ciudades cambió; no se modifica a ciegas")
 s = s.replace(needle_city, "   mdRenderCity(h);\n   mdCityLegacyCopiapo(id);")
+# Evitar insertar datos personales de otra cuenta en el inicio de sesión.
+import re
+prefill_pattern = r"function prefillKnownAccount\(\)\{[\s\S]*?\}\n\nfunction showRecovery\(\)\{"
+replacement = """function prefillKnownAccount(){
+  // Nunca completar un correo privado o ajeno por defecto.
+  // Cada persona debe ingresar explícitamente su propia dirección.
+}
+
+function showRecovery(){"""
+if len(re.findall(prefill_pattern,s))!=1: raise SystemExit("Prefill source no coincide")
+s=re.sub(prefill_pattern,lambda _:replacement,s,count=1)
+change("function showRecovery(){prefillKnownAccount();", "function showRecovery(){")
 out=s.encode()
 if sha(out)!=dst: raise SystemExit("Result SHA mismatch: "+sha(out))
 p.write_bytes(out)
