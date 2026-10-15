@@ -1,0 +1,46 @@
+name: MascotaDatos - publicar paginas de privacidad
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/*.html'
+      - '.github/workflows/publicar-privacidad.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: mascotadatos-pages
+  cancel-in-progress: false
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Verificar paginas HTML
+        run: |
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          for name in ('index.html','privacidad.html','solicitar-eliminacion-cuenta.html'):
+              p = Path('docs') / name
+              text = p.read_text(encoding='utf-8')
+              if '<html' not in text or '</html>' not in text:
+                  raise SystemExit(f'Página inválida: {name}')
+              if 'alttorres@hotmail.com' not in text:
+                  raise SystemExit(f'Falta contacto verificado: {name}')
+              HTMLParser().feed(text)
+              print('OK:', name)
+          PY
+      - name: Preparar sitio estático
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs
+      - name: Publicar sitio
+        id: deploy
+        uses: actions/deploy-pages@v4
