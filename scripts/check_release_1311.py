@@ -47,6 +47,8 @@ if "async function mdRequestDeletion()" not in html: errors.append("Authenticate
 if "sb.functions.invoke(\'account_deletion_requests\'" not in html: errors.append("Authenticated deletion API not invoked")
 if "sb.from(\'account_deletion_requests\').insert" in html: errors.append("Client must not directly insert arbitrary account deletion IDs")
 if "Registrar solicitud desde mi sesión" not in html: errors.append("Deletion request button missing")
+if "https://torresalejandroaltamirano.github.io/MascotaDatos-/privacidad.html" not in html: errors.append("Public HTTPS privacy link missing")
+if "https://torresalejandroaltamirano.github.io/MascotaDatos-/solicitar-eliminacion-cuenta.html" not in html: errors.append("Public HTTPS account deletion link missing")
 if "veterinarias" not in html.lower(): errors.append("Veterinarias screen absent")
 # La actualización jamás debe perder Favoritos ni los avisos guardados.
 for marker in ('<section id="favoritos" class="view">', 'id="favoritesResults"',
