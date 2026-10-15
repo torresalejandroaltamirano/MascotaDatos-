@@ -120,6 +120,8 @@ privacy_card = """<div class="card" id="md-privacy-contact" style="margin-top:12
 change('<div id="sessionBox" class="notice">Comprobando sesión…</div>', '<div id="sessionBox" class="notice">Comprobando sesión…</div>'+privacy_card)
 # La sección de Seguridad también ofrece contacto sin duplicar la cuenta.
 change('<h2>🛡️ Seguridad y privacidad</h2>', '<h2>🛡️ Seguridad y privacidad</h2><p class="small">Consultas de privacidad: <a href="mailto:alttorres@hotmail.com?subject=Consulta%20privacidad%20MascotaDatos">alttorres@hotmail.com</a></p>')
+# Enlaces públicos comprobados en GitHub Pages (privacidad aún preliminar).
+change('<h3>Privacidad y eliminación de cuenta</h3>', '<h3>Privacidad y eliminación de cuenta</h3><p class="small"><a href="https://torresalejandroaltamirano.github.io/MascotaDatos-/privacidad.html">Información de privacidad</a> · <a href="https://torresalejandroaltamirano.github.io/MascotaDatos-/solicitar-eliminacion-cuenta.html">Cómo solicitar eliminación desde la web</a></p>')
 # Solicitud autenticada, se almacena con RLS. No borra datos por sí sola.
 change('<div id="sessionBox" class="notice">Comprobando sesión…</div>', '<div id="sessionBox" class="notice">Comprobando sesión…</div>') if False else None
 change('Solicitar eliminación por correo</a>', 'Solicitar eliminación por correo</a><button class="btn" type="button" style="margin-top:10px" onclick="mdRequestDeletion()">Registrar solicitud desde mi sesión</button><div class="small" id="md-deletion-status" role="status" aria-live="polite"></div>')
