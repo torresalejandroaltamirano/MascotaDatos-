@@ -15,6 +15,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Verificar configuracion de firma antes de compilar
+        env:
+          MASCOTADATOS_KEYSTORE_BASE64: ${{ secrets.MASCOTADATOS_KEYSTORE_BASE64 }}
+          MASCOTADATOS_KEYSTORE_PASSWORD: ${{ secrets.MASCOTADATOS_KEYSTORE_PASSWORD }}
+          MASCOTADATOS_KEY_ALIAS: ${{ secrets.MASCOTADATOS_KEY_ALIAS }}
+          MASCOTADATOS_KEY_PASSWORD: ${{ secrets.MASCOTADATOS_KEY_PASSWORD }}
+        run: |
+          set -eu
+          missing=0
+          for name in MASCOTADATOS_KEYSTORE_BASE64 MASCOTADATOS_KEYSTORE_PASSWORD MASCOTADATOS_KEY_ALIAS MASCOTADATOS_KEY_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Falta secreto GitHub Actions: $name"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "::error::Firma detenida antes de compilar para proteger la actualizacion 1.3.10"
+            exit 1
+          fi
       - name: Descargar proyecto
         uses: actions/checkout@v4
 
