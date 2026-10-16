@@ -90,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean openExternal(Uri uri) {
         if (uri == null) return false;
         String scheme = uri.getScheme();
+        if ("mailto".equalsIgnoreCase(scheme)) {
+            try { startActivity(new Intent(Intent.ACTION_SENDTO, uri)); return true; }
+            catch (ActivityNotFoundException ignored) { return true; }
+        }
         if ("https".equalsIgnoreCase(scheme) || "http".equalsIgnoreCase(scheme)) {
             String host = uri.getHost();
             if ("appassets.androidplatform.net".equalsIgnoreCase(host)) return false;

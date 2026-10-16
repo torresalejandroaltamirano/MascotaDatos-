@@ -1,0 +1,1 @@
+Correcciones 1.3.11 pendientes de compilación: conservar icono, portada sin v32, unificar Veterinarias por ciudad, corregir navegación/publicidad y normalizar imágenes de ciudades. La fotografía original de la Catedral de Copiapó aún debe recuperarse. No publicar AAB anterior.
