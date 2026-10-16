@@ -165,9 +165,11 @@ change("if(!list.length){h+='<div class=\"notice\">Todavía no hay locales o ser
 # Enlace a una sección de servicios con fichas reales que ya existen, sin controles falsos.
 change("""<div class="card"><div class="icon">✂️</div><b>Peluquerías</b></div>""",
        """<div class="card action" onclick="mdServiceType('peluquerías')"><div class="icon">✂️</div><b>Peluquerías</b></div>""")
+service_labels={'paseadores':'Paseadores','cuidadores':'Cuidadores','transporte':'Transporte','hoteles':'Hoteles','atención a domicilio':'Atención a domicilio'}
 for typeName,icon in [('paseadores','🐕'),('cuidadores','🏠'),('transporte','🚗'),('hoteles','🏨'),('atención a domicilio','🏥')]:
-    change('<div class="card"><div class="icon">'+icon+'</div><b>'+{'paseadores':'Paseadores','cuidadores':'Cuidadores','transporte':'Transporte','hoteles':'Hoteles','atención a domicilio':'Atención a domicilio'}[typeName]+'</b></div>',
-           '<div class="card action" onclick="mdServiceType(\\''+typeName+'\\')"><div class="icon">'+icon+'</div><b>'+{'paseadores':'Paseadores','cuidadores':'Cuidadores','transporte':'Transporte','hoteles':'Hoteles','atención a domicilio':'Atención a domicilio'}[typeName]+'</b></div>')
+    label=service_labels[typeName]
+    change(f'<div class="card"><div class="icon">{icon}</div><b>{label}</b></div>',
+           f'<div class="card action" onclick="mdServiceType(&quot;{typeName}&quot;)"><div class="icon">{icon}</div><b>{label}</b></div>')
 change("""</section>
 
 
