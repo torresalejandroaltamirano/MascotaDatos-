@@ -51,6 +51,18 @@ jobs:
           "$AAPT2" dump resources "$APK" > /tmp/md1311-resources.txt
           grep -q 'ic_launcher' /tmp/md1311-resources.txt
           echo "PASS: APK con paquete, version e icono oficial presentes"
+      - name: Validar rechazo de APK Release sin firma con apksigner
+        run: |
+          set -euo pipefail
+          APKSIGNER="$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          test -x "$APKSIGNER"
+          APK="app/build/outputs/apk/release/app-release-unsigned.apk"
+          if "$APKSIGNER" verify --verbose "$APK" > /tmp/md-apksigner.txt 2>&1; then
+            echo "ERROR: el APK marcado sin firma fue aceptado como firmado"
+            cat /tmp/md-apksigner.txt
+            exit 1
+          fi
+          echo "PASS: el APK sin firma se rechaza; no distribuir este artefacto"
       - name: Guardar APK y AAB Release SIN FIRMAR
         uses: actions/upload-artifact@v4
         with:
