@@ -143,6 +143,57 @@ deletion_js = """async function mdRequestDeletion(){
 }
 """
 change('async function logoutAccount(){', deletion_js+'async function logoutAccount(){')
+
+# Correcciones de directorios 1.3.11, sin tocar navegación ya aprobada.
+change(".select('id,name,address,phone,category,verification_status,updated_at,cities(name)').eq('cities.name',city).order('name')",
+       ".select('id,name,address,phone,category,verification_status,updated_at,cities!inner(name)').eq('cities.name',city).order('name')")
+change("const list=(data||[]).filter(x=>(x.category||'').toLowerCase()!=='veterinaria');",
+       """const list=(data||[]).filter(x=>
+      x.cities?.name===city &&
+      (x.category||'').toLowerCase()!=='veterinaria'
+    );""")
+# Asegurar que los locales ya incluidos para Copiapó siguen visibles al haber pocos datos en línea.
+change("if(!list.length){h+='<div class=\"notice\">Todavía no hay locales o servicios registrados en la base online para esta ciudad.</div>';}",
+       """if(!list.length){
+      const fallback=shops.filter(x=>x.ciudad===city);
+      if(fallback.length){
+        h+='<div class="notice">Directorio local de respaldo; datos sujetos a verificación.</div><div class="list">'+fallback.map(x=>'<div class="item"><h3>'+esc(x.nombre)+'</h3><div class="meta">📍 '+esc(x.direccion)+'<br>📞 '+esc(x.telefono||'Por verificar')+'</div></div>').join('')+'</div>';
+      }else{
+        h+='<div class="notice">Aún no hay locales verificados de '+esc(city)+'. No mostramos locales de otras comunas.</div>';
+      }
+    }""")
+# Enlace a una sección de servicios con fichas reales que ya existen, sin controles falsos.
+change("""<div class="card"><div class="icon">✂️</div><b>Peluquerías</b></div>""",
+       """<div class="card action" onclick="mdServiceType('peluquerías')"><div class="icon">✂️</div><b>Peluquerías</b></div>""")
+for typeName,icon in [('paseadores','🐕'),('cuidadores','🏠'),('transporte','🚗'),('hoteles','🏨'),('atención a domicilio','🏥')]:
+    change('<div class="card"><div class="icon">'+icon+'</div><b>'+{'paseadores':'Paseadores','cuidadores':'Cuidadores','transporte':'Transporte','hoteles':'Hoteles','atención a domicilio':'Atención a domicilio'}[typeName]+'</b></div>',
+           '<div class="card action" onclick="mdServiceType(\\''+typeName+'\\')"><div class="icon">'+icon+'</div><b>'+{'paseadores':'Paseadores','cuidadores':'Cuidadores','transporte':'Transporte','hoteles':'Hoteles','atención a domicilio':'Atención a domicilio'}[typeName]+'</b></div>')
+change("""</section>
+
+
+<section id="busquedaGeneral" class="view">""",
+       """  <div id="md-service-results" class="list" role="status" aria-live="polite" style="margin-top:16px"></div>
+</section>
+
+
+<section id="busquedaGeneral" class="view">""")
+service_js = """function mdServiceType(tipo){
+ const box=document.getElementById('md-service-results');
+ if(!box)return;
+ const known={
+   'peluquerías':[['Estética Canina Copiapó','San Antonio 3167, Copiapó','+56 9 5428 8889'],
+                  ['Isacura Spa Canino','Pl. Wheelwright 1252, Copiapó','+56 9 6765 3013'],
+                  ['Sammy Pets','Av. El Palomar 1936, Copiapó','+56 9 4553 2892']]
+ };
+ const found=known[tipo]||[];
+ box.innerHTML='<h3>'+esc(tipo.charAt(0).toUpperCase()+tipo.slice(1))+'</h3>'+
+ (found.length?found.map(x=>'<div class="item"><h3>'+esc(x[0])+'</h3><div class="meta">📍 '+esc(x[1])+'<br>📞 '+esc(x[2])+'<br>Datos de referencia: confirmar antes de acudir.</div></div>').join(''):
+ '<div class="notice">Todavía no hay servicios de esta categoría verificados en el directorio. No se muestran datos inventados.</div>');
+}
+"""
+change("function doGlobalSearch(){",service_js+"function doGlobalSearch(){")
+change('id="globalSearch" placeholder=', 'id="globalSearch" type="search" style="display:block;width:100%;min-width:0;box-sizing:border-box;padding:14px;font-size:16px;border-radius:12px" placeholder=')
+
 out=s.encode()
 if out.count(b'id="md-privacy-contact"')!=1: raise SystemExit("Privacy contact missing or duplicated")
 p.write_bytes(out)
