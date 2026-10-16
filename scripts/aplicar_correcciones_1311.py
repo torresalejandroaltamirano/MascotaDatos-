@@ -162,6 +162,22 @@ change("if(!list.length){h+='<div class=\"notice\">Todavía no hay locales o ser
         h+='<div class="notice">Aún no hay locales verificados de '+esc(city)+'. No mostramos locales de otras comunas.</div>';
       }
     }""")
+# Ampliación de Copiapó con direcciones publicadas por distribuidores y tiendas;
+# mostrar como referencias a confirmar, sin atribuirles vigencia contractual.
+change('const shops = [', '''const shops = [
+{"ciudad":"Copiapó","nombre":"Mundo Mascotas — Patio Center San Fernando","direccion":"Los Carrera 4723, local 13, Copiapó","telefono":"+56 9 2035 8935","categoria":"Pet shop","estado":"referencia_publica"},
+{"ciudad":"Copiapó","nombre":"SuperZoo Copiapó","direccion":"Mall Plaza Copiapó, Maipú 109, Copiapó","categoria":"Pet shop","estado":"referencia_publica"},
+{"ciudad":"Copiapó","nombre":"Animall’s — Los Carrera","direccion":"Los Carrera 4723, local 9, Copiapó","categoria":"Pet shop","estado":"referencia_publica"},''')
+# Mostrar los locales de respaldo de Copiapó incluso si la base online tiene una sola ficha;
+# deduplicar por nombre, no repetir otros municipios.
+change("    box.innerHTML=h;\n  }catch(err){", """    if(list.length && city==='Copiapó'){
+      const canon=x=>String(x||'').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+      const names=new Set(list.map(x=>canon(x.name)));
+      const extras=shops.filter(x=>x.ciudad===city && !names.has(canon(x.nombre)));
+      if(extras.length)h+='<div class="notice">Más locales de Copiapó incluidos en el directorio local. Confirmar datos antes de acudir.</div><div class="list">'+extras.map(x=>'<div class="item"><h3>'+esc(x.nombre)+'</h3><div class="meta">📍 '+esc(x.direccion)+'<br>📞 '+esc(x.telefono||'Por verificar')+'</div></div>').join('')+'</div>';
+    }
+    box.innerHTML=h;
+  }catch(err){""")
 # Enlace a una sección de servicios con fichas reales que ya existen, sin controles falsos.
 change("""<div class="card"><div class="icon">✂️</div><b>Peluquerías</b></div>""",
        """<div class="card action" onclick="mdServiceType('peluquerías')"><div class="icon">✂️</div><b>Peluquerías</b></div>""")
