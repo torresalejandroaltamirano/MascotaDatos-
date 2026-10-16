@@ -37,6 +37,20 @@ jobs:
         run: gradle assembleDebug --stacktrace
       - name: Compilar APK y AAB Release sin firma (solo verificaciones)
         run: gradle assembleRelease bundleRelease --stacktrace
+      - name: Verificar manifiesto y recursos del APK Release compilado
+        run: |
+          set -euo pipefail
+          APK="app/build/outputs/apk/release/app-release-unsigned.apk"
+          test -s "$APK"
+          AAPT2="$ANDROID_HOME/build-tools/36.0.0/aapt2"
+          test -x "$AAPT2"
+          "$AAPT2" dump badging "$APK" > /tmp/md1311-badging.txt
+          grep -q "package: name='cl.mascotadatos.app' versionCode='1311' versionName='1.3.11'" /tmp/md1311-badging.txt
+          grep -q "^application: label=" /tmp/md1311-badging.txt
+          grep -q "icon=" /tmp/md1311-badging.txt
+          "$AAPT2" dump resources "$APK" > /tmp/md1311-resources.txt
+          grep -q 'ic_launcher' /tmp/md1311-resources.txt
+          echo "PASS: APK con paquete, version e icono oficial presentes"
       - name: Guardar APK y AAB Release SIN FIRMAR
         uses: actions/upload-artifact@v4
         with:
