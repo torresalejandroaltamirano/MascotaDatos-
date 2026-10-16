@@ -62,6 +62,7 @@ if html.count('alt="Catedral de Copiapó"') != 1: errors.append("Official Copiap
 if 'width:98px;height:68px;object-fit:contain' not in html: errors.append("Copiapó cathedral thumbnail not proportionate")
 if "logo" not in html.lower(): errors.append("Logo refs absent")
 if 'android:icon="@mipmap/ic_launcher"' not in manifest_path.read_text(encoding="utf-8"): errors.append("Official launcher icon not declared in Android manifest")
+if 'android:screenOrientation="portrait"' not in manifest_path.read_text(encoding="utf-8"): errors.append("Portrait orientation not preserved from installed 1.3.10")
 adaptive_icon_path = root / "app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml"
 official_logo_path = root / "app/src/main/res/drawable-nodpi/logo_mascotadatos.png"
 if not adaptive_icon_path.is_file() or '@drawable/logo_mascotadatos' not in adaptive_icon_path.read_text(encoding="utf-8"):
