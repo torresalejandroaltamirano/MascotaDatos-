@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private ConsentInformation consent;
     private boolean adsStarted;
     private boolean destroyed;
+    private boolean refreshingAssets;
 
     private void updatePrivacyOptions() {
         if (destroyed) return;
@@ -118,6 +119,19 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         webView.setWebViewClient(new WebViewClient() {
+            @Override public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (destroyed || !url.startsWith("https://appassets.androidplatform.net/assets/")) return;
+                android.content.SharedPreferences prefs = getSharedPreferences("asset_updates", MODE_PRIVATE);
+                if (refreshingAssets) { prefs.edit().putInt("version", BuildConfig.VERSION_CODE).apply(); return; }
+                if (prefs.getInt("version", 0) >= BuildConfig.VERSION_CODE) return;
+                refreshingAssets = true;
+                // Retirar solo caché de la interfaz antigua: conservar localStorage, sesión y favoritos.
+                view.evaluateJavascript("(async function(){try{" +
+                    "if(navigator.serviceWorker){const r=await navigator.serviceWorker.getRegistrations();await Promise.all(r.map(x=>x.unregister()));}" +
+                    "if(window.caches){const k=await caches.keys();await Promise.all(k.map(x=>caches.delete(x)));}" +
+                    "}finally{location.replace('https://appassets.androidplatform.net/assets/index.html?build=" + BuildConfig.VERSION_CODE + "');}})()", null);
+            }
             @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return loader.shouldInterceptRequest(request.getUrl());
             }
