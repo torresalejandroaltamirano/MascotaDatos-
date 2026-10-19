@@ -1,0 +1,11 @@
+{
+  "name": "mascotadatos-regression",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node tests/directory-regression.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  }
+}
