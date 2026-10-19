@@ -22,3 +22,13 @@ Fecha de auditoría: 2026-10-16.
 - Actualizar la APK 1.3.10 instalada **sin desinstalar**, preservar Favoritos, inicio de sesión y datos locales; requiere una prueba en Android real.
 - `apksigner` y herramientas oficiales no están instaladas en este entorno, por lo que falta esa verificación oficial.
 - El AAB compilado y firmado **no implica** aceptación por Google Play Console. Comprobar aceptación y requisitos de prueba/política antes de anunciar publicación.
+
+## Avance de monetización — 2026-10-19
+- AdMob: app MascotaDatos creada en la cuenta principal sin 22.
+- App ID: `ca-app-pub-2369519530952827~6693315056`.
+- Banner inferior: `ca-app-pub-2369519530952827/7526305566`.
+- Integración nativa: Mobile Ads 24.7.0 y UMP 4.0.0; banner adaptable bajo WebView, opción de privacidad cuando corresponde y solicitudes condicionadas por canRequestAds.
+- Debug utiliza IDs oficiales de prueba; release usa los IDs propios. Se preservan origen de WebView, almacenamiento y navegación.
+- Google Play: aplicación existente `cl.mascotadatos.app`, ID 4973103208543562310, en borrador; declaración de anuncios guardada.
+- La compilación de validación no acredita firma de actualización, prueba en Android, aprobación de AdMob ni publicación.
+- Pendientes: mensaje UMP propio y política de privacidad final; declaraciones de datos; firma original; actualización en Android real; pruebas de borrado descritas arriba; configuración y prueba cerrada de Play Console.
