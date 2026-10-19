@@ -3,6 +3,18 @@ package cl.mascotadatos.app;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.Button;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.ConsentRequestParameters;
+import com.google.android.ump.UserMessagingPlatform;
 import android.os.Bundle;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -18,6 +30,70 @@ import androidx.webkit.WebViewAssetLoader;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
+    private AdView banner;
+    private ConsentInformation consent;
+    private boolean adsStarted;
+    private boolean destroyed;
+
+    private void updatePrivacyOptions() {
+        if (destroyed) return;
+        findViewById(R.id.privacy_options).setVisibility(
+            consent.getPrivacyOptionsRequirementStatus() ==
+                ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED ? View.VISIBLE : View.GONE);
+    }
+
+    private void startAdsIfAllowed() {
+        if (destroyed || adsStarted || !consent.canRequestAds()) return;
+        adsStarted = true;
+        MobileAds.initialize(this, status -> runOnUiThread(() -> {
+            if (destroyed || !consent.canRequestAds()) return;
+            FrameLayout container = findViewById(R.id.banner_container);
+            container.post(() -> {
+                if (destroyed || !consent.canRequestAds()) return;
+                int width = Math.round(container.getWidth() / getResources().getDisplayMetrics().density);
+                if (width <= 0) width = getResources().getConfiguration().screenWidthDp;
+                banner = new AdView(this);
+                banner.setAdUnitId(BuildConfig.BANNER_AD_UNIT_ID);
+                banner.setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, width));
+                banner.setAdListener(new AdListener() {
+                    @Override public void onAdLoaded() {
+                        if (!destroyed) container.setVisibility(View.VISIBLE);
+                    }
+                    @Override public void onAdFailedToLoad(LoadAdError error) {
+                        if (!destroyed) container.setVisibility(View.GONE);
+                    }
+                });
+                container.addView(banner);
+                banner.loadAd(new AdRequest.Builder().build());
+            });
+        }));
+    }
+
+    private void configureAds() {
+        consent = UserMessagingPlatform.getConsentInformation(this);
+        Button privacy = findViewById(R.id.privacy_options);
+        privacy.setOnClickListener(view -> {
+            if (banner != null) { banner.destroy(); banner = null; }
+            FrameLayout container = findViewById(R.id.banner_container);
+            container.removeAllViews();
+            container.setVisibility(View.GONE);
+            adsStarted = false;
+            UserMessagingPlatform.showPrivacyOptionsForm(this, error -> {
+                updatePrivacyOptions();
+                startAdsIfAllowed();
+            });
+        });
+        consent.requestConsentInfoUpdate(this, new ConsentRequestParameters.Builder().build(), () -> {
+            if (destroyed) return;
+            updatePrivacyOptions();
+            UserMessagingPlatform.loadAndShowConsentFormIfRequired(this, error -> {
+                updatePrivacyOptions();
+                startAdsIfAllowed();
+            });
+        }, error -> { updatePrivacyOptions(); startAdsIfAllowed(); });
+        startAdsIfAllowed();
+    }
+
     private ValueCallback<Uri[]> fileCallback;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
         setContentView(R.layout.activity_main);
         webView = findViewById(R.id.webview);
+        configureAds();
 
         WebSettings s = webView.getSettings();
         s.setJavaScriptEnabled(true);
@@ -116,7 +193,19 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
+    @Override protected void onPause() {
+        if (banner != null) banner.pause();
+        super.onPause();
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (banner != null) banner.resume();
+    }
+
     @Override protected void onDestroy() {
+        destroyed = true;
+        if (banner != null) { banner.destroy(); banner = null; }
         if (webView != null) {
             webView.stopLoading();
             webView.setWebChromeClient(null);
