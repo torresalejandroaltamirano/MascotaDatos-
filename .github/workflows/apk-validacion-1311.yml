@@ -28,6 +28,14 @@ jobs:
         run: python3 scripts/aplicar_correcciones_1311.py
       - name: Validar codigo
         run: python3 scripts/check_release_1311.py
+      - name: Node para pruebas funcionales del directorio
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Probar ciudades, servicios y fichas sin escribir datos reales
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm test
       - name: Reparar formato de iconos Android
         run: |
           javac tools/FixLauncherIcons.java
