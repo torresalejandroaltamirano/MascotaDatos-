@@ -77,7 +77,7 @@
   document.querySelectorAll('#inicio .card.action').forEach(el=>{
     const title=el.querySelector('b');if(!title)return;
     if(title.textContent.trim()==='Veterinarias'){title.textContent='Directorio';const small=el.querySelector('.small');if(small)small.textContent='Ciudad · veterinarias · tiendas e insumos';}
-    else if(/^(Insumos|Tiendas e insumos)$/.test(title.textContent.trim()))el.remove();
+    else if(el.getAttribute('onclick')==="show('insumosCiudad')")el.remove();
   });
   const navVet=document.querySelector('nav button[data-view="veterinarias"]');if(navVet)navVet.innerHTML='<span>🏥</span>Directorio';
   const navShop=document.querySelector('nav button[data-view="insumos"]');if(navShop){navShop.innerHTML='<span>✂️</span>Servicios';navShop.setAttribute('onclick',"show('servicios2')");}
