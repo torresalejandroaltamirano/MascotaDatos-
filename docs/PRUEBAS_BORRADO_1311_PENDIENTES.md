@@ -32,3 +32,7 @@ Fecha de auditoría: 2026-10-16.
 - Google Play: aplicación existente `cl.mascotadatos.app`, ID 4973103208543562310, en borrador; declaración de anuncios guardada.
 - La compilación de validación no acredita firma de actualización, prueba en Android, aprobación de AdMob ni publicación.
 - Pendientes: mensaje UMP propio y política de privacidad final; declaraciones de datos; firma original; actualización en Android real; pruebas de borrado descritas arriba; configuración y prueba cerrada de Play Console.
+
+### Firma local recuperada y verificada — 2026-10-19
+El respaldo original pudo abrirse con sus credenciales conservadas; no se guardaron secretos en GitHub. Se firmaron los artefactos del run 39206262624 (commit 66a42cd47693db5231a997a88b9520d48e265d2d). APK: apksigner oficial Build Tools 36 verifica v2/v3 y certificado CADAF8B58B5055A83312D9C4531AE574B9EE68FBDE615AB1BA1401D4225F9FCC; zipalign -c -P 16 4 aprobado. AAB: jarsigner verifica y keytool confirma el mismo certificado. Los archivos se denominan MascotaDatos_1.3.11_AdMob_FIRMADO.apk y MascotaDatos_1.3.11_AdMob_FIRMADO.aab.
+Esto resuelve la firma de estos archivos, pero no configura los secretos de Actions ni acredita instalación en Android, funcionamiento de anuncios, borrado o publicación. La próxima prueba es actualizar 1.3.10 sin desinstalar ni borrar datos.
