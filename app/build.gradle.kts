@@ -15,6 +15,17 @@ android {
         versionName = "1.3.11"
     }
 
+    buildTypes {
+        getByName("debug") {
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
+            buildConfigField("String", "BANNER_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
+        }
+        getByName("release") {
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-2369519530952827~6693315056"
+            buildConfigField("String", "BANNER_AD_UNIT_ID", "\"ca-app-pub-2369519530952827/7526305566\"")
+        }
+    }
+
     buildFeatures {
         buildConfig = true
     }
@@ -32,6 +43,8 @@ android {
 }
 
 dependencies {
+    implementation("com.google.android.gms:play-services-ads:24.7.0")
+    implementation("com.google.android.ump:user-messaging-platform:4.0.0")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.activity:activity-ktx:1.10.1")
