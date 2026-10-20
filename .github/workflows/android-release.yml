@@ -1,4 +1,4 @@
-name: Generar MascotaDatos 1.3.13 firmado
+name: Generar MascotaDatos 1.3.16 firmado
 
 on:
   workflow_dispatch:
@@ -103,7 +103,7 @@ jobs:
           test -n "$MASCOTADATOS_KEY_ALIAS"
           test -n "$MASCOTADATOS_KEY_PASSWORD"
           UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
-          SIGNED_APK="app/build/outputs/apk/release/MascotaDatos-1.3.13-signed.apk"
+          SIGNED_APK="app/build/outputs/apk/release/MascotaDatos-1.3.16-signed.apk"
           $ANDROID_HOME/build-tools/36.0.0/apksigner sign \
             --ks mascotadatos-release.jks \
             --ks-key-alias "$MASCOTADATOS_KEY_ALIAS" \
@@ -139,19 +139,19 @@ jobs:
 
       - name: Generar hashes SHA-256
         run: |
-          sha256sum app/build/outputs/apk/release/MascotaDatos-1.3.13-signed.apk > MascotaDatos-1.3.13-SHA256.txt
-          sha256sum app/build/outputs/bundle/release/app-release.aab >> MascotaDatos-1.3.13-SHA256.txt
-          cat MascotaDatos-1.3.13-SHA256.txt
+          sha256sum app/build/outputs/apk/release/MascotaDatos-1.3.16-signed.apk > MascotaDatos-1.3.16-SHA256.txt
+          sha256sum app/build/outputs/bundle/release/app-release.aab >> MascotaDatos-1.3.16-SHA256.txt
+          cat MascotaDatos-1.3.16-SHA256.txt
 
       - name: Comprobar AAB firmado y APK publicada
         run: |
           set -euo pipefail
-          test -s app/build/outputs/apk/release/MascotaDatos-1.3.13-signed.apk
+          test -s app/build/outputs/apk/release/MascotaDatos-1.3.16-signed.apk
           test -s app/build/outputs/bundle/release/app-release.aab
           jarsigner -verify app/build/outputs/bundle/release/app-release.aab
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify app/build/outputs/apk/release/MascotaDatos-1.3.13-signed.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify app/build/outputs/apk/release/MascotaDatos-1.3.16-signed.apk
           EXPECTED="CADAF8B58B5055A83312D9C4531AE574B9EE68FBDE615AB1BA1401D4225F9FCC"
-          ACTUAL="$("$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs app/build/outputs/apk/release/MascotaDatos-1.3.13-signed.apk | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -n 1 | tr -d ':' | tr '[:lower:]' '[:upper:]')"
+          ACTUAL="$("$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs app/build/outputs/apk/release/MascotaDatos-1.3.16-signed.apk | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -n 1 | tr -d ':' | tr '[:lower:]' '[:upper:]')"
           if [ "$ACTUAL" != "$EXPECTED" ]; then
             echo "::error::APK final incompatible con certificado de version 1.3.10."
             exit 1
@@ -164,9 +164,9 @@ jobs:
       - name: Guardar APK, AAB y hashes
         uses: actions/upload-artifact@v4
         with:
-          name: MascotaDatos-1.3.13-RELEASE
+          name: MascotaDatos-1.3.16-RELEASE
           path: |
-            app/build/outputs/apk/release/MascotaDatos-1.3.13-signed.apk
+            app/build/outputs/apk/release/MascotaDatos-1.3.16-signed.apk
             app/build/outputs/bundle/release/app-release.aab
-            MascotaDatos-1.3.13-SHA256.txt
+            MascotaDatos-1.3.16-SHA256.txt
 
