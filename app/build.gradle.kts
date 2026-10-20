@@ -12,8 +12,8 @@ android {
         applicationId = "cl.mascotadatos.app"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1312
-        versionName = "1.3.12"
+        versionCode = 1313
+        versionName = "1.3.13"
     }
 
     buildTypes {
