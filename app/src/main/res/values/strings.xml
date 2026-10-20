@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MascotaDatos</string>
+    <string name="ad_privacy_options">Privacidad de los anuncios</string>
 </resources>

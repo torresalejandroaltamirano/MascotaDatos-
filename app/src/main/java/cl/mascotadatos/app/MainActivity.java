@@ -3,6 +3,18 @@ package cl.mascotadatos.app;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.Button;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.ConsentRequestParameters;
+import com.google.android.ump.UserMessagingPlatform;
 import android.os.Bundle;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -18,6 +30,71 @@ import androidx.webkit.WebViewAssetLoader;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
+    private AdView banner;
+    private ConsentInformation consent;
+    private boolean adsStarted;
+    private boolean destroyed;
+    private boolean refreshingAssets;
+
+    private void updatePrivacyOptions() {
+        if (destroyed) return;
+        findViewById(R.id.privacy_options).setVisibility(
+            consent.getPrivacyOptionsRequirementStatus() ==
+                ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED ? View.VISIBLE : View.GONE);
+    }
+
+    private void startAdsIfAllowed() {
+        if (destroyed || adsStarted || !consent.canRequestAds()) return;
+        adsStarted = true;
+        MobileAds.initialize(this, status -> runOnUiThread(() -> {
+            if (destroyed || !consent.canRequestAds()) return;
+            FrameLayout container = findViewById(R.id.banner_container);
+            container.post(() -> {
+                if (destroyed || !consent.canRequestAds()) return;
+                int width = Math.round(container.getWidth() / getResources().getDisplayMetrics().density);
+                if (width <= 0) width = getResources().getConfiguration().screenWidthDp;
+                banner = new AdView(this);
+                banner.setAdUnitId(BuildConfig.BANNER_AD_UNIT_ID);
+                banner.setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, width));
+                banner.setAdListener(new AdListener() {
+                    @Override public void onAdLoaded() {
+                        if (!destroyed) container.setVisibility(View.VISIBLE);
+                    }
+                    @Override public void onAdFailedToLoad(LoadAdError error) {
+                        if (!destroyed) container.setVisibility(View.GONE);
+                    }
+                });
+                container.addView(banner);
+                banner.loadAd(new AdRequest.Builder().build());
+            });
+        }));
+    }
+
+    private void configureAds() {
+        consent = UserMessagingPlatform.getConsentInformation(this);
+        Button privacy = findViewById(R.id.privacy_options);
+        privacy.setOnClickListener(view -> {
+            if (banner != null) { banner.destroy(); banner = null; }
+            FrameLayout container = findViewById(R.id.banner_container);
+            container.removeAllViews();
+            container.setVisibility(View.GONE);
+            adsStarted = false;
+            UserMessagingPlatform.showPrivacyOptionsForm(this, error -> {
+                updatePrivacyOptions();
+                startAdsIfAllowed();
+            });
+        });
+        consent.requestConsentInfoUpdate(this, new ConsentRequestParameters.Builder().build(), () -> {
+            if (destroyed) return;
+            updatePrivacyOptions();
+            UserMessagingPlatform.loadAndShowConsentFormIfRequired(this, error -> {
+                updatePrivacyOptions();
+                startAdsIfAllowed();
+            });
+        }, error -> { updatePrivacyOptions(); startAdsIfAllowed(); });
+        startAdsIfAllowed();
+    }
+
     private ValueCallback<Uri[]> fileCallback;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
         setContentView(R.layout.activity_main);
         webView = findViewById(R.id.webview);
+        configureAds();
 
         WebSettings s = webView.getSettings();
         s.setJavaScriptEnabled(true);
@@ -41,6 +119,19 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         webView.setWebViewClient(new WebViewClient() {
+            @Override public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (destroyed || !url.startsWith("https://appassets.androidplatform.net/assets/")) return;
+                android.content.SharedPreferences prefs = getSharedPreferences("asset_updates", MODE_PRIVATE);
+                if (refreshingAssets) { prefs.edit().putInt("version", BuildConfig.VERSION_CODE).apply(); return; }
+                if (prefs.getInt("version", 0) >= BuildConfig.VERSION_CODE) return;
+                refreshingAssets = true;
+                // Retirar solo caché de la interfaz antigua: conservar localStorage, sesión y favoritos.
+                view.evaluateJavascript("(async function(){try{" +
+                    "if(navigator.serviceWorker){const r=await navigator.serviceWorker.getRegistrations();await Promise.all(r.map(x=>x.unregister()));}" +
+                    "if(window.caches){const k=await caches.keys();await Promise.all(k.map(x=>caches.delete(x)));}" +
+                    "}finally{location.replace('https://appassets.androidplatform.net/assets/index.html?build=" + BuildConfig.VERSION_CODE + "');}})()", null);
+            }
             @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return loader.shouldInterceptRequest(request.getUrl());
             }
@@ -90,6 +181,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean openExternal(Uri uri) {
         if (uri == null) return false;
         String scheme = uri.getScheme();
+        if ("mailto".equalsIgnoreCase(scheme)) {
+            try { startActivity(new Intent(Intent.ACTION_SENDTO, uri)); return true; }
+            catch (ActivityNotFoundException ignored) { return true; }
+        }
         if ("https".equalsIgnoreCase(scheme) || "http".equalsIgnoreCase(scheme)) {
             String host = uri.getHost();
             if ("appassets.androidplatform.net".equalsIgnoreCase(host)) return false;
@@ -112,7 +207,19 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
+    @Override protected void onPause() {
+        if (banner != null) banner.pause();
+        super.onPause();
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (banner != null) banner.resume();
+    }
+
     @Override protected void onDestroy() {
+        destroyed = true;
+        if (banner != null) { banner.destroy(); banner = null; }
         if (webView != null) {
             webView.stopLoading();
             webView.setWebChromeClient(null);
