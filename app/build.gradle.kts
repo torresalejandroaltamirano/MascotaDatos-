@@ -1,4 +1,5 @@
 plugins {
+    id("org.jetbrains.kotlin.plugin.compose")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
@@ -28,6 +29,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        compose = true
     }
 
     packaging {
@@ -42,7 +44,14 @@ android {
     }
 }
 
+kotlin { jvmToolchain(17) }
+
 dependencies {
+    implementation(platform("androidx.compose:compose-bom:2025.04.01"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("com.google.android.gms:play-services-ads:24.7.0")
     implementation("com.google.android.ump:user-messaging-platform:4.0.0")
     implementation("androidx.core:core-ktx:1.17.0")

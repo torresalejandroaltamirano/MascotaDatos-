@@ -30,6 +30,38 @@ import androidx.webkit.WebViewAssetLoader;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
+    private androidx.compose.ui.platform.ComposeView composeHome;
+    private boolean pageReady;
+    private String pendingRoute;
+
+    private void openSection(String route) {
+        if (!pageReady) { pendingRoute = route; return; }
+        // El único argumento procede del enum nativo; JSON evita interpolación de código.
+        String id = org.json.JSONObject.quote(route);
+        webView.evaluateJavascript("(function(){if(typeof show!=='function'||!show(" + id + "))return false;" +
+            "window.scrollTo(0,0);" +
+            "if(" + id + "==='favoritos'&&typeof loadFavorites==='function')loadFavorites();" +
+            "if(" + id + "==='notificaciones'&&typeof loadNotifications==='function')loadNotifications();" +
+            "return true;})()", result -> {
+                if ("true".equals(result)) setHomeVisible(false);
+            });
+    }
+
+    private void setHomeVisible(boolean visible) {
+        composeHome.setVisibility(visible ? View.VISIBLE : View.GONE);
+        webView.setImportantForAccessibility(visible ? View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS : View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+    }
+
+    private void connectHome() {
+        pageReady = true;
+        // Solo observar navegación de la página local; no se expone un JavascriptInterface.
+        webView.evaluateJavascript("(function(){if(window.mdNativeObserver)return;" +
+            "const notify=()=>{const v=document.querySelector('.view.active');" +
+            "document.title='MascotaDatos:native:'+(v?v.id:'inicio');};" +
+            "window.mdNativeObserver=new MutationObserver(notify);" +
+            "document.querySelectorAll('.view').forEach(v=>window.mdNativeObserver.observe(v,{attributes:true,attributeFilter:['class']}));notify();})()", null);
+        if (pendingRoute != null) { String route = pendingRoute; pendingRoute = null; openSection(route); }
+    }
     private AdView banner;
     private ConsentInformation consent;
     private boolean adsStarted;
@@ -102,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
         setContentView(R.layout.activity_main);
         webView = findViewById(R.id.webview);
+        composeHome = findViewById(R.id.compose_home);
+        cl.mascotadatos.app.ui.MascotaHomeHost.install(composeHome, this::openSection);
         configureAds();
 
         WebSettings s = webView.getSettings();
@@ -123,8 +157,8 @@ public class MainActivity extends AppCompatActivity {
                 super.onPageFinished(view, url);
                 if (destroyed || !url.startsWith("https://appassets.androidplatform.net/assets/")) return;
                 android.content.SharedPreferences prefs = getSharedPreferences("asset_updates", MODE_PRIVATE);
-                if (refreshingAssets) { prefs.edit().putInt("version", BuildConfig.VERSION_CODE).apply(); return; }
-                if (prefs.getInt("version", 0) >= BuildConfig.VERSION_CODE) return;
+                if (refreshingAssets) { prefs.edit().putInt("version", BuildConfig.VERSION_CODE).apply(); connectHome(); return; }
+                if (prefs.getInt("version", 0) >= BuildConfig.VERSION_CODE) { connectHome(); return; }
                 refreshingAssets = true;
                 // Retirar solo caché de la interfaz antigua: conservar localStorage, sesión y favoritos.
                 view.evaluateJavascript("(async function(){try{" +
@@ -144,6 +178,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         webView.setWebChromeClient(new WebChromeClient() {
+            @Override public void onReceivedTitle(WebView view, String title) {
+                super.onReceivedTitle(view, title);
+                if (pageReady && view.getUrl() != null &&
+                    view.getUrl().startsWith("https://appassets.androidplatform.net/assets/") &&
+                    title != null && title.startsWith("MascotaDatos:native:")) {
+                    setHomeVisible("MascotaDatos:native:inicio".equals(title));
+                }
+            }
             @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
                 if (fileCallback != null) fileCallback.onReceiveValue(null);
                 fileCallback = callback;
@@ -163,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
-                if (webView == null) { finish(); return; }
+                if (webView == null || composeHome.getVisibility() == View.VISIBLE) { finish(); return; }
                 webView.evaluateJavascript(
                     "(function(){try{" +
                     "if(typeof window.mascotaDatosBack==='function') return window.mascotaDatosBack()?'handled':'unhandled';" +
