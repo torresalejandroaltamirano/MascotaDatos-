@@ -35,5 +35,9 @@ class RecoveryScreenTest {
         check(directory.exists() || directory.mkdirs())
         File(directory, name).outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
         bitmap.recycle()
+        // Gradle puede desinstalar la app tras la prueba; conservar la captura fuera de sus datos.
+        instrumentation.uiAutomation.executeShellCommand(
+            "cp /sdcard/Android/data/cl.mascotadatos.app/files/screenshots/$name /sdcard/Download/$name"
+        ).use { android.os.ParcelFileDescriptor.AutoCloseInputStream(it).readBytes() }
     }
 }
