@@ -212,8 +212,9 @@ service_js = """function mdServiceType(tipo){
 change("function doGlobalSearch(){",service_js+"function doGlobalSearch(){")
 change('id="globalSearch" placeholder=', 'id="globalSearch" type="search" style="display:block;width:100%;min-width:0;box-sizing:border-box;padding:14px;font-size:16px;border-radius:12px" placeholder=')
 
-s=s.replace("</body>", '<script src="md-release-1312.js"></script>\n</body>')
+s=s.replace("</body>", '<script src="md-release-1312.js"></script>\n<script src="md-account-layout.js"></script>\n</body>')
 out=s.encode()
 if out.count(b'id="md-privacy-contact"')!=1: raise SystemExit("Privacy contact missing or duplicated")
 p.write_bytes(out)
 print("PASS: exact corrected source")
+

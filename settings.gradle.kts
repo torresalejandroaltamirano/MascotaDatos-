@@ -14,3 +14,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "MascotaDatos"
 include(":app")
+
+
+include(":recovery")
