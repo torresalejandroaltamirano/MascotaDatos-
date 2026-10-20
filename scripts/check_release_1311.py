@@ -18,8 +18,8 @@ if errors:
 html = html_path.read_text(encoding="utf-8")
 gradle = gradle_path.read_text(encoding="utf-8")
 java = java_path.read_text(encoding="utf-8")
-if not re.search(r'versionName\s*=\s*"1\.3\.13"', gradle): errors.append("versionName must be 1.3.13")
-if not re.search(r'versionCode\s*=\s*1313\b', gradle): errors.append("versionCode must be 1313")
+if not re.search(r'versionName\s*=\s*"1\.3\.14"', gradle): errors.append("versionName must be 1.3.14")
+if not re.search(r'versionCode\s*=\s*1314\b', gradle): errors.append("versionCode must be 1314")
 if not re.search(r'applicationId\s*=\s*"cl\.mascotadatos\.app"', gradle): errors.append("App ID changed")
 if "mascotaDatosBack" not in java: errors.append("Android Back bridge missing")
 if "window.mascotaDatosBack" not in html: errors.append("Web Back handler absent")
@@ -87,4 +87,5 @@ if errors:
     for e in errors: print("FAIL:", e)
     sys.exit(1)
 print("PASS: static checks. Does not prove Android functionality or signature compatibility.")
+
 

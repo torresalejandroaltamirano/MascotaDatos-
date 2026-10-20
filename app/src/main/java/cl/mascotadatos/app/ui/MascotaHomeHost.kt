@@ -17,7 +17,7 @@ object MascotaHomeHost {
                     logoPainter = painterResource(R.drawable.mascotadatos_brand),
                     onNavigate = { destination ->
                         open.accept(when (destination) {
-                            MascotaDestination.VETERINARY -> "ciudades"
+                            MascotaDestination.VETERINARY -> "veterinarias"
                             MascotaDestination.LOCATION -> "ciudades"
                             MascotaDestination.EMERGENCY -> "urgencias"
                             MascotaDestination.CARE -> "cuidados"
@@ -43,3 +43,4 @@ object MascotaHomeHost {
         }
     }
 }
+

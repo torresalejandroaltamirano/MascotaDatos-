@@ -5,20 +5,23 @@
   const style = document.createElement('style');
   style.textContent = `#globalSearch,.search input{display:block!important;width:100%!important;min-width:0!important;min-height:54px!important;padding:15px!important;font-size:17px!important;box-sizing:border-box!important;border:2px solid #507d77!important;border-radius:14px!important}.search{width:100%;box-sizing:border-box}#servicios2 .grid button,#publicidad .grid button{font:inherit;color:inherit;text-align:left;cursor:pointer;min-height:104px}#md-service-results{scroll-margin-top:120px}.item[hidden]{display:none!important}.md-directory-link{display:inline-block;margin:8px 6px 0 0}.md-release-label{font-size:12px;text-align:center;color:#45625e}`;
   document.head.append(style);
-  document.querySelectorAll('footer').forEach(el => el.textContent='MascotaDatos 1.3.13 · Información y servicios para mascotas');
+  document.querySelectorAll('footer').forEach(el => el.textContent='MascotaDatos 1.3.14 · Información y servicios para mascotas');
   const official = [
     {name:'Nicoovet',city:'Chañaral',category:'veterinaria',address:'Atención veterinaria a domicilio en Chañaral',website:'https://nicoovet.cl/'},
-    {name:'Centro Veterinario Renacer Pets',city:'Vallenar',category:'veterinaria',address:'Vallejos 962, Vallenar',website:'https://renacerpets.cl/contacto/'}
+    {name:'Centro Veterinario Renacer Pets',match:'renacer pets',city:'Vallenar',category:'veterinaria',address:'J.J. Vallejos 962, Vallenar',phone:'+56 9 8572 9189',website:'https://renacerpets.cl/contacto/'},
+    {name:'Clínica Veterinaria Smartpet',match:'smartpet',city:'Vallenar',category:'veterinaria',address:'Alonso de Ercilla 390, Vallenar',phone:'+56 51 261 4990',website:'https://smartpet.cl/index.php/contacto/'},
+    {name:'Munay Vet',match:'munay',city:'Copiapó',category:'veterinaria',address:'Av. Ignacio Carrera Pinto 743, Copiapó',phone:'+56 9 7374 6914',website:'https://munayvet.cl/'},
+    {name:'Centro Quirúrgico Veterinario CEQVet',match:'ceqvet',city:'Copiapó',category:'veterinaria',address:'Luis Flores 483, Copiapó',phone:'+56 9 7633 8018',website:'https://ceqvetcopiapo.cl/'}
   ];
   const local = [];
   Object.entries(names).forEach(([id,city]) => (cityData[id] || []).forEach(x => local.push({name:x[0],address:x[1],phone:x[2],city,category:'veterinaria'})));
   shops.forEach(x => local.push({name:x.nombre,address:x.direccion,phone:x.telefono,city:x.ciudad,category:'insumos'}));
   globalData.forEach(x => {
     const city = Object.values(names).find(n => new RegExp('(?:,|^)\\s*'+n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*$','i').test(x.direccion || ''));
-    if(city) local.push({name:x.nombre,address:x.direccion,phone:x.telefono,city,category:normalize(x.tipo).includes('veterinari')?'veterinaria':'insumos'});
+    if(city) local.push({name:x.nombre,address:x.direccion,phone:x.telefono,city,category:/^(veterinaria|clinica veterinaria|hospital veterinario|centro veterinario)$/.test(normalize(x.tipo))?'veterinaria':'insumos'});
   });
   // La dirección actual publicada por la propia clínica sustituye la ficha histórica.
-  official.forEach(x => { for(let i=local.length-1;i>=0;i--) if(local[i].city===x.city && normalize(local[i].name).includes('renacer pets')) local.splice(i,1); local.push(x); });
+  official.forEach(x => { for(let i=local.length-1;i>=0;i--) if(local[i].city===x.city && normalize(local[i].name).includes(x.match || normalize(x.name))) local.splice(i,1); local.push(x); });
   function unique(rows) {
     const seen = new Set();
     return rows.filter(x => {const key=normalize(x.name).replace(/[^a-z0-9]/g,'');if(seen.has(key))return false;seen.add(key);return true;});
@@ -49,9 +52,9 @@
       if(generations.get(box)!==generation)return;
       const rows=unique([...remote,...local.filter(x=>x.city===city && (kind==='veterinaria'?x.category==='veterinaria':x.category!=='veterinaria'))]);
       box.replaceChildren();
-      const h=document.createElement('h2');h.textContent='📍 '+city;box.append(h);
-      const input=document.createElement('input');input.type='search';input.placeholder='Buscar en '+city;input.setAttribute('aria-label','Buscar locales en '+city);const wrapper=document.createElement('div');wrapper.className='search';wrapper.append(input);box.append(wrapper);
-      const notice=document.createElement('p');notice.className='notice';notice.textContent=rows.length?rows.length+' fichas de '+city+(loading?' · Actualizando…':''):'Aún no hay fichas locales disponibles para '+city+'. No se muestran locales de otras ciudades.';box.append(notice);
+      const h=document.createElement('h2');h.textContent=(kind==='veterinaria'?'Veterinarias en ':'Tiendas e insumos en ')+city;box.append(h);
+      const input=document.createElement('input');input.type='search';input.placeholder=(kind==='veterinaria'?'Buscar veterinaria en ':'Buscar tienda en ')+city;input.setAttribute('aria-label',input.placeholder);const wrapper=document.createElement('div');wrapper.className='search';wrapper.append(input);box.append(wrapper);
+      const notice=document.createElement('p');notice.className='notice';notice.textContent=rows.length?rows.length+(kind==='veterinaria'?' veterinarias en ':' tiendas y locales en ')+city+(loading?' · Actualizando…':''):'Aún no hay fichas locales disponibles para '+city+'. No se muestran locales de otras ciudades.';box.append(notice);
       const list=document.createElement('div');list.className='list';rows.forEach(x=>list.append(item(x)));box.append(list);
       input.oninput=()=>list.querySelectorAll('.item').forEach(el=>el.hidden=!normalize(el.textContent).includes(normalize(input.value)));
     };
@@ -65,13 +68,20 @@
   }
   let directoryKind='veterinaria', directoryCity='copiapo';
   const cityScreen=document.getElementById('ciudades');
-  const categoryLabel=document.createElement('label');categoryLabel.textContent='Tipo de local';categoryLabel.className='search';
-  const category=document.createElement('select');category.setAttribute('aria-label','Tipo de local');category.style.cssText='width:100%;min-height:54px;padding:14px;font:inherit;border-radius:12px';category.innerHTML='<option value="veterinaria">Veterinarias</option><option value="insumos">Tiendas e insumos</option>';categoryLabel.append(category);
+  const categoryLabel=document.createElement('label');categoryLabel.textContent='Mostrar';categoryLabel.className='search';
+  const category=document.createElement('select');category.setAttribute('aria-label','Tipo de directorio');category.style.cssText='width:100%;min-height:54px;padding:14px;font:inherit;border-radius:12px';category.innerHTML='<option value="veterinaria">Veterinarias</option><option value="insumos">Tiendas e insumos</option>';categoryLabel.append(category);
   if(cityScreen){const heading=cityScreen.querySelector('h2');if(heading){heading.textContent='Directorio por ciudad';heading.after(categoryLabel);}}
   window.city=id=>{directoryCity=id;return directory(names[id],directoryKind,document.getElementById('cityContent'));};
   category.onchange=()=>{directoryKind=category.value;city(directoryCity);};
   const originalShow=window.show;
-  window.show=id=>{if(id==='insumosCiudad'){directoryKind='insumos';category.value=directoryKind;id='ciudades';}const result=originalShow(id);if(id==='ciudades')city(directoryCity);return result;};
+  window.show=id=>{
+    // Cada acceso explícito selecciona su categoría; no heredar el filtro de tiendas.
+    if(id==='veterinarias'){directoryKind='veterinaria';category.value=directoryKind;id='ciudades';}
+    else if(id==='insumosCiudad'){directoryKind='insumos';category.value=directoryKind;id='ciudades';}
+    const result=originalShow(id);
+    if(id==='ciudades')city(directoryCity);
+    return result;
+  };
   window.loadShops=name=>{directoryKind='insumos';category.value=directoryKind;directoryCity=Object.keys(names).find(id=>names[id]===name)||'copiapo';originalShow('ciudades');return city(directoryCity);};
   const oldShopScreen=document.getElementById('insumosCiudad');if(oldShopScreen)oldShopScreen.remove();
   document.querySelectorAll('#inicio .card.action').forEach(el=>{
@@ -79,7 +89,7 @@
     if(title.textContent.trim()==='Veterinarias'){title.textContent='Directorio';const small=el.querySelector('.small');if(small)small.textContent='Ciudad · veterinarias · tiendas e insumos';}
     else if(el.getAttribute('onclick')==="show('insumosCiudad')")el.remove();
   });
-  const navVet=document.querySelector('nav button[data-view="veterinarias"]');if(navVet)navVet.innerHTML='<span>🏥</span>Directorio';
+  const navVet=document.querySelector('nav button[data-view="veterinarias"]');if(navVet){navVet.innerHTML='<span>🏥</span>Veterinarias';navVet.setAttribute('onclick',"show('veterinarias')");}
   const navShop=document.querySelector('nav button[data-view="insumos"]');if(navShop){navShop.innerHTML='<span>✂️</span>Servicios';navShop.setAttribute('onclick',"show('servicios2')");}
 
   const serviceData={
@@ -152,3 +162,4 @@ window.requestPasswordReset = async function(event) {
     message.textContent = 'No se pudo enviar el enlace. Revisa tu conexión y vuelve a intentarlo en unos minutos.';
   } finally { if (button) button.disabled = false; }
 };
+

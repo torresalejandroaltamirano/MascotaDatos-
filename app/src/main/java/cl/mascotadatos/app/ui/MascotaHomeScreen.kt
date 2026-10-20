@@ -173,7 +173,7 @@ fun BrandHeader(logoPainter: Painter, modifier: Modifier = Modifier) {
                 shadowElevation = 5.dp, border = BorderStroke(3.dp, Color.White)) {
                 Image(painter = logoPainter, contentDescription = null,
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(116.dp).clip(CircleShape).padding(7.dp))
+                    modifier = Modifier.widthIn(max = 224.dp).fillMaxWidth().aspectRatio(1f).clip(CircleShape).padding(3.dp))
             }
             Text("MascotaDatos", style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold, color = MascotaColors.Forest,
@@ -259,3 +259,4 @@ fun MascotaBottomBar(
         }
     }
 }
+
