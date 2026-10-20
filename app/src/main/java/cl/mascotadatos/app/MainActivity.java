@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private androidx.compose.ui.platform.ComposeView composeHome;
     private boolean pageReady;
     private String pendingRoute;
+    private boolean recoveryOpening;
 
     private void openSection(String route) {
         if (!pageReady) { pendingRoute = route; return; }
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             "const notify=()=>{const v=document.querySelector('.view.active');" +
             "document.title='MascotaDatos:native:'+(v?v.id:'inicio');};" +
             "window.mdNativeObserver=new MutationObserver(notify);" +
+            "window.showRecovery=function(){if(document.activeElement)document.activeElement.blur();document.title=\"MascotaDatos:native:recuperar-clave\";};" +
             "document.querySelectorAll('.view').forEach(v=>window.mdNativeObserver.observe(v,{attributes:true,attributeFilter:['class']}));notify();})()", null);
         if (pendingRoute != null) { String route = pendingRoute; pendingRoute = null; openSection(route); }
     }
@@ -190,6 +192,14 @@ public class MainActivity extends AppCompatActivity {
                 if (pageReady && view.getUrl() != null &&
                     view.getUrl().startsWith("https://appassets.androidplatform.net/assets/") &&
                     title != null && title.startsWith("MascotaDatos:native:")) {
+                    if ("MascotaDatos:native:recuperar-clave".equals(title)) {
+                        if (!recoveryOpening) {
+                            recoveryOpening = true;
+                            startActivity(new Intent(MainActivity.this, PasswordRecoveryActivity.class));
+                            view.evaluateJavascript("document.title='MascotaDatos:native:cuenta';", null);
+                        }
+                        return;
+                    }
                     setHomeVisible("MascotaDatos:native:inicio".equals(title));
                 }
             }
@@ -263,6 +273,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override protected void onResume() {
         super.onResume();
+        recoveryOpening = false;
         if (banner != null) banner.resume();
     }
 
@@ -278,3 +289,4 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 }
+

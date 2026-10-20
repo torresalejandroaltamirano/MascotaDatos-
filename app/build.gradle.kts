@@ -12,8 +12,10 @@ android {
         applicationId = "cl.mascotadatos.app"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1314
-        versionName = "1.3.14"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "SUPABASE_PUBLIC_KEY", "\"sb_publishable_cI2DN3hLz4NxFiWZoEIRig_fYVXcZ4Z\"")
+        versionCode = 1315
+        versionName = "1.3.15"
     }
 
     buildTypes {
@@ -47,6 +49,13 @@ android {
 kotlin { jvmToolchain(17) }
 
 dependencies {
+    implementation(project(":recovery"))
+    implementation("androidx.activity:activity-compose:1.10.1")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.04.01"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation(platform("androidx.compose:compose-bom:2025.04.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
@@ -60,4 +69,5 @@ dependencies {
     implementation("androidx.webkit:webkit:1.17.0")
     implementation("com.google.android.material:material:1.13.0")
 }
+
 

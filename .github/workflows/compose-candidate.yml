@@ -30,7 +30,7 @@ jobs:
           javac tools/FixLauncherIcons.java
           java -cp tools FixLauncherIcons
       - name: Compilar Debug y Release
-        run: gradle assembleDebug assembleRelease bundleRelease --stacktrace
+        run: gradle testDebugUnitTest assembleDebug assembleRelease bundleRelease --stacktrace
       - uses: actions/upload-artifact@v4
         with:
           name: MascotaDatos-Compose-VALIDACION-no-publicar
@@ -38,3 +38,30 @@ jobs:
             app/build/outputs/apk/debug/app-debug.apk
             app/build/outputs/apk/release/app-release-unsigned.apk
             app/build/outputs/bundle/release/app-release.aab
+
+
+      - name: Habilitar aceleración de emulador
+        run: sudo chmod 666 /dev/kvm
+      - name: Probar pantalla nativa en Android
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          script: |
+            adb shell wm size 1080x2400
+            adb shell wm density 360
+            gradle connectedDebugAndroidTest --stacktrace
+            mkdir -p screenshots
+            adb pull /sdcard/Android/data/cl.mascotadatos.app/files/screenshots/. screenshots/
+      - name: Guardar captura y resultados de Android
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MascotaDatos-1315-pruebas-pantalla
+          path: |
+            screenshots/
+            app/build/reports/androidTests/
+            recovery/build/reports/tests/

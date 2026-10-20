@@ -217,3 +217,4 @@ out=s.encode()
 if out.count(b'id="md-privacy-contact"')!=1: raise SystemExit("Privacy contact missing or duplicated")
 p.write_bytes(out)
 print("PASS: exact corrected source")
+
