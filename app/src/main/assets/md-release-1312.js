@@ -122,3 +122,11 @@
   }
   if(serviceBox){const p=document.createElement('p');p.className='notice';p.textContent='Selecciona una categoría para consultar sus prestadores y datos de contacto.';serviceBox.append(p);}
 })();
+
+/* Presentación de solicitudes y cuenta, 20 octubre 2026. */
+(() => {
+  const style = document.createElement('style');
+  style.id = 'md-account-polish';
+  style.textContent = "\n/* Cuenta: acciones separadas y formularios legibles en pantallas pequeñas. */\n#md-privacy-contact{padding:22px!important;border:1px solid #d8e5e1!important;border-radius:18px!important;box-shadow:0 4px 16px rgba(15,79,76,.06)}\n#md-privacy-contact h3{margin:0 0 14px;line-height:1.3}\n#md-privacy-contact p{line-height:1.6;overflow-wrap:anywhere}\n#md-privacy-contact>.btn{display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;width:100%!important;min-height:52px;padding:14px 18px!important;margin:0!important;border:1px solid #0f4f4c!important;border-radius:12px!important;font:inherit!important;font-weight:600!important;line-height:1.4!important;text-align:center;text-decoration:none!important;white-space:normal}\n#md-privacy-contact>.btn+.btn{margin-top:14px!important;background:#f1f7f5!important;color:#0f4f4c!important}\n#md-privacy-contact>.btn:focus-visible{outline:3px solid #c08849;outline-offset:3px}\n#md-deletion-status:not(:empty){margin-top:14px;padding:12px;border-radius:10px;background:#f1f7f5;line-height:1.5}\n#cuenta>.grid{gap:18px!important;align-items:start}\n#cuenta>.grid>.card{min-width:0;box-sizing:border-box}\n#cuenta .form label{min-width:0}\n#cuenta .password-field input{flex:1;min-width:0;width:100%}\n#cuenta .password-field .toggle-password{flex:0 0 46px}\n@media(max-width:640px){#cuenta>.grid{grid-template-columns:minmax(0,1fr)!important}#cuenta>.grid>.card{padding:20px!important}#md-privacy-contact{padding:20px!important}}\n";
+  document.head.append(style);
+})();
