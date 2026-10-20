@@ -49,6 +49,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void setHomeVisible(boolean visible) {
         composeHome.setVisibility(visible ? View.VISIBLE : View.GONE);
+        webView.setVisibility(visible ? View.INVISIBLE : View.VISIBLE);
+        if (visible) {
+            webView.clearFocus();
+            android.view.inputmethod.InputMethodManager keyboard =
+                (android.view.inputmethod.InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            if (keyboard != null) keyboard.hideSoftInputFromWindow(webView.getWindowToken(), 0);
+        }
         webView.setImportantForAccessibility(visible ? View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS : View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
     }
 
