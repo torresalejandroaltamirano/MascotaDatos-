@@ -56,11 +56,12 @@ jobs:
             gradle :app:connectedDebugAndroidTest --stacktrace
             mkdir -p screenshots
             adb pull /sdcard/Download/recuperacion-inicial.png screenshots/recuperacion-inicial.png
+            adb pull /sdcard/Download/cuenta-ordenada.png screenshots/cuenta-ordenada.png
       - name: Guardar captura y resultados de Android
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: MascotaDatos-1315-pruebas-pantalla
+          name: MascotaDatos-1316-pruebas-pantalla
           path: |
             screenshots/
             app/build/reports/androidTests/

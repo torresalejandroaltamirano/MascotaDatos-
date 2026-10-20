@@ -9,6 +9,21 @@ const w=dom.window; w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=fun
 let inserted,queries=[];
 w.stub={auth:{getUser:async()=>({data:{user:{id:'test-only',email_confirmed_at:'yes'}}})},from:table=>({select(){return this},eq(k,city){this.city=city;queries.push(city);return this},order(){const city=this.city;return new Promise(r=>setTimeout(()=>r({data:[{name:'FUGA COPIAPO',category:'insumos',cities:{name:'Copiapó'}},{name:'Local de '+city,category:'insumos',cities:{name:city}},{name:'Veterinaria de '+city,category:'veterinaria',cities:{name:city}}]}),city==='Copiapó'?15:0))},insert:async x=>{inserted=x;return {error:null}}})};
 w.eval(base+'\nconst sb=window.stub;\n'+submitFunction+'\n'+fs.readFileSync('app/src/main/assets/md-release-1312.js','utf8'));
+w.eval(fs.readFileSync('app/src/main/assets/md-account-layout.js','utf8'));
+// El acceso permanece arriba; privacidad navega aparte sin reconstruir formularios.
+const account=w.document.getElementById('cuenta');
+const loginInput=account.querySelector('input[name=email]');
+assert.equal(account.querySelector('#md-account-access').firstElementChild.querySelector('h3').textContent,'Iniciar sesión');
+assert.equal(account.querySelectorAll('#md-privacy-contact').length,0);
+const registration=account.querySelector('#md-account-registration');assert(!registration.open);
+assert(registration.querySelector('form[onsubmit="registerAccount(event)"]'));
+assert(w.document.querySelector('#cuentaPrivacidad #md-deletion-status'));
+loginInput.value='prueba@example.com';
+w.show('cuenta');account.querySelector('#md-account-settings button').click();
+assert(w.document.querySelector('#cuentaPrivacidad.view.active'));
+assert(w.mascotaDatosBack());assert(account.classList.contains('active'));
+assert.equal(account.querySelector('input[name=email]'),loginInput);
+assert.equal(loginInput.value,'prueba@example.com');loginInput.value='';
 (async()=>{
  const names=['Caldera','Vallenar','Chañaral','Huasco','Freirina','Diego de Almagro','Tierra Amarilla','Alto del Carmen'];
  for(const city of names){await w.loadShops(city);const text=w.document.getElementById('cityContent').textContent;assert(!text.includes('FUGA COPIAPO'),city);assert(!text.includes('FarmVet Los Mancos'),city);assert(text.includes('Local de '+city));}

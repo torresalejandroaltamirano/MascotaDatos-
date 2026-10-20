@@ -14,8 +14,8 @@ android {
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "SUPABASE_PUBLIC_KEY", "\"sb_publishable_cI2DN3hLz4NxFiWZoEIRig_fYVXcZ4Z\"")
-        versionCode = 1315
-        versionName = "1.3.15"
+        versionCode = 1316
+        versionName = "1.3.16"
     }
 
     buildTypes {
