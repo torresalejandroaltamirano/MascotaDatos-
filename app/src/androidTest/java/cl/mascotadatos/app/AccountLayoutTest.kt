@@ -26,19 +26,19 @@ class AccountLayoutTest {
                 return result
             }
             val deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(60)
-            while (js("!!document.getElementById('md-account-layout')") != "true" && System.nanoTime() < deadline) {
+            while (js("!!document.getElementById('md-account-layout') && !!window.mdNativeObserver") != "true" && System.nanoTime() < deadline) {
                 Thread.sleep(250)
             }
             assertTrue(js("!!document.getElementById('md-account-layout')") == "true")
-            assertTrue(js("show('cuenta');window.scrollTo(0,0);true") == "true")
+            assertTrue(js("show('cuenta');true") == "true")
             InstrumentationRegistry.getInstrumentation().waitForIdleSync()
             assertTrue(js("document.querySelector('#md-account-access').firstElementChild.querySelector('h3').textContent==='Iniciar sesión'") == "true")
             assertTrue(js("!document.querySelector('#cuenta #md-privacy-contact') && !document.querySelector('#md-account-registration').open") == "true")
-            assertTrue(js("document.querySelector('#md-account-access input[name=email]').getBoundingClientRect().bottom < window.innerHeight") == "true")
             val instrumentation = InstrumentationRegistry.getInstrumentation()
             instrumentation.uiAutomation.executeShellCommand(
                 "screencap -p /sdcard/Download/cuenta-ordenada.png"
             ).use { android.os.ParcelFileDescriptor.AutoCloseInputStream(it).readBytes() }
+            assertTrue("El correo debe estar visible: " + js("JSON.stringify({bottom:document.querySelector('#md-account-access input[name=email]').getBoundingClientRect().bottom,height:window.innerHeight})"), js("document.querySelector('#md-account-access input[name=email]').getBoundingClientRect().bottom < window.innerHeight") == "true")
             assertTrue(js("document.querySelector('#md-account-settings button').click();!!document.querySelector('#cuentaPrivacidad.active #md-privacy-contact')") == "true")
             assertTrue(js("window.mascotaDatosBack();!!document.querySelector('#cuenta.active')") == "true")
             // No introducir credenciales, enviar correos o solicitar eliminación.

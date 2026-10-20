@@ -36,9 +36,17 @@
   hint.textContent = 'Consulta la política de privacidad o solicita la eliminación de tu cuenta.';
   settings.append(settingsTitle, link, hint); account.append(settings);
 
+  const originalShow = window.show;
+  window.show = id => {
+    const result = originalShow(id);
+    if (id === 'cuenta' && result) account.scrollIntoView({block:'start'});
+    return result;
+  };
+
   const style = document.createElement('style'); style.id = 'md-account-layout';
   style.textContent = `
     #cuenta>#md-account-access{grid-template-columns:minmax(0,1fr)!important;gap:18px!important}
+    #cuenta{scroll-margin-top:84px}
     #md-account-registration{border:1px solid #ded8cc;border-radius:18px;background:#fffdf9;overflow:hidden}
     #md-account-registration>summary{padding:18px 20px;min-height:24px;cursor:pointer;font-weight:600;color:#1b4d4f;line-height:1.5}
     #md-account-registration>summary:focus-visible{outline:3px solid #bd884f;outline-offset:-4px}

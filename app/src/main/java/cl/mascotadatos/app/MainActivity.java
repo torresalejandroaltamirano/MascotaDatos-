@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         // El único argumento procede del enum nativo; JSON evita interpolación de código.
         String id = org.json.JSONObject.quote(route);
         webView.evaluateJavascript("(function(){if(typeof show!=='function'||!show(" + id + "))return false;" +
-            "window.scrollTo(0,0);" +
+            "if(" + id + "==='cuenta')document.getElementById('cuenta').scrollIntoView({block:'start'});else window.scrollTo(0,0);" +
             "if(" + id + "==='favoritos'&&typeof loadFavorites==='function')loadFavorites();" +
             "if(" + id + "==='notificaciones'&&typeof loadNotifications==='function')loadNotifications();" +
             "return true;})()", result -> {
