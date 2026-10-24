@@ -3,6 +3,10 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+val admobLiveAdsEnabled = providers.gradleProperty("admobLiveAdsEnabled").orNull == "true"
+val sampleAdMobAppId = "ca-app-pub-3940256099942544~3347511713"
+val productionAdMobAppId = "ca-app-pub-2369519530952827~6693315056"
+
 android {
     namespace = "cl.mascotadatos.app"
     compileSdk = 36
@@ -13,15 +17,21 @@ android {
         targetSdk = 36
         versionCode = 1311
         versionName = "1.3.11"
+        manifestPlaceholders["adMobAppId"] = sampleAdMobAppId
     }
 
     buildFeatures {
         buildConfig = true
     }
 
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+    buildTypes {
+        debug {
+            manifestPlaceholders["adMobAppId"] = sampleAdMobAppId
+            buildConfigField("boolean", "ADMOB_LIVE_ADS_ENABLED", "false")
+        }
+        release {
+            manifestPlaceholders["adMobAppId"] = if (admobLiveAdsEnabled) productionAdMobAppId else sampleAdMobAppId
+            buildConfigField("boolean", "ADMOB_LIVE_ADS_ENABLED", admobLiveAdsEnabled.toString())
         }
     }
 
@@ -37,4 +47,6 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.10.1")
     implementation("androidx.webkit:webkit:1.17.0")
     implementation("com.google.android.material:material:1.13.0")
+    implementation("com.google.android.gms:play-services-ads:25.5.0")
+    implementation("com.google.android.ump:user-messaging-platform:4.0.0")
 }
