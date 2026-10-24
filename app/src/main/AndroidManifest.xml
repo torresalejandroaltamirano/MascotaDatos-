@@ -11,6 +11,9 @@
         android:roundIcon="@drawable/mascotadatos_launcher"
         android:theme="@style/Theme.MascotaDatos"
         android:usesCleartextTraffic="false">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${adMobAppId}" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
