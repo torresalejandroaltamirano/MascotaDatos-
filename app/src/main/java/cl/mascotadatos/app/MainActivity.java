@@ -6,6 +6,10 @@ import android.content.pm.PackageManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.GeolocationPermissions;
@@ -22,17 +26,38 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.webkit.WebViewAssetLoader;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.ConsentRequestParameters;
+import com.google.android.ump.UserMessagingPlatform;
+
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
     private ValueCallback<Uri[]> fileCallback;
     private GeolocationPermissions.Callback locationCallback;
     private String locationOrigin;
+    private FrameLayout adContainer;
+    private Button privacyOptionsButton;
+    private AdView adView;
+    private ConsentInformation consentInformation;
+    private boolean pageReady = false;
+    private boolean adsInitialized = false;
+
+    private static final String TEST_BANNER_ID = "ca-app-pub-3940256099942544/9214589741";
+    private static final String LIVE_BANNER_ID = "ca-app-pub-2369519530952827/7526305566";
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
         setContentView(R.layout.activity_main);
         webView = findViewById(R.id.webview);
+        adContainer = findViewById(R.id.ad_view_container);
+        privacyOptionsButton = findViewById(R.id.privacy_options_button);
+        privacyOptionsButton.setOnClickListener(v ->
+                UserMessagingPlatform.showPrivacyOptionsForm(MainActivity.this, formError -> updatePrivacyOptionsButton()));
 
         WebSettings s = webView.getSettings();
         s.setJavaScriptEnabled(true);
@@ -62,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
                 super.onPageFinished(view, url);
                 if (url != null && url.startsWith("https://appassets.androidplatform.net/assets/index.html")) {
                     view.evaluateJavascript("(function(){var c=document.createElement('link');c.rel='stylesheet';c.href='/assets/final-fixes.css';document.head.appendChild(c);var s=document.createElement('script');s.src='/assets/final-fixes.js';document.body.appendChild(s);})();", null);
+                    pageReady = true;
+                    maybeInitializeAds();
                 }
             }
         });
@@ -94,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        requestConsent();
+
         if (savedInstanceState == null) {
             webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
         } else {
@@ -107,15 +136,63 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 43 && locationCallback != null) {
-            boolean granted = false;
-            for (int result : grantResults) if (result == PackageManager.PERMISSION_GRANTED) granted = true;
-            locationCallback.invoke(locationOrigin, granted, false);
-            locationCallback = null;
-            locationOrigin = null;
+    private void requestConsent() {
+        consentInformation = UserMessagingPlatform.getConsentInformation(this);
+        ConsentRequestParameters params = new ConsentRequestParameters.Builder().build();
+        consentInformation.requestConsentInfoUpdate(
+                this,
+                params,
+                () -> {
+                    updatePrivacyOptionsButton();
+                    UserMessagingPlatform.loadAndShowConsentFormIfRequired(this, formError -> {
+                        updatePrivacyOptionsButton();
+                        maybeInitializeAds();
+                    });
+                },
+                requestError -> {
+                    updatePrivacyOptionsButton();
+                    maybeInitializeAds();
+                });
+    }
+
+    private void updatePrivacyOptionsButton() {
+        if (privacyOptionsButton == null || consentInformation == null) return;
+        boolean required = consentInformation.getPrivacyOptionsRequirementStatus()
+                == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED;
+        privacyOptionsButton.setVisibility(required ? View.VISIBLE : View.GONE);
+    }
+
+    private void maybeInitializeAds() {
+        if (!pageReady || consentInformation == null || !consentInformation.canRequestAds()) return;
+        if (adsInitialized) {
+            if (adView == null) loadBanner();
+            return;
         }
+        adsInitialized = true;
+        MobileAds.initialize(this, status -> runOnUiThread(() -> {
+            if (pageReady) loadBanner();
+        }));
+    }
+
+    private void loadBanner() {
+        if (isFinishing() || !pageReady || adContainer == null) return;
+        destroyBanner();
+        adView = new AdView(this);
+        int widthDp = (int) (getResources().getDisplayMetrics().widthPixels / getResources().getDisplayMetrics().density);
+        adView.setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, widthDp));
+        adView.setAdUnitId(BuildConfig.ADMOB_LIVE_ADS_ENABLED && !BuildConfig.DEBUG ? LIVE_BANNER_ID : TEST_BANNER_ID);
+        adContainer.addView(adView, new FrameLayout.LayoutParams(-1, -2));
+        adContainer.setVisibility(View.VISIBLE);
+        adView.loadAd(new AdRequest.Builder().build());
+    }
+
+    private void destroyBanner() {
+        if (adView != null) {
+            adContainer.removeView(adView);
+            adView.destroy();
+            adView = null;
+        }
+        if (adContainer != null) adContainer.setVisibility(View.GONE);
     }
 
     private boolean openExternal(Uri uri) {
@@ -135,12 +212,33 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    @Override protected void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 43 && locationCallback != null) {
+            boolean granted = false;
+            for (int result : grantResults) if (result == PackageManager.PERMISSION_GRANTED) granted = true;
+            locationCallback.invoke(locationOrigin, granted, false);
+            locationCallback = null;
+            locationOrigin = null;
+        }
+    }
+
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode != 42 || fileCallback == null) return;
         Uri[] result = WebChromeClient.FileChooserParams.parseResult(resultCode, data);
         fileCallback.onReceiveValue(result);
         fileCallback = null;
+    }
+
+    @Override protected void onPause() {
+        if (adView != null) adView.pause();
+        super.onPause();
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (adView != null) adView.resume();
     }
 
     @Override protected void onSaveInstanceState(Bundle outState) {
@@ -153,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
             locationCallback.invoke(locationOrigin, false, false);
             locationCallback = null;
         }
+        destroyBanner();
         if (webView != null) {
             webView.stopLoading();
             webView.setWebChromeClient(null);
