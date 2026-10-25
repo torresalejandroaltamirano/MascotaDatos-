@@ -4,6 +4,14 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+val admobLiveAdsEnabled = providers.gradleProperty("admobLiveAdsEnabled").orNull == "true"
+val sampleAdMobAppId = "ca-app-pub-3940256099942544~3347511713"
+val productionAdMobAppId = "ca-app-pub-2369519530952827~6693315056"
+val sampleBannerAdUnitId = "ca-app-pub-3940256099942544/6300978111"
+val productionBannerAdUnitId = "ca-app-pub-2369519530952827/7526305566"
+val releaseAdMobAppId = if (admobLiveAdsEnabled) productionAdMobAppId else sampleAdMobAppId
+val releaseBannerAdUnitId = if (admobLiveAdsEnabled) productionBannerAdUnitId else sampleBannerAdUnitId
+
 android {
     namespace = "cl.mascotadatos.app"
     compileSdk = 36
@@ -14,18 +22,19 @@ android {
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "SUPABASE_PUBLIC_KEY", "\"sb_publishable_cI2DN3hLz4NxFiWZoEIRig_fYVXcZ4Z\"")
+        manifestPlaceholders["admobAppId"] = sampleAdMobAppId
         versionCode = 1316
         versionName = "1.3.16"
     }
 
     buildTypes {
         getByName("debug") {
-            manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
-            buildConfigField("String", "BANNER_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
+            manifestPlaceholders["admobAppId"] = sampleAdMobAppId
+            buildConfigField("String", "BANNER_AD_UNIT_ID", "\"$sampleBannerAdUnitId\"")
         }
         getByName("release") {
-            manifestPlaceholders["admobAppId"] = "ca-app-pub-2369519530952827~6693315056"
-            buildConfigField("String", "BANNER_AD_UNIT_ID", "\"ca-app-pub-2369519530952827/7526305566\"")
+            manifestPlaceholders["admobAppId"] = releaseAdMobAppId
+            buildConfigField("String", "BANNER_AD_UNIT_ID", "\"$releaseBannerAdUnitId\"")
         }
     }
 
@@ -69,5 +78,3 @@ dependencies {
     implementation("androidx.webkit:webkit:1.17.0")
     implementation("com.google.android.material:material:1.13.0")
 }
-
-
