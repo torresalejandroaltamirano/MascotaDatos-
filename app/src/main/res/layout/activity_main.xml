@@ -2,11 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root" android:orientation="vertical"
     android:layout_width="match_parent" android:layout_height="match_parent">
-    <WebView android:id="@+id/webview" android:layout_width="match_parent"
-        android:layout_height="0dp" android:layout_weight="1" />
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1">
+        <WebView android:id="@+id/webview" android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <androidx.compose.ui.platform.ComposeView android:id="@+id/compose_home"
+            android:layout_width="match_parent" android:layout_height="match_parent"
+            android:visibility="gone" />
+    </FrameLayout>
     <FrameLayout android:id="@+id/banner_container" android:layout_width="match_parent"
         android:layout_height="wrap_content" android:visibility="gone" />
     <Button android:id="@+id/privacy_options" android:layout_width="match_parent"
         android:layout_height="wrap_content" android:text="@string/ad_privacy_options"
         android:visibility="gone" />
 </LinearLayout>
+
+
