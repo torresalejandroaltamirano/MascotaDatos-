@@ -17,6 +17,7 @@ android {
 
     buildTypes {
         getByName("debug") {
+            applicationIdSuffix = ".preview"
             manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
             buildConfigField("String", "BANNER_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
         }
