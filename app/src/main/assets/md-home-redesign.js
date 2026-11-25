@@ -1,69 +1,120 @@
-/* Portada interactiva MascotaDatos · conserva logo, navegación y contenido existente. */
+/* Portada MascotaDatos: imagen cinematográfica, accesos reparados y directorio local sin conexión. */
 (() => {
-  if (window.__mdHome3dInstalled) return;
-  window.__mdHome3dInstalled = true;
+  if (window.__mdHomeRefreshInstalled) return;
+  window.__mdHomeRefreshInstalled = true;
   const home = document.getElementById('inicio');
   if (!home) return;
-  const hero = home.querySelector('.hero');
-  if (!hero) return;
 
   const style = document.createElement('style');
   style.textContent = `
-    #inicio .hero{background:linear-gradient(135deg,#fff8eb 0%,#f4e6ce 100%);border:1px solid #eadcc8;border-radius:24px;padding:20px;box-shadow:0 12px 28px #4a2d1814}
+    #inicio .hero{background:linear-gradient(135deg,#fff8eb,#f3e4cc);border:1px solid #eadcc8;border-radius:22px;padding:16px;box-shadow:0 8px 22px #4a2d1813}
     #inicio .hero img{display:none}
-    #inicio .hero h1{font-size:24px;line-height:1.12;color:#0b4d4a}
-    #inicio .hero p{font-size:14px;line-height:1.5;color:#5e5045;margin-top:7px}
-    .md-home-stage{position:relative;overflow:hidden;isolation:isolate;margin:14px 0 17px;padding:18px 16px 16px;border-radius:26px;background:radial-gradient(circle at 75% 22%,#f9dca2 0,transparent 27%),linear-gradient(145deg,#0b4d4a,#126d65 66%,#184c48);color:#fff;box-shadow:0 16px 30px #0b4d4a28}
-    .md-home-stage:before,.md-home-stage:after{content:"";position:absolute;border-radius:50%;pointer-events:none;z-index:-1}
-    .md-home-stage:before{width:180px;height:180px;right:-65px;top:-75px;border:1px solid #ffffff35;box-shadow:0 0 0 18px #ffffff0b,0 0 0 38px #ffffff08}
-    .md-home-stage:after{width:110px;height:110px;left:-62px;bottom:-60px;background:#d98a2528}
-    .md-stage-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#f7dca9;font-weight:800}
-    .md-stage-title{font-size:19px;font-weight:800;margin:5px 0 2px}
-    .md-stage-hint{font-size:12px;color:#e2f0e8;margin:0}
-    .md-carousel{height:224px;position:relative;perspective:850px;touch-action:pan-y;cursor:grab;user-select:none}
-    .md-carousel:active{cursor:grabbing}
-    .md-cylinder{position:absolute;width:170px;height:170px;left:50%;top:25px;transform:translateX(-50%);transform-style:preserve-3d;will-change:transform}
-    .md-pet-face{position:absolute;inset:0;border:1px solid #ffffff4a;border-radius:28px;background:linear-gradient(145deg,#fff7e5,#f1d6a5);box-shadow:0 16px 28px #001c194d;backface-visibility:hidden;display:grid;place-items:center}
-    .md-pet-face:nth-child(1){transform:rotateY(0deg) translateZ(112px)}
-    .md-pet-face:nth-child(2){transform:rotateY(120deg) translateZ(112px)}
-    .md-pet-face:nth-child(3){transform:rotateY(240deg) translateZ(112px)}
-    .md-pet-face svg{width:148px;height:148px;filter:drop-shadow(0 9px 7px #4a2d1833)}
-    .md-orbit{position:absolute;left:50%;top:43px;width:225px;height:142px;transform:translateX(-50%) rotateX(69deg);border:1px solid #ffffff55;border-radius:50%;pointer-events:none}
-    .md-rotate-hint{position:absolute;bottom:5px;left:0;right:0;text-align:center;font-size:11px;color:#e4f2eb}
-    .md-stage-controls{display:flex;justify-content:center;gap:8px;margin-top:2px}
-    .md-stage-controls button{width:38px;height:38px;border-radius:50%;border:1px solid #ffffff5c;color:#fff;background:#ffffff16;font-size:17px}
+    #inicio .hero h1{font-size:22px;line-height:1.16;color:#0b4d4a;margin:0 0 5px}
+    #inicio .hero p{font-size:13px;line-height:1.45;color:#5e5045}
+    .md-home-stage{position:relative;overflow:hidden;margin:12px 0 16px;border-radius:24px;background:#0b4d4a;color:white;box-shadow:0 14px 30px #0b4d4a30}
+    .md-home-photo{height:clamp(310px,92vw,390px);position:relative;overflow:hidden;touch-action:pan-y;perspective:1000px}
+    .md-home-photo img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 58%;transform:scale(1.025);transition:transform .18s ease-out,filter .18s ease-out;will-change:transform}
+    .md-home-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0b302d66 0%,transparent 35%,#0b302d05 52%,#0b302dcc 100%);pointer-events:none}
+    .md-photo-label{position:absolute;z-index:1;top:14px;left:14px;padding:7px 11px;border:1px solid #fff8;border-radius:20px;background:#0b4d4a99;color:#fff8eb;font-size:10px;font-weight:800;letter-spacing:.08em}
+    .md-photo-caption{position:absolute;z-index:1;left:16px;right:16px;bottom:16px}
+    .md-photo-caption b{display:block;font-size:20px;line-height:1.15;text-shadow:0 2px 12px #001c19a6}
+    .md-photo-caption span{display:block;margin-top:5px;color:#fff8eb;font-size:12px;text-shadow:0 1px 8px #001c19}
     .md-quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-    .md-quick button{font:inherit;text-align:left;border:1px solid #eadcc8;background:#fff;border-radius:18px;padding:13px;color:#4a2d18;box-shadow:0 5px 13px #4a2d180c;min-height:75px}
+    .md-quick button{font:inherit;text-align:left;border:1px solid #eadcc8;background:#fff;border-radius:18px;padding:13px;color:#4a2d18;box-shadow:0 5px 13px #4a2d180c;min-height:76px}
+    .md-quick button:active{transform:scale(.98)}
     .md-quick button b{display:block;color:#0b4d4a;font-size:13px;margin-top:4px}
     .md-quick button span{font-size:21px}
-    @media (max-width:360px){.md-carousel{height:205px}.md-cylinder{width:148px;height:148px}.md-pet-face:nth-child(1){transform:rotateY(0deg) translateZ(98px)}.md-pet-face:nth-child(2){transform:rotateY(120deg) translateZ(98px)}.md-pet-face:nth-child(3){transform:rotateY(240deg) translateZ(98px)}}
-    @media(prefers-reduced-motion:reduce){.md-cylinder{transition:none!important}}
+    .md-local-entry{position:relative}
+    .md-local-entry .badge{white-space:nowrap}
+    .md-local-entry .md-local-source{font-size:10px;color:#71675d;margin-top:6px}
+    #publicidadSolicitud{display:none!important}
+    @media(prefers-reduced-motion:reduce){.md-home-photo img{transition:none}}
   `;
   document.head.append(style);
 
-  const face = (kind, label) => {
-    const cat = kind === 'cat';
-    return '<div class="md-pet-face" role="img" aria-label="'+label+'"><svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="fur'+kind+'" x2="0.8" y2="1"><stop stop-color="'+(cat?'#d98a25':'#f0c47b')+'"/><stop offset="1" stop-color="'+(cat?'#bd542b':'#d98a25')+'"/></linearGradient><radialGradient id="shine'+kind+'"><stop stop-color="#fff9e9"/><stop offset="1" stop-color="#f1d6a5"/></radialGradient></defs><ellipse cx="80" cy="137" rx="48" ry="9" fill="#4a2d1824"/>'+(cat?'<path d="M38 64 33 20 67 43Q80 38 93 43L127 20 122 66Q137 91 119 113Q103 132 80 132Q57 132 41 113Q23 91 38 64Z"':'<path d="M42 51Q24 23 16 46Q8 78 39 88Q39 112 57 126Q80 142 103 126Q121 112 121 88Q152 78 144 46Q136 23 118 51Q103 39 80 39Q57 39 42 51Z')+' " fill="url(#fur'+kind+')" stroke="#8b4b25" stroke-width="3"/><ellipse cx="80" cy="89" rx="42" ry="34" fill="url(#shine'+kind+')" opacity=".88"/><ellipse cx="61" cy="77" rx="5" ry="7" fill="#263a32"/><ellipse cx="99" cy="77" rx="5" ry="7" fill="#263a32"/><path d="M74 92Q80 99 86 92M80 98Q77 106 70 106M80 98Q83 106 90 106" fill="none" stroke="#4a2d18" stroke-width="3" stroke-linecap="round"/><path d="M53 101 25 96M54 108 29 112M107 101 135 96M106 108 131 112" stroke="#8b4b25" stroke-width="2" stroke-linecap="round"/><circle cx="48" cy="96" r="3" fill="#bd542b"/><circle cx="112" cy="96" r="3" fill="#bd542b"/><path d="M55 121Q80 141 105 121" fill="none" stroke="#fff8eb" stroke-width="5" stroke-linecap="round"/></svg></div>';
-  };
-  const stage = document.createElement('section');
-  stage.className = 'md-home-stage';
-  stage.setAttribute('aria-label','Mascotas ilustradas en escena 3D giratoria');
-  stage.innerHTML = '<div class="md-stage-kicker">MascotaDatos · Atacama</div><div class="md-stage-title">Un mundo para cuidarles mejor</div><p class="md-stage-hint">Veterinarias, insumos y servicios locales en un solo lugar.</p><div class="md-carousel" aria-label="Arrastra para girar la escena 360 grados"><div class="md-orbit"></div><div class="md-cylinder">'+face('cat','Gato ilustrado en 3D')+face('dog','Perro ilustrado en 3D')+face('cat','Gato ilustrado en 3D')+'</div><div class="md-rotate-hint">↔ Arrastra para explorar en 360°</div></div><div class="md-stage-controls"><button type="button" aria-label="Girar a la izquierda">‹</button><button type="button" aria-label="Girar a la derecha">›</button></div>';
-  hero.insertAdjacentElement('afterend',stage);
+  const hero = home.querySelector('.hero');
+  if (hero) {
+    const h=hero.querySelector('h1'), p=hero.querySelector('p');
+    if (h) h.textContent='Bienvenido a MascotaDatos';
+    if (p) p.textContent='Información para cuidar a tu mascota y encontrar servicios en Atacama.';
+  }
+  const stage=document.createElement('section');
+  stage.className='md-home-stage';
+  stage.setAttribute('aria-label','Imagen cinematográfica de mascotas en el desierto de Atacama');
+  stage.innerHTML='<div class="md-home-photo"><img src="https://appassets.androidplatform.net/assets/md-home-hero.png" alt="Gato y perro en un paisaje de Atacama" loading="eager"><div class="md-photo-label">MASCOTADATOS · ATACAMA</div><div class="md-photo-caption"><b>Cerca de quienes más quieres</b><span>Veterinarias, insumos y servicios locales</span></div></div>';
+  if (hero) hero.insertAdjacentElement('afterend',stage);
+  else home.prepend(stage);
 
   const quick=document.createElement('div');
   quick.className='md-quick';
-  quick.innerHTML='<button type="button" data-go="ciudades"><span>🏥</span><b>Veterinarias cercanas</b></button><button type="button" data-go="insumosCiudad"><span>🛍️</span><b>Insumos locales</b></button>';
+  quick.innerHTML='<button type="button" data-go="veterinarias"><span>🏥</span><b>Veterinarias de Copiapó</b></button><button type="button" data-go="insumosCiudad"><span>🛍️</span><b>Insumos y tiendas locales</b></button>';
   stage.insertAdjacentElement('afterend',quick);
-  quick.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{if(typeof window.show==='function')window.show(b.dataset.go)}));
 
-  const carousel=stage.querySelector('.md-carousel'), cylinder=stage.querySelector('.md-cylinder');
-  let angle=0,startX=0,startY=0,dragging=false;
-  const draw=()=>{cylinder.style.transform='translateX(-50%) rotateX(-7deg) rotateY('+angle+'deg)'};
-  const step=dir=>{angle+=dir*120;draw()};
-  const buttons=stage.querySelectorAll('.md-stage-controls button');
-  buttons[0].addEventListener('click',()=>step(-1));buttons[1].addEventListener('click',()=>step(1));
-  carousel.addEventListener('pointerdown',e=>{dragging=true;startX=e.clientX;startY=e.clientY;carousel.setPointerCapture(e.pointerId);});
-  carousel.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-startX;angle+=dx*.85;startX=e.clientX;draw();});
-  const stop=()=>{dragging=false};carousel.addEventListener('pointerup',stop);carousel.addEventListener('pointercancel',stop);draw();
+  const offlineData=[
+    {n:'Centro Quirúrgico Veterinario CEQVet',a:'Luis Flores 483, Copiapó',p:'+56 9 7633 8018',c:'veterinaria',s:'por_verificar',u:'ceqvetcopiapo.cl'},
+    {n:'Hospital Clínico Veterinario Huellitas',a:'Callejón José Joaquín Vallejo 630, Copiapó',p:'+56 52 223 3133 / +56 9 7444 4971',c:'veterinaria',s:'por_verificar',u:'veterinariahuellitas.cl'},
+    {n:'Munay Vet — Clínica Veterinaria',a:'Av. Ignacio Carrera Pinto 743, Copiapó',p:'+56 9 7374 6914',c:'veterinaria',s:'por_verificar',u:'munayvet.cl'},
+    {n:'Ciudad Mascota',a:'Los Carrera 1036, Copiapó',p:'+56 9 5215 0987',c:'insumos',s:'por_verificar'},
+    {n:'Farmacia Veterinaria Los Mancos',a:'Bernardo O’Higgins 21, Copiapó',p:'+56 52 223 9520 / +56 9 8848 4840',c:'insumos',s:'por_verificar',u:'guabinatural.cl'},
+    {n:'Farmavet Los Mancos',a:'Rodriguez 760, Copiapó',p:'+56 9 5830 0433',c:'insumos',s:'verificado',u:'farmavetlosmancos.com'},
+    {n:'Huellitas Pet Shop',a:'Callejón José Joaquín Vallejo 630, Copiapó',p:'+56 52 223 3133 / +56 9 7444 4971',c:'insumos',s:'por_verificar',u:'veterinariahuellitas.cl'},
+    {n:'Mundo Mascotas — Mall Plaza Copiapó',a:'Mall Plaza Copiapó',p:'+56 9 2035 8935',c:'insumos',s:'por_verificar',u:'guabinatural.cl'},
+    {n:'Mundo Mascotas — Patio Center San Fernando',a:'Los Carrera 4723, Local 13, Patio Center San Fernando, Copiapó',p:'+56 9 2035 8935',c:'insumos',s:'por_verificar',u:'guabinatural.cl'},
+    {n:'Panchitas Pet Shop',a:'La Cruz 678, Copiapó',p:'',c:'insumos',s:'por_verificar'},
+    {n:'Pet Shop Matanda',a:'Av. Los Carrera 2354, Copiapó',p:'+56 9 5664 1895',c:'insumos',s:'por_verificar',u:'matandapetshop.cl'},
+    {n:'Pet Store Olea',a:'José Joaquín Vallejos 474, Copiapó',p:'',c:'insumos',s:'por_verificar',u:'biogance.cl'}
+  ];
+  const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+  function addOfflineDirectory(){
+    const status=document.getElementById('onlineStatus');
+    const msg=norm(status?.textContent||'');
+    if(!msg.includes('sinconexion')&&!msg.includes('desconect'))return;
+    const containers={
+      veterinaria:document.getElementById('vet'),
+      insumos:document.getElementById('shopResults')||document.getElementById('shops')
+    };
+    let inserted=0;
+    offlineData.forEach(row=>{
+      const box=containers[row.c]; if(!box)return;
+      const key=norm(row.n);
+      if([...box.querySelectorAll('.item')].some(el=>norm(el.querySelector('h3')?.textContent||el.textContent).includes(key)))return;
+      const card=document.createElement('div');card.className='item md-local-entry';card.dataset.search=norm([row.n,row.a,row.p].join(' '));
+      const top=document.createElement('div');top.className='top';
+      const title=document.createElement('h3');title.textContent=row.n;
+      const badge=document.createElement('span');badge.className='badge '+(row.s==='verificado'?'':'warn');badge.textContent=row.s==='verificado'?'Verificado':'En revisión';
+      top.append(title,badge);
+      const meta=document.createElement('div');meta.className='meta';meta.textContent='📍 '+row.a+(row.p?' · 📞 '+row.p:' · Teléfono no publicado');
+      const source=document.createElement('div');source.className='md-local-source';source.textContent=row.u?'Fuente informativa: '+row.u:'Ficha local; contacto pendiente de confirmar.';
+      card.append(top,meta,source);box.append(card);inserted++;
+    });
+    if(inserted&&status)status.textContent='⚠️ Sin conexión a la base online · Mostrando fichas locales guardadas.';
+  }
+  const originalShow=window.show;
+  if(typeof originalShow==='function'&&!window.__mdShowRouteFix){
+    window.__mdShowRouteFix=true;
+    window.show=function(id){
+      const target=(id==='ciudades'&&!document.getElementById('ciudades'))?'veterinarias':id;
+      const result=originalShow.call(window,target);
+      if(target==='veterinarias'||target==='insumosCiudad')setTimeout(addOfflineDirectory,0);
+      return result;
+    };
+  }
+  quick.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>window.show?.(b.dataset.go)));
+
+  const photo=stage.querySelector('.md-home-photo'),img=photo.querySelector('img');
+  let down=false,x0=0,y0=0;
+  photo.addEventListener('pointerdown',e=>{down=true;x0=e.clientX;y0=e.clientY;photo.setPointerCapture(e.pointerId)});
+  photo.addEventListener('pointermove',e=>{
+    if(!down)return;
+    const rx=Math.max(-4,Math.min(4,(e.clientY-y0)*-.035));
+    const ry=Math.max(-6,Math.min(6,(e.clientX-x0)*.035));
+    img.style.transform='scale(1.06) rotateX('+rx+'deg) rotateY('+ry+'deg)';
+    img.style.filter='saturate(1.05) brightness(1.02)';
+  });
+  const reset=()=>{down=false;img.style.transform='scale(1.025)';img.style.filter='none'};
+  photo.addEventListener('pointerup',reset);photo.addEventListener('pointercancel',reset);
+
+  setTimeout(addOfflineDirectory,1200);
+  const status=document.getElementById('onlineStatus');
+  if(status)new MutationObserver(()=>addOfflineDirectory()).observe(status,{childList:true,subtree:true,characterData:true});
 })();
