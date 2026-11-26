@@ -26,9 +26,7 @@
     .md-quick button span{font-size:21px}
     .md-local-entry{position:relative}
     .md-local-entry .badge{white-space:nowrap}
-    .md-local-entry .md-local-source{font-size:10px;color:#71675d;margin-top:6px}
-    #publicidadSolicitud{display:none!important}
-    @media(prefers-reduced-motion:reduce){.md-home-photo img{transition:none}}
+    .md-local-entry .md-local-source{font-size:10px;color:#71675d;margin-top:6px}    @media(prefers-reduced-motion:reduce){.md-home-photo img{transition:none}}
   `;
   document.head.append(style);
 
@@ -70,7 +68,7 @@
     const msg=norm(status?.textContent||'');
     if(!msg.includes('sinconexion')&&!msg.includes('desconect'))return;
     const containers={
-      veterinaria:document.getElementById('vet'),
+      veterinaria:(document.getElementById('cityContent')||document.getElementById('vet')),
       insumos:document.getElementById('shopResults')||document.getElementById('shops')
     };
     let inserted=0;
