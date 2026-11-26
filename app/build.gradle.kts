@@ -11,12 +11,13 @@ android {
         applicationId = "cl.mascotadatos.app"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1312
-        versionName = "1.3.12"
+        versionCode = 1316
+        versionName = "1.3.16"
     }
 
     buildTypes {
         getByName("debug") {
+            applicationIdSuffix = ".preview1316"
             manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
             buildConfigField("String", "BANNER_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
         }

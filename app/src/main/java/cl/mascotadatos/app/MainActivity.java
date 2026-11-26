@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
             @Override public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 if (destroyed || !url.startsWith("https://appassets.androidplatform.net/assets/")) return;
+                view.evaluateJavascript("(function(){if(window.__mdHomeScriptLoaded)return;window.__mdHomeScriptLoaded=true;var s=document.createElement('script');s.src='https://appassets.androidplatform.net/assets/md-home-redesign.js';document.head.appendChild(s);})();", null);
                 android.content.SharedPreferences prefs = getSharedPreferences("asset_updates", MODE_PRIVATE);
                 if (refreshingAssets) { prefs.edit().putInt("version", BuildConfig.VERSION_CODE).apply(); return; }
                 if (prefs.getInt("version", 0) >= BuildConfig.VERSION_CODE) return;

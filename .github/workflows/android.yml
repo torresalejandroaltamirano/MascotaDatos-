@@ -7,6 +7,7 @@ on:
       - main
       - v35-profesional
       - v1.3.11-cierre
+      - feat/mascotadatos-home-3d
 
 jobs:
   build:
